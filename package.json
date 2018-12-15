@@ -16,5 +16,8 @@
     "homebridge": ">=0.4.0"
   },
   "author": "Alexander Rydén",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "shellies": "^0.2.0"
+  }
 }
