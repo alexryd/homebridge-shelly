@@ -16,9 +16,11 @@ module.exports = homebridge => {
       .setCharacteristic(Characteristic.SerialNumber, device.id)
 
     if (device.settings && device.settings.fw) {
+      const fw = device.settings.fw
+      const m = fw.match(/v([0-9]+(?:\.[0-9]+)*)/)
       infoService.setCharacteristic(
         Characteristic.FirmwareRevision,
-        device.settings.fw
+        m !== null ? m[1] : fw
       )
     }
 
