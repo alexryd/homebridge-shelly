@@ -7,89 +7,100 @@ module.exports = homebridge => {
   const Service = homebridge.hap.Service
   const uuid = homebridge.hap.uuid
 
-  const createAccessory = (device, name) => {
-    const accessory = new PlatformAccessory(name, uuid.generate(name))
+  class ShellyAccessory {
+    constructor(device, platformAccessory = null) {
+      this.device = device
+      this.platformAccessory = platformAccessory
 
-    const infoService = accessory.getService(Service.AccessoryInformation)
-      .setCharacteristic(Characteristic.Manufacturer, 'Shelly')
-      .setCharacteristic(Characteristic.Model, device.type)
-      .setCharacteristic(Characteristic.SerialNumber, device.id)
+      if (!this.platformAccessory) {
+        this.platformAccessory = this.createPlatformAccessory()
+      }
 
-    if (device.settings && device.settings.fw) {
-      const fw = device.settings.fw
-      const m = fw.match(/v([0-9]+(?:\.[0-9]+)*)/)
-      infoService.setCharacteristic(
-        Characteristic.FirmwareRevision,
-        m !== null ? m[1] : fw
+      this.setupEventHandlers()
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `${d.type} ${d.id}`
+    }
+
+    createPlatformAccessory() {
+      const d = this.device
+      const pa = new PlatformAccessory(
+        this.name,
+        uuid.generate(this.name)
       )
+
+      const infoService = pa.getService(Service.AccessoryInformation)
+        .setCharacteristic(Characteristic.Manufacturer, 'Shelly')
+        .setCharacteristic(Characteristic.Model, d.type)
+        .setCharacteristic(Characteristic.SerialNumber, d.id)
+
+      if (d.settings && d.settings.fw) {
+        const fw = d.settings.fw
+        const m = fw.match(/v([0-9]+(?:\.[0-9]+)*)/)
+        infoService.setCharacteristic(
+          Characteristic.FirmwareRevision,
+          m !== null ? m[1] : fw
+        )
+      }
+
+      if (d.settings && d.settings.hwinfo) {
+        infoService.setCharacteristic(
+          Characteristic.HardwareRevision,
+          d.settings.hwinfo.hw_revision
+        )
+      }
+
+      pa.context = {
+        type: d.type,
+        id: d.id,
+        host: d.host,
+      }
+
+      pa.updateReachability(d.online)
+
+      return pa
     }
 
-    if (device.settings && device.settings.hwinfo) {
-      infoService.setCharacteristic(
-        Characteristic.HardwareRevision,
-        device.settings.hwinfo.hw_revision
+    setupEventHandlers() {
+      const pa = this.platformAccessory
+
+      this.device
+        .on('online', () => { pa.updateReachability(true) })
+        .on('offline', () => { pa.updateReachability(false) })
+    }
+  }
+
+  class Shelly1RelayAccessory extends ShellyAccessory {
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+
+      pa.category = Accessory.Categories.SWITCH
+
+      pa.addService(
+        new Service.Switch()
+          .setCharacteristic(Characteristic.On, this.device.relay0)
       )
+
+      return pa
     }
 
-    accessory.context = {
-      type: device.type,
-      id: device.id,
-      host: device.host,
-    }
+    setupEventHandlers() {
+      super.setupEventHandlers()
 
-    accessory.updateReachability(device.online)
+      const d = this.device
+      const onCharacteristic = this.platformAccessory
+        .getService(Service.Switch)
+        .getCharacteristic(Characteristic.On)
+        .on('set', async (newValue, callback) => {
+          await d.setRelay(0, newValue)
+          callback()
+        })
 
-    return accessory
-  }
-
-  const createShelly1RelayAccessory = device => {
-    const accessory = createAccessory(
-      device,
-      device.name || `${device.type} ${device.id}`
-    )
-
-    accessory.category = Accessory.Categories.SWITCH
-
-    accessory.addService(
-      new Service.Switch()
-        .setCharacteristic(Characteristic.On, device.relay0)
-    )
-
-    setupShelly1RelayHandlers(device, accessory)
-
-    return accessory
-  }
-
-  const createAccessoriesForDevice = device => {
-    let accessories = []
-
-    if (device.type === 'SHSW-1') {
-      accessories.push(createShelly1RelayAccessory(device))
-    }
-
-    return accessories
-  }
-
-  const setupShelly1RelayHandlers = (device, accessory) => {
-    const onCharacteristic = accessory
-      .getService(Service.Switch)
-      .getCharacteristic(Characteristic.On)
-      .on('set', async (newValue, callback) => {
-        await device.setRelay(0, newValue)
-        callback()
+      d.on('change:relay0', newValue => {
+        onCharacteristic.setValue(newValue)
       })
-
-    device.on('change:relay0', newValue => {
-      onCharacteristic.setValue(newValue)
-    })
-  }
-
-  const setupHandlersForAccessory = (device, accessory) => {
-    device.on('online', () => { accessory.updateReachability(true) })
-    device.on('offline', () => { accessory.updateReachability(false) })
-
-    if (device.type === 'SHSW-1') {
-      setupShelly1RelayHandlers(device, accessory)
     }
   }
 
@@ -104,19 +115,24 @@ module.exports = homebridge => {
     }
 
     discoverDeviceHandler(device) {
-      const accessories = createAccessoriesForDevice(device)
+      const platformAccessories = []
 
-      if (accessories.length > 0) {
+      if (device.type === 'SHSW-1') {
+        const accessory = new Shelly1RelayAccessory(device)
+        platformAccessories.push(accessory.platformAccessory)
+      }
+
+      if (platformAccessories.length > 0) {
         this.api.registerPlatformAccessories(
           'homebridge-shelly',
           'Shelly',
-          accessories
+          platformAccessories
         )
       }
     }
 
-    async configureAccessory(accessory) {
-      const ctx = accessory.context
+    async configureAccessory(platformAccessory) {
+      const ctx = platformAccessory.context
       let device = shellies.getDevice(ctx.type, ctx.id)
 
       if (!device) {
@@ -137,7 +153,9 @@ module.exports = homebridge => {
         }
       }
 
-      setupHandlersForAccessory(device, accessory)
+      if (device.type === 'SHSW-1') {
+        new Shelly1RelayAccessory(device, platformAccessory)
+      }
     }
   }
 
