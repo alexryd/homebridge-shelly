@@ -16,6 +16,7 @@ module.exports = homebridge => {
         this.platformAccessory = this.createPlatformAccessory()
       }
 
+      this.updateSettings()
       this.setupEventHandlers()
     }
 
@@ -31,10 +32,26 @@ module.exports = homebridge => {
         uuid.generate(this.name)
       )
 
-      const infoService = pa.getService(Service.AccessoryInformation)
+      pa.getService(Service.AccessoryInformation)
         .setCharacteristic(Characteristic.Manufacturer, 'Shelly')
         .setCharacteristic(Characteristic.Model, d.type)
         .setCharacteristic(Characteristic.SerialNumber, d.id)
+
+      pa.context = {
+        type: d.type,
+        id: d.id,
+        host: d.host,
+      }
+
+      pa.updateReachability(d.online)
+
+      return pa
+    }
+
+    updateSettings() {
+      const d = this.device
+      const infoService = this.platformAccessory
+        .getService(Service.AccessoryInformation)
 
       if (d.settings && d.settings.fw) {
         const fw = d.settings.fw
@@ -51,16 +68,6 @@ module.exports = homebridge => {
           d.settings.hwinfo.hw_revision
         )
       }
-
-      pa.context = {
-        type: d.type,
-        id: d.id,
-        host: d.host,
-      }
-
-      pa.updateReachability(d.online)
-
-      return pa
     }
 
     setupEventHandlers() {
@@ -69,6 +76,7 @@ module.exports = homebridge => {
       this.device
         .on('online', () => { pa.updateReachability(true) })
         .on('offline', () => { pa.updateReachability(false) })
+        .on('change:settings', this.updateSettings.bind(this))
     }
   }
 
