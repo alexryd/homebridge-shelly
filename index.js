@@ -8,7 +8,8 @@ module.exports = homebridge => {
   const uuid = homebridge.hap.uuid
 
   class ShellyAccessory {
-    constructor(device, platformAccessory = null) {
+    constructor(log, device, platformAccessory = null) {
+      this.log = log
       this.device = device
       this.platformAccessory = platformAccessory
 
@@ -72,11 +73,23 @@ module.exports = homebridge => {
 
     setupEventHandlers() {
       const pa = this.platformAccessory
+        .on('identify', this.identify.bind(this))
 
       this.device
         .on('online', () => { pa.updateReachability(true) })
         .on('offline', () => { pa.updateReachability(false) })
         .on('change:settings', this.updateSettings.bind(this))
+    }
+
+    identify(paired, callback) {
+      this.log(
+        'Device with ID',
+        device.id,
+        'and address',
+        device.host,
+        'identified'
+      )
+      callback()
     }
   }
 
@@ -110,6 +123,16 @@ module.exports = homebridge => {
         onCharacteristic.setValue(newValue)
       })
     }
+
+    async identify(paired, callback) {
+      const currentState = this.device.relay0
+      await this.device.setRelay(0, !currentState)
+
+      setTimeout(async () => {
+        await this.device.setRelay(0, currentState)
+        callback()
+      }, 1000)
+    }
   }
 
   class ShellyPlatform {
@@ -126,7 +149,7 @@ module.exports = homebridge => {
       const platformAccessories = []
 
       if (device.type === 'SHSW-1') {
-        const accessory = new Shelly1RelayAccessory(device)
+        const accessory = new Shelly1RelayAccessory(this.log, device)
         platformAccessories.push(accessory.platformAccessory)
       }
 
@@ -162,7 +185,7 @@ module.exports = homebridge => {
       }
 
       if (device.type === 'SHSW-1') {
-        new Shelly1RelayAccessory(device, platformAccessory)
+        new Shelly1RelayAccessory(this.log, device, platformAccessory)
       }
     }
   }
