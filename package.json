@@ -17,6 +17,10 @@
   },
   "author": "Alexander Rydén",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexryd/homebridge-shelly.git"
+  },
   "dependencies": {
     "shellies": "^0.2.1"
   }
