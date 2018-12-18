@@ -135,6 +135,58 @@ module.exports = homebridge => {
     }
   }
 
+  class Shelly2RelayAccessory extends ShellyAccessory {
+    constructor(log, device, index, platformAccessory = null) {
+      super(log, device, platformAccessory)
+
+      this.index = index
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+
+      pa.category = Accessory.Categories.SWITCH
+      pa.context.index = this.index
+
+      pa.addService(
+        new Service.Switch()
+          .setCharacteristic(
+            Characteristic.On,
+            this.device['relay' + this.index]
+          )
+      )
+
+      return pa
+    }
+
+    setupEventHandlers() {
+      super.setupEventHandlers()
+
+      const d = this.device
+      const onCharacteristic = this.platformAccessory
+        .getService(Service.Switch)
+        .getCharacteristic(Characteristic.On)
+        .on('set', async (newValue, callback) => {
+          await d.setRelay(this.index, newValue)
+          callback()
+        })
+
+      d.on('change:relay' + this.index, newValue => {
+        onCharacteristic.setValue(newValue)
+      })
+    }
+
+    async identify(paired, callback) {
+      const currentState = this.device['relay' + this.index]
+      await this.device.setRelay(this.index, !currentState)
+
+      setTimeout(async () => {
+        await this.device.setRelay(this.index, currentState)
+        callback()
+      }, 1000)
+    }
+  }
+
   class ShellyPlatform {
     constructor(log, config, api) {
       this.log = log
@@ -146,14 +198,21 @@ module.exports = homebridge => {
     }
 
     discoverDeviceHandler(device) {
-      const platformAccessories = []
+      const platformAccessories = null
 
       if (device.type === 'SHSW-1') {
         const accessory = new Shelly1RelayAccessory(this.log, device)
-        platformAccessories.push(accessory.platformAccessory)
+        platformAccessories = [accessory.platformAccessory]
+      } else if (device.type === 'SHSW-21') {
+        const accessory1 = new Shelly2RelayAccessory(this.log, device, 0)
+        const accessory2 = new Shelly2RelayAccessory(this.log, device, 1)
+        platformAccessories = [
+          accessory1.platformAccessory,
+          accessory2.platformAccessory,
+        ]
       }
 
-      if (platformAccessories.length > 0) {
+      if (platformAccessories) {
         this.api.registerPlatformAccessories(
           'homebridge-shelly',
           'Shelly',
@@ -186,6 +245,13 @@ module.exports = homebridge => {
 
       if (device.type === 'SHSW-1') {
         new Shelly1RelayAccessory(this.log, device, platformAccessory)
+      } else if (device.type === 'SHSW-21') {
+        new Shelly2RelayAccessory(
+          this.log,
+          device,
+          ctx.index,
+          platformAccessory
+        )
       }
     }
   }
