@@ -198,7 +198,7 @@ module.exports = homebridge => {
     }
 
     discoverDeviceHandler(device) {
-      const platformAccessories = null
+      let platformAccessories = null
 
       if (device.type === 'SHSW-1') {
         const accessory = new Shelly1RelayAccessory(this.log, device)
