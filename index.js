@@ -205,12 +205,13 @@ module.exports = homebridge => {
     }
 
     discoverDeviceHandler(device) {
+      const type = device.type
       let platformAccessories = null
 
-      if (device.type === 'SHSW-1') {
+      if (type === 'SHSW-1') {
         const accessory = new Shelly1RelayAccessory(this.log, device)
         platformAccessories = [accessory.platformAccessory]
-      } else if (device.type === 'SHSW-21') {
+      } else if (type === 'SHSW-21' || type === 'SHSW-22') {
         const accessory1 = new Shelly2RelayAccessory(this.log, device, 0)
         const accessory2 = new Shelly2RelayAccessory(this.log, device, 1)
         platformAccessories = [
@@ -250,9 +251,11 @@ module.exports = homebridge => {
         }
       }
 
-      if (device.type === 'SHSW-1') {
+      const type = device.type
+
+      if (type === 'SHSW-1') {
         new Shelly1RelayAccessory(this.log, device, platformAccessory)
-      } else if (device.type === 'SHSW-21') {
+      } else if (type === 'SHSW-21' || type === 'SHSW-22') {
         new Shelly2RelayAccessory(
           this.log,
           device,
