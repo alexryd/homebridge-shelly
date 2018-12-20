@@ -8,10 +8,14 @@ module.exports = homebridge => {
   const uuid = homebridge.hap.uuid
 
   class ShellyAccessory {
-    constructor(log, device, platformAccessory = null) {
+    constructor(log, device, platformAccessory = null, props = null) {
       this.log = log
       this.device = device
       this.platformAccessory = platformAccessory
+
+      if (props) {
+        Object.assign(this, props)
+      }
 
       if (!this.platformAccessory) {
         this.platformAccessory = this.createPlatformAccessory()
@@ -137,9 +141,12 @@ module.exports = homebridge => {
 
   class Shelly2RelayAccessory extends ShellyAccessory {
     constructor(log, device, index, platformAccessory = null) {
-      super(log, device, platformAccessory)
+      super(log, device, platformAccessory, { index })
+    }
 
-      this.index = index
+    get name() {
+      const d = this.device
+      return d.name || `${d.type} ${d.id} ${this.index}`
     }
 
     createPlatformAccessory() {
