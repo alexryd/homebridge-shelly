@@ -97,56 +97,9 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly1RelayAccessory extends ShellyAccessory {
-    createPlatformAccessory() {
-      const pa = super.createPlatformAccessory()
-
-      pa.category = Accessory.Categories.SWITCH
-
-      pa.addService(
-        new Service.Switch()
-          .setCharacteristic(Characteristic.On, this.device.relay0)
-      )
-
-      return pa
-    }
-
-    setupEventHandlers() {
-      super.setupEventHandlers()
-
-      const d = this.device
-      const onCharacteristic = this.platformAccessory
-        .getService(Service.Switch)
-        .getCharacteristic(Characteristic.On)
-        .on('set', async (newValue, callback) => {
-          await d.setRelay(0, newValue)
-          callback()
-        })
-
-      d.on('change:relay0', newValue => {
-        onCharacteristic.setValue(newValue)
-      })
-    }
-
-    async identify(paired, callback) {
-      const currentState = this.device.relay0
-      await this.device.setRelay(0, !currentState)
-
-      setTimeout(async () => {
-        await this.device.setRelay(0, currentState)
-        callback()
-      }, 1000)
-    }
-  }
-
-  class Shelly2RelayAccessory extends ShellyAccessory {
+  class ShellyRelayAccessory extends ShellyAccessory {
     constructor(log, device, index, platformAccessory = null) {
       super(log, device, platformAccessory, { index })
-    }
-
-    get name() {
-      const d = this.device
-      return d.name || `${d.type} ${d.id} ${this.index}`
     }
 
     createPlatformAccessory() {
@@ -191,6 +144,28 @@ module.exports = homebridge => {
         await this.device.setRelay(this.index, currentState)
         callback()
       }, 1000)
+    }
+  }
+
+  class Shelly1RelayAccessory extends ShellyRelayAccessory {
+    constructor(log, device, platformAccessory = null) {
+      super(log, device, 0, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly1 ${d.id}`
+    }
+  }
+
+  class Shelly2RelayAccessory extends ShellyRelayAccessory {
+    get name() {
+      const d = this.device
+      if (d.name) {
+        return `${d.name} #${this.index}`
+      } else {
+        return `Shelly2 ${d.id} #${this.index}`
+      }
     }
   }
 
