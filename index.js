@@ -1,3 +1,4 @@
+const inherits = require('util').inherits
 const shellies = require('shellies')
 
 module.exports = homebridge => {
@@ -6,6 +7,21 @@ module.exports = homebridge => {
   const PlatformAccessory = homebridge.platformAccessory
   const Service = homebridge.hap.Service
   const uuid = homebridge.hap.uuid
+
+  const ConsumptionCharacteristic = function() {
+    Characteristic.call(this, 'Consumption', ConsumptionCharacteristic.UUID)
+    this.setProps({
+      format: Characteristic.Formats.FLOAT,
+      unit: 'W',
+      minValue: 0,
+      maxValue: 65535,
+      minStep: 0.1,
+      perms: [ Characteristic.Perms.READ, Characteristic.Perms.NOTIFY ],
+    })
+    this.value = this.getDefaultValue()
+  }
+  ConsumptionCharacteristic.UUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'
+  inherits(ConsumptionCharacteristic, Characteristic)
 
   class ShellyAccessory {
     constructor(log, device, platformAccessory = null, props = null) {
@@ -98,8 +114,10 @@ module.exports = homebridge => {
   }
 
   class ShellyRelayAccessory extends ShellyAccessory {
-    constructor(log, device, index, platformAccessory = null) {
-      super(log, device, platformAccessory, { index })
+    constructor(log, device, index, powerMeterIndex = null,
+      platformAccessory = null
+    ) {
+      super(log, device, platformAccessory, { index, powerMeterIndex })
     }
 
     createPlatformAccessory() {
@@ -108,13 +126,18 @@ module.exports = homebridge => {
       pa.category = Accessory.Categories.SWITCH
       pa.context.index = this.index
 
-      pa.addService(
-        new Service.Switch()
-          .setCharacteristic(
-            Characteristic.On,
-            this.device['relay' + this.index]
-          )
-      )
+      const switchService = new Service.Switch()
+        .setCharacteristic(
+          Characteristic.On,
+          this.device['relay' + this.index]
+        )
+
+      if (this.powerMeterIndex !== null) {
+        switchService.addCharacteristic(ConsumptionCharacteristic)
+          .setValue(this.device['powerMeter' + this.powerMeterIndex])
+      }
+
+      pa.addService(switchService)
 
       return pa
     }
@@ -134,6 +157,14 @@ module.exports = homebridge => {
       d.on('change:relay' + this.index, newValue => {
         onCharacteristic.setValue(newValue)
       })
+
+      if (this.powerMeterIndex !== null) {
+        d.on('change:powerMeter' + this.powerMeterIndex, newValue => {
+          this.platformAccessory.getService(Service.Switch)
+            .getCharacteristic(ConsumptionCharacteristic)
+            .setValue(newValue)
+        })
+      }
     }
 
     async identify(paired, callback) {
@@ -149,7 +180,7 @@ module.exports = homebridge => {
 
   class Shelly1RelayAccessory extends ShellyRelayAccessory {
     constructor(log, device, platformAccessory = null) {
-      super(log, device, 0, platformAccessory)
+      super(log, device, 0, null, platformAccessory)
     }
 
     get name() {
@@ -159,6 +190,11 @@ module.exports = homebridge => {
   }
 
   class Shelly2RelayAccessory extends ShellyRelayAccessory {
+    constructor(log, device, index, platformAccessory = null) {
+      const powerMeterIndex = device.type === 'SHSW-21' ? 0 : index
+      super(log, device, index, powerMeterIndex, platformAccessory)
+    }
+
     get name() {
       const d = this.device
       if (d.name) {
