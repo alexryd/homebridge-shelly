@@ -1,3 +1,4 @@
+const { handleFailedRequest } = require('./error-handlers')
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
@@ -134,8 +135,12 @@ module.exports = homebridge => {
         .getService(Service.Switch)
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
-          await d.setRelay(this.index, newValue)
-          callback()
+          try {
+            await d.setRelay(this.index, newValue)
+            callback()
+          } catch (e) {
+            handleFailedRequest(this.log, d, e)
+          }
         })
 
       d.on('change:relay' + this.index, newValue => {
@@ -153,11 +158,21 @@ module.exports = homebridge => {
 
     async identify(paired, callback) {
       const currentState = this.device['relay' + this.index]
-      await this.device.setRelay(this.index, !currentState)
+
+      try {
+        await this.device.setRelay(this.index, !currentState)
+      } catch (e) {
+        handleFailedRequest(this.log, this.device, e)
+        return
+      }
 
       setTimeout(async () => {
-        await this.device.setRelay(this.index, currentState)
-        callback()
+        try {
+          await this.device.setRelay(this.index, currentState)
+          callback()
+        } catch (e) {
+          handleFailedRequest(this.log, this.device, e)
+        }
       }, 1000)
     }
   }

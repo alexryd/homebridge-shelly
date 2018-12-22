@@ -1,5 +1,7 @@
 const shellies = require('shellies')
 
+const { handleFailedRequest } = require('./error-handlers')
+
 module.exports = homebridge => {
   const {
     Shelly1RelayAccessory,
@@ -59,13 +61,7 @@ module.exports = homebridge => {
         try {
           device.settings = await device.getSettings()
         } catch (e) {
-          this.log(
-            'Device with ID',
-            device.id,
-            'and address',
-            device.host,
-            'is unreachable'
-          )
+          handleFailedRequest(this.log, device, e)
           device.online = false
         }
       }
