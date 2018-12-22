@@ -22,6 +22,6 @@
     "url": "https://github.com/alexryd/homebridge-shelly.git"
   },
   "dependencies": {
-    "shellies": "^0.4.0"
+    "shellies": "^0.5.0"
   }
 }
