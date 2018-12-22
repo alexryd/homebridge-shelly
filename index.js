@@ -1,27 +1,12 @@
-const inherits = require('util').inherits
 const shellies = require('shellies')
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
   const Characteristic = homebridge.hap.Characteristic
+  const { ConsumptionCharacteristic } = require('./characteristics')(homebridge)
   const PlatformAccessory = homebridge.platformAccessory
   const Service = homebridge.hap.Service
   const uuid = homebridge.hap.uuid
-
-  const ConsumptionCharacteristic = function() {
-    Characteristic.call(this, 'Consumption', ConsumptionCharacteristic.UUID)
-    this.setProps({
-      format: Characteristic.Formats.FLOAT,
-      unit: 'W',
-      minValue: 0,
-      maxValue: 65535,
-      minStep: 0.1,
-      perms: [ Characteristic.Perms.READ, Characteristic.Perms.NOTIFY ],
-    })
-    this.value = this.getDefaultValue()
-  }
-  ConsumptionCharacteristic.UUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'
-  inherits(ConsumptionCharacteristic, Characteristic)
 
   class ShellyAccessory {
     constructor(log, device, platformAccessory = null, props = null) {
