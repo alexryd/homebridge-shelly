@@ -15,6 +15,10 @@ module.exports = homebridge => {
       this.config = config
       this.api = api
 
+      if (config.username && config.password) {
+        shellies.setAuthCredentials(config.username, config.password)
+      }
+
       shellies.on('discover', this.discoverDeviceHandler.bind(this))
       this.api.on('didFinishLaunching', () => { shellies.start() })
     }

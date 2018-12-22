@@ -20,11 +20,19 @@ Currently the following Shelly devices are supported:
 "platforms": [
   {
     "platform": "Shelly",
-    "name": "Shelly"
+    "name": "Shelly",
+    "username": null,
+    "password": null
   }
 ]
 ```
 
+### Authentication
+Set the `"username"` and `"password"` options if you have restricted the web
+interface with a username and password. Note that this configuration applies
+to all Shelly devices.
+
+### Automatic discovery
 That's it. There are no other configuration options. Shelly devices will be
 automatically discovered, as long as they are on the same network and subnet as
-the device running homebridge.
+the device running homebridge and they are running the default firmware.
