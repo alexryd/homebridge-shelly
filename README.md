@@ -7,6 +7,7 @@
 Currently the following Shelly devices are supported:
 * [Shelly1](https://shelly.cloud/shelly1-open-source/)
 * [Shelly2](https://shelly.cloud/shelly2/) in relay mode
+* [Shelly4Pro](https://shelly.cloud/shelly-4-pro/)
 
 ## Installation
 1. Install homebridge by following

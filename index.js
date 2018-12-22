@@ -205,6 +205,21 @@ module.exports = homebridge => {
     }
   }
 
+  class Shelly4ProRelayAccessory extends ShellyRelayAccessory {
+    constructor(log, device, index, platformAccessory = null) {
+      super(log, device, index, index, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      if (d.name) {
+        return `${d.name} #${this.index}`
+      } else {
+        return `Shelly4Pro ${d.id} #${this.index}`
+      }
+    }
+  }
+
   class ShellyPlatform {
     constructor(log, config, api) {
       this.log = log
@@ -220,14 +235,20 @@ module.exports = homebridge => {
       let platformAccessories = null
 
       if (type === 'SHSW-1') {
-        const accessory = new Shelly1RelayAccessory(this.log, device)
-        platformAccessories = [accessory.platformAccessory]
-      } else if (type === 'SHSW-21' || type === 'SHSW-22') {
-        const accessory1 = new Shelly2RelayAccessory(this.log, device, 0)
-        const accessory2 = new Shelly2RelayAccessory(this.log, device, 1)
         platformAccessories = [
-          accessory1.platformAccessory,
-          accessory2.platformAccessory,
+          new Shelly1RelayAccessory(this.log, device).platformAccessory
+        ]
+      } else if (type === 'SHSW-21' || type === 'SHSW-22') {
+        platformAccessories = [
+          new Shelly2RelayAccessory(this.log, device, 0).platformAccessory,
+          new Shelly2RelayAccessory(this.log, device, 1).platformAccessory,
+        ]
+      } else if (type === 'SHSW-44') {
+        platformAccessories = [
+          new Shelly4ProRelayAccessory(this.log, device, 0).platformAccessory,
+          new Shelly4ProRelayAccessory(this.log, device, 1).platformAccessory,
+          new Shelly4ProRelayAccessory(this.log, device, 2).platformAccessory,
+          new Shelly4ProRelayAccessory(this.log, device, 3).platformAccessory,
         ]
       }
 
@@ -268,6 +289,13 @@ module.exports = homebridge => {
         new Shelly1RelayAccessory(this.log, device, platformAccessory)
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
         new Shelly2RelayAccessory(
+          this.log,
+          device,
+          ctx.index,
+          platformAccessory
+        )
+      } else if (type === 'SHSW-44') {
+        new Shelly4ProRelayAccessory(
           this.log,
           device,
           ctx.index,
