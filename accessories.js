@@ -140,6 +140,7 @@ module.exports = homebridge => {
             callback()
           } catch (e) {
             handleFailedRequest(this.log, d, e, 'Failed to set relay')
+            callback(e)
           }
         })
 
@@ -168,6 +169,7 @@ module.exports = homebridge => {
           e,
           'Failed to identify device'
         )
+        callback(e)
         return
       }
 
@@ -182,6 +184,7 @@ module.exports = homebridge => {
             e,
             'Failed to identify device'
           )
+          callback(e)
         }
       }, 1000)
     }
