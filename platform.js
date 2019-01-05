@@ -69,7 +69,12 @@ module.exports = homebridge => {
         try {
           device.settings = await device.getSettings()
         } catch (e) {
-          handleFailedRequest(this.log, device, e)
+          handleFailedRequest(
+            this.log,
+            device,
+            e,
+            'Failed to load device settings'
+          )
           device.online = false
         }
       }

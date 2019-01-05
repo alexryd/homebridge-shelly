@@ -3,7 +3,11 @@ const getDeviceIdentifier = device => {
   return `(device ${device.id}, at ${device.host})`
 }
 
-const handleFailedRequest = (log, device, e) => {
+const handleFailedRequest = (log, device, e, msg = null) => {
+  if (msg) {
+    log(msg)
+  }
+
   if (e.status === 401) {
     log('Wrong username or password', getDeviceIdentifier(device))
   } else if (e.status && e.response) {

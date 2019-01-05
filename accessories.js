@@ -139,7 +139,7 @@ module.exports = homebridge => {
             await d.setRelay(this.index, newValue)
             callback()
           } catch (e) {
-            handleFailedRequest(this.log, d, e)
+            handleFailedRequest(this.log, d, e, 'Failed to set relay')
           }
         })
 
@@ -162,7 +162,12 @@ module.exports = homebridge => {
       try {
         await this.device.setRelay(this.index, !currentState)
       } catch (e) {
-        handleFailedRequest(this.log, this.device, e)
+        handleFailedRequest(
+          this.log,
+          this.device,
+          e,
+          'Failed to identify device'
+        )
         return
       }
 
@@ -171,7 +176,12 @@ module.exports = homebridge => {
           await this.device.setRelay(this.index, currentState)
           callback()
         } catch (e) {
-          handleFailedRequest(this.log, this.device, e)
+          handleFailedRequest(
+            this.log,
+            this.device,
+            e,
+            'Failed to identify device'
+          )
         }
       }, 1000)
     }
