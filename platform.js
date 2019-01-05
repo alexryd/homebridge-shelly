@@ -19,6 +19,10 @@ module.exports = homebridge => {
         shellies.setAuthCredentials(config.username, config.password)
       }
 
+      if (typeof config.requestTimeout === 'number') {
+        shellies.request.timeout(config.requestTimeout * 1000)
+      }
+
       shellies.on('discover', this.discoverDeviceHandler.bind(this))
       this.api.on('didFinishLaunching', () => { shellies.start() })
     }
