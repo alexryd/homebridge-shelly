@@ -27,6 +27,8 @@ const handleFailedRequest = (log, device, e) => {
     }
   } else if (e.errno) {
     log('Error:', e.message, getDeviceIdentifier(device))
+  } else if (e.code === 'ABORTED') {
+    log('Request timeout', getDeviceIdentifier(device))
   } else {
     log('Error sending request', getDeviceIdentifier(device))
     log(e.stack)
