@@ -10,10 +10,9 @@ module.exports = homebridge => {
   } = require('./accessories')(homebridge)
 
   class ShellyPlatform {
-    constructor(log, config, api) {
+    constructor(log, config) {
       this.log = log
       this.config = config
-      this.api = api
 
       if (config.username && config.password) {
         shellies.setAuthCredentials(config.username, config.password)
@@ -24,7 +23,7 @@ module.exports = homebridge => {
       }
 
       shellies.on('discover', this.discoverDeviceHandler.bind(this))
-      this.api.on('didFinishLaunching', () => { shellies.start() })
+      homebridge.on('didFinishLaunching', () => { shellies.start() })
     }
 
     discoverDeviceHandler(device) {
@@ -50,7 +49,7 @@ module.exports = homebridge => {
       }
 
       if (platformAccessories) {
-        this.api.registerPlatformAccessories(
+        homebridge.registerPlatformAccessories(
           'homebridge-shelly',
           'Shelly',
           platformAccessories
