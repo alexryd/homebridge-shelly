@@ -61,25 +61,13 @@ module.exports = homebridge => {
       }
     }
 
-    async configureAccessory(platformAccessory) {
+    configureAccessory(platformAccessory) {
       const ctx = platformAccessory.context
       let device = shellies.getDevice(ctx.type, ctx.id)
 
       if (!device) {
         device = shellies.createDevice(ctx.type, ctx.id, ctx.host)
         shellies.addDevice(device)
-
-        try {
-          device.settings = await device.getSettings()
-        } catch (e) {
-          handleFailedRequest(
-            this.log,
-            device,
-            e,
-            'Failed to load device settings'
-          )
-          device.online = false
-        }
       }
 
       const type = device.type
