@@ -4,11 +4,12 @@
   "description": "Shelly plugin for Homebridge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --exit",
     "eslint": "eslint ."
   },
   "pre-commit": [
-    "eslint"
+    "eslint",
+    "test"
   ],
   "keywords": [
     "homebridge",
@@ -35,6 +36,9 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "pre-commit": "^1.2.2"
+    "mocha": "^5.2.0",
+    "pre-commit": "^1.2.2",
+    "should": "^13.2.3",
+    "sinon": "^7.2.2"
   }
 }
