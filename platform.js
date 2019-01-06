@@ -9,10 +9,49 @@ module.exports = homebridge => {
     Shelly4ProRelayAccessory,
   } = require('./accessories')(homebridge)
 
+  class DeviceWrapper {
+    constructor(platform, device, ...accessories) {
+      this.platform = platform
+      this.device = device
+      this.accessories = accessories
+
+      this.device.on('online', this.loadSettings.bind(this))
+
+      if (this.device.online) {
+        this.loadSettings()
+      }
+    }
+
+    get platformAccessories() {
+      return this.accessories.map(a => a.platformAccessory)
+    }
+
+    loadSettings() {
+      const d = this.device
+
+      if (!d.settings) {
+        d.getSettings()
+          .then(settings => {
+            d.settings = settings
+          })
+          .catch(error => {
+            handleFailedRequest(
+              this.platform.log,
+              d,
+              error,
+              'Failed to load device settings'
+            )
+            d.online = false
+          })
+      }
+    }
+  }
+
   class ShellyPlatform {
     constructor(log, config) {
       this.log = log
       this.config = config
+      this.deviceWrappers = new Map()
 
       if (config.username && config.password) {
         shellies.setAuthCredentials(config.username, config.password)
@@ -32,31 +71,39 @@ module.exports = homebridge => {
 
     discoverDeviceHandler(device) {
       const type = device.type
-      let platformAccessories = null
+      let deviceWrapper = null
 
       if (type === 'SHSW-1') {
-        platformAccessories = [
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
           new Shelly1RelayAccessory(this.log, device).platformAccessory
-        ]
+        )
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
-        platformAccessories = [
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
           new Shelly2RelayAccessory(this.log, device, 0).platformAccessory,
-          new Shelly2RelayAccessory(this.log, device, 1).platformAccessory,
-        ]
+          new Shelly2RelayAccessory(this.log, device, 1).platformAccessory
+        )
       } else if (type === 'SHSW-44') {
-        platformAccessories = [
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
           new Shelly4ProRelayAccessory(this.log, device, 0).platformAccessory,
           new Shelly4ProRelayAccessory(this.log, device, 1).platformAccessory,
           new Shelly4ProRelayAccessory(this.log, device, 2).platformAccessory,
-          new Shelly4ProRelayAccessory(this.log, device, 3).platformAccessory,
-        ]
+          new Shelly4ProRelayAccessory(this.log, device, 3).platformAccessory
+        )
       }
 
-      if (platformAccessories) {
+      if (deviceWrapper) {
+        this.deviceWrappers.set(device, deviceWrapper)
+
         homebridge.registerPlatformAccessories(
           'homebridge-shelly',
           'Shelly',
-          platformAccessories
+          deviceWrapper.platformAccessories
         )
       }
     }
@@ -67,26 +114,40 @@ module.exports = homebridge => {
 
       if (!device) {
         device = shellies.createDevice(ctx.type, ctx.id, ctx.host)
+        device.online = false
         shellies.addDevice(device)
+      }
+
+      let deviceWrapper = this.deviceWrappers.get(device)
+
+      if (!deviceWrapper) {
+        deviceWrapper = new DeviceWrapper(this, device)
+        this.deviceWrappers.set(device, deviceWrapper)
       }
 
       const type = device.type
 
       if (type === 'SHSW-1') {
-        new Shelly1RelayAccessory(this.log, device, platformAccessory)
+        deviceWrapper.accessories.push(
+          new Shelly1RelayAccessory(this.log, device, platformAccessory)
+        )
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
-        new Shelly2RelayAccessory(
-          this.log,
-          device,
-          ctx.index,
-          platformAccessory
+        deviceWrapper.accessories.push(
+          new Shelly2RelayAccessory(
+            this.log,
+            device,
+            ctx.index,
+            platformAccessory
+          )
         )
       } else if (type === 'SHSW-44') {
-        new Shelly4ProRelayAccessory(
-          this.log,
-          device,
-          ctx.index,
-          platformAccessory
+        deviceWrapper.accessories.push(
+          new Shelly4ProRelayAccessory(
+            this.log,
+            device,
+            ctx.index,
+            platformAccessory
+          )
         )
       }
     }
