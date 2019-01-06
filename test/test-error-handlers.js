@@ -6,7 +6,7 @@ const log = require('./mocks/log')
 
 const { handleFailedRequest } = require('../error-handlers')
 
-describe('handleFailedRequest', function() {
+describe('handleFailedRequest()', function() {
   it('should log error messages', function() {
     const logStub = sinon.stub(log, 'log')
     const device = {
