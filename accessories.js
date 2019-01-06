@@ -89,9 +89,9 @@ module.exports = homebridge => {
     identify(paired, callback) {
       this.log(
         'Device with ID',
-        device.id,
+        this.device.id,
         'and address',
-        device.host,
+        this.device.host,
         'identified'
       )
       callback()
