@@ -58,7 +58,7 @@ module.exports = homebridge => {
       }
 
       if (typeof config.requestTimeout === 'number') {
-        shellies.request.timeout(config.requestTimeout * 1000)
+        shellies.request.timeout(config.requestTimeout)
       }
 
       if (typeof config.staleTimeout === 'number') {
