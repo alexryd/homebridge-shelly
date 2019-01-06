@@ -35,7 +35,9 @@ const handleFailedRequest = (log, device, e, msg = null) => {
     log('Request timeout', getDeviceIdentifier(device))
   } else {
     log('Error sending request', getDeviceIdentifier(device))
-    log(e.stack)
+    if (e.stack) {
+      log(e.stack)
+    }
   }
 }
 
