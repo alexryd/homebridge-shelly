@@ -233,6 +233,8 @@ module.exports = homebridge => {
   }
 
   return {
+    ShellyAccessory,
+    ShellyRelayAccessory,
     Shelly1RelayAccessory,
     Shelly2RelayAccessory,
     Shelly4ProRelayAccessory,
