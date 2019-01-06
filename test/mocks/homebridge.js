@@ -5,13 +5,39 @@ Accessory.Categories = {
   SWITCH: 'SWITCH'
 }
 
-class Characteristic {}
+class Characteristic {
+  constructor(displayName, UUID, props) {
+    this.displayName = displayName
+    this.UUID = UUID
+    this.props = props
+    this.value = null
+  }
+
+  setProps(props) {
+    this.props = props
+  }
+
+  getDefaultValue() {
+    return 'default value'
+  }
+}
+
 Characteristic.FirmwareRevision = 'FirmwareRevision'
 Characteristic.HardwareRevision = 'HardwareRevision'
 Characteristic.Manufacturer = 'Manufacturer'
 Characteristic.Model = 'Model'
 Characteristic.On = 'On'
 Characteristic.SerialNumber = 'SerialNumber'
+
+Characteristic.Formats = {
+  FLOAT: 'FLOAT',
+}
+
+Characteristic.Perms = {
+  NOTIFY: 'NOTIFY',
+  READ: 'READ',
+  WRITE: 'WRITE',
+}
 
 class PlatformAccessory {}
 
