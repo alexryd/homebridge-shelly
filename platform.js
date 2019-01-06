@@ -77,23 +77,23 @@ module.exports = homebridge => {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly1RelayAccessory(this.log, device).platformAccessory
+          new Shelly1RelayAccessory(this.log, device)
         )
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly2RelayAccessory(this.log, device, 0).platformAccessory,
-          new Shelly2RelayAccessory(this.log, device, 1).platformAccessory
+          new Shelly2RelayAccessory(this.log, device, 0),
+          new Shelly2RelayAccessory(this.log, device, 1)
         )
       } else if (type === 'SHSW-44') {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly4ProRelayAccessory(this.log, device, 0).platformAccessory,
-          new Shelly4ProRelayAccessory(this.log, device, 1).platformAccessory,
-          new Shelly4ProRelayAccessory(this.log, device, 2).platformAccessory,
-          new Shelly4ProRelayAccessory(this.log, device, 3).platformAccessory
+          new Shelly4ProRelayAccessory(this.log, device, 0),
+          new Shelly4ProRelayAccessory(this.log, device, 1),
+          new Shelly4ProRelayAccessory(this.log, device, 2),
+          new Shelly4ProRelayAccessory(this.log, device, 3)
         )
       }
 
