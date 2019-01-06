@@ -22,6 +22,10 @@ module.exports = homebridge => {
         shellies.request.timeout(config.requestTimeout * 1000)
       }
 
+      if (typeof config.staleTimeout === 'number') {
+        shellies.staleTimeout = config.staleTimeout
+      }
+
       shellies.on('discover', this.discoverDeviceHandler.bind(this))
       homebridge.on('didFinishLaunching', () => { shellies.start() })
     }
