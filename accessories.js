@@ -76,14 +76,25 @@ module.exports = homebridge => {
       }
     }
 
+    updateReachability() {
+      this.platformAccessory.updateReachability(this.device.online)
+    }
+
     setupEventHandlers() {
-      const pa = this.platformAccessory
+      this.platformAccessory
         .on('identify', this.identify.bind(this))
 
       this.device
-        .on('online', () => { pa.updateReachability(true) })
-        .on('offline', () => { pa.updateReachability(false) })
-        .on('change:settings', this.updateSettings.bind(this))
+        .on('online', this.updateReachability, this)
+        .on('offline', this.updateReachability, this)
+        .on('change:settings', this.updateSettings, this)
+    }
+
+    detach() {
+      this.device
+        .removeListener('online', this.updateReachability, this)
+        .removeListener('offline', this.updateReachability, this)
+        .removeListener('change:settings', this.updateSettings, this)
     }
 
     identify(paired, callback) {
@@ -126,7 +137,8 @@ module.exports = homebridge => {
       super.setupEventHandlers()
 
       const d = this.device
-      const onCharacteristic = this.platformAccessory
+
+      this.platformAccessory
         .getService(Service.Switch)
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
@@ -147,33 +159,62 @@ module.exports = homebridge => {
           }
         })
 
-      d.on('change:relay' + this.index, newValue => {
-        this.log.debug(
-          'State of relay #' + this.index,
-          'on device',
-          d.type,
-          d.id,
-          'changed to',
-          newValue
-        )
-        onCharacteristic.setValue(newValue)
-      })
+      d.on('change:relay' + this.index, this.relayChangeHandler, this)
 
       if (this.powerMeterIndex !== null) {
-        d.on('change:powerMeter' + this.powerMeterIndex, newValue => {
-          this.log.debug(
-            'Power meter #' + this.powerMeterIndex,
-            'on device',
-            d.type,
-            d.id,
-            'changed to',
-            newValue
-          )
-          this.platformAccessory.getService(Service.Switch)
-            .getCharacteristic(ConsumptionCharacteristic)
-            .setValue(newValue)
-        })
+        d.on(
+          'change:powerMeter' + this.powerMeterIndex,
+          this.powerMeterChangeHandler,
+          this
+        )
       }
+    }
+
+    relayChangeHandler(newValue) {
+      this.log.debug(
+        'State of relay #' + this.index,
+        'on device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.platformAccessory
+        .getService(Service.Switch)
+        .getCharacteristic(Characteristic.On)
+        .setValue(newValue)
+    }
+
+    powerMeterChangeHandler(newValue) {
+      this.log.debug(
+        'Power meter #' + this.powerMeterIndex,
+        'on device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.platformAccessory.getService(Service.Switch)
+        .getCharacteristic(ConsumptionCharacteristic)
+        .setValue(newValue)
+    }
+
+    detach() {
+      super.detach()
+
+      this.device
+        .removeListener(
+          'change:relay' + this.index,
+          this.relayChangeHandler,
+          this
+        )
+        .removeListener(
+          'change:powerMeter' + this.powerMeterIndex,
+          this.powerMeterChangeHandler,
+          this
+        )
     }
 
     async identify(paired, callback) {

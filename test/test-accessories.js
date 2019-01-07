@@ -161,6 +161,17 @@ describe('ShellyAccessory', function() {
     })
   })
 
+  describe('#updateReachability()', function() {
+    it('should update the reachability of the platform accessory', function() {
+      const updateReachability = sinon.stub(
+        accessory.platformAccessory,
+        'updateReachability'
+      )
+      accessory.updateReachability()
+      updateReachability.calledOnce.should.be.true()
+    })
+  })
+
   describe('#setupEventHandlers()', function() {
     it('should invoke identify() on `identify` events', function() {
       const identify = sinon.stub(ShellyAccessory.prototype, 'identify')
@@ -198,6 +209,14 @@ describe('ShellyAccessory', function() {
         updateSettings.calledOnce.should.be.true()
       }
     )
+  })
+
+  describe('#detach', function() {
+    it('should remove all event listeners from the device', function() {
+      device.eventNames().length.should.not.equal(0)
+      accessory.detach()
+      device.eventNames().length.should.equal(0)
+    })
   })
 
   describe('#identify()', function() {
@@ -319,7 +338,9 @@ describe('ShellyRelayAccessory', function() {
           done()
         })
     })
+  })
 
+  describe('#relayChangeHandler()', function() {
     it('should update On when the relay state is changed', function() {
       const on = accessory.platformAccessory
         .getService(Service.Switch)
@@ -331,7 +352,9 @@ describe('ShellyRelayAccessory', function() {
       device['relay' + accessory.index] = false
       on.value.should.be.false()
     })
+  })
 
+  describe('#powerMeterChangeHandler()', function() {
     it('should update Consumption when the power meter is changed', function() {
       const pa = accessory.platformAccessory
       let consumption = null
@@ -348,6 +371,14 @@ describe('ShellyRelayAccessory', function() {
 
       device['powerMeter' + accessory.powerMeterIndex] = 0
       consumption.value.should.equal(0)
+    })
+  })
+
+  describe('#detach()', function() {
+    it('should remove all event listeners from the device', function() {
+      device.eventNames().length.should.not.equal(0)
+      accessory.detach()
+      device.eventNames().length.should.equal(0)
     })
   })
 })
