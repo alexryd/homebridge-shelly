@@ -176,13 +176,13 @@ describe('ShellyAccessory', function() {
         'updateReachability'
       )
 
-      device.online = false
-      updateReachability.calledOnce.should.be.true()
-      updateReachability.calledWith(false).should.be.true()
-
       device.online = true
-      updateReachability.calledTwice.should.be.true()
+      updateReachability.calledOnce.should.be.true()
       updateReachability.calledWith(true).should.be.true()
+
+      device.online = false
+      updateReachability.calledTwice.should.be.true()
+      updateReachability.calledWith(false).should.be.true()
     })
 
     it(

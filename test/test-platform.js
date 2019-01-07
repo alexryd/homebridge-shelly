@@ -263,6 +263,7 @@ describe('DeviceWrapper', function() {
         'loadSettings'
       )
 
+      device.online = true
       // eslint-disable-next-line no-new
       new ShellyPlatform.DeviceWrapper(platform, device)
 
@@ -275,7 +276,6 @@ describe('DeviceWrapper', function() {
         'loadSettings'
       )
 
-      device.online = false
       // eslint-disable-next-line no-new
       new ShellyPlatform.DeviceWrapper(platform, device)
 
@@ -339,6 +339,7 @@ describe('DeviceWrapper', function() {
     it('should set the device to offline on errors', function(done) {
       sinon.stub(device, 'getSettings').rejects()
 
+      device.online = true
       device.on('offline', () => done())
 
       deviceWrapper.loadSettings()
