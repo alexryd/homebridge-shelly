@@ -142,6 +142,10 @@ module.exports = homebridge => {
         .getService(Service.Switch)
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
+          if (d['relay' + this.index] === newValue) {
+            return
+          }
+
           try {
             this.log.debug(
               'Setting state of relay #' + this.index,
