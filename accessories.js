@@ -131,20 +131,44 @@ module.exports = homebridge => {
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
           try {
+            this.log.debug(
+              'Setting state of relay #' + this.index,
+              'on device',
+              d.type,
+              d.id,
+              'to',
+              newValue
+            )
             await d.setRelay(this.index, newValue)
             callback()
           } catch (e) {
-            handleFailedRequest(this.log, d, e, 'Failed to set relay')
+            handleFailedRequest(this.log, d, e, 'Failed to set relay state')
             callback(e)
           }
         })
 
       d.on('change:relay' + this.index, newValue => {
+        this.log.debug(
+          'State of relay #' + this.index,
+          'on device',
+          d.type,
+          d.id,
+          'changed to',
+          newValue
+        )
         onCharacteristic.setValue(newValue)
       })
 
       if (this.powerMeterIndex !== null) {
         d.on('change:powerMeter' + this.powerMeterIndex, newValue => {
+          this.log.debug(
+            'Power meter #' + this.powerMeterIndex,
+            'on device',
+            d.type,
+            d.id,
+            'changed to',
+            newValue
+          )
           this.platformAccessory.getService(Service.Switch)
             .getCharacteristic(ConsumptionCharacteristic)
             .setValue(newValue)

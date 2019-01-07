@@ -262,10 +262,11 @@ describe('DeviceWrapper', function() {
         ShellyPlatform.DeviceWrapper.prototype,
         'loadSettings'
       )
+      const d = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
 
-      device.online = true
+      d.online = true
       // eslint-disable-next-line no-new
-      new ShellyPlatform.DeviceWrapper(platform, device)
+      new ShellyPlatform.DeviceWrapper(platform, d)
 
       loadSettings.calledOnce.should.be.true()
     })
@@ -287,12 +288,12 @@ describe('DeviceWrapper', function() {
         ShellyPlatform.DeviceWrapper.prototype,
         'loadSettings'
       )
+      const d = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
 
-      device.online = false
       // eslint-disable-next-line no-new
-      new ShellyPlatform.DeviceWrapper(platform, device)
+      new ShellyPlatform.DeviceWrapper(platform, d)
 
-      device.online = true
+      d.online = true
       loadSettings.calledOnce.should.be.true()
     })
   })

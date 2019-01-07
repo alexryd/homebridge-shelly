@@ -15,9 +15,26 @@ module.exports = homebridge => {
       this.device = device
       this.accessories = accessories
 
-      this.device.on('online', this.loadSettings.bind(this))
+      device
+        .on('online', () => {
+          platform.log.debug(
+            'Device',
+            device.type,
+            device.id,
+            'came online'
+          )
+          this.loadSettings()
+        })
+        .on('offline', () => {
+          platform.log.debug(
+            'Device',
+            device.type,
+            device.id,
+            'went offline'
+          )
+        })
 
-      if (this.device.online) {
+      if (device.online) {
         this.loadSettings()
       }
     }
@@ -30,6 +47,8 @@ module.exports = homebridge => {
       const d = this.device
 
       if (!d.settings) {
+        this.platform.log.debug('Loading settings for device', d.type, d.id)
+
         d.getSettings()
           .then(settings => {
             d.settings = settings
@@ -65,11 +84,31 @@ module.exports = homebridge => {
         shellies.staleTimeout = config.staleTimeout
       }
 
-      shellies.on('discover', this.discoverDeviceHandler.bind(this))
+      shellies
+        .on('discover', this.discoverDeviceHandler.bind(this))
+        .on('unknown', (type, id, host) => {
+          log.debug(
+            'Unknown device',
+            type,
+            id,
+            'at',
+            host,
+            'discovered'
+          )
+        })
+
       homebridge.on('didFinishLaunching', () => { shellies.start() })
     }
 
     discoverDeviceHandler(device) {
+      this.log.debug(
+        'New device discovered:',
+        device.type,
+        device.id,
+        'at',
+        device.host
+      )
+
       const type = device.type
       let deviceWrapper = null
 
@@ -105,12 +144,20 @@ module.exports = homebridge => {
           'Shelly',
           deviceWrapper.platformAccessories
         )
+      } else {
+        this.log.debug('Unknown device, so skipping it')
       }
     }
 
     configureAccessory(platformAccessory) {
       const ctx = platformAccessory.context
       let device = shellies.getDevice(ctx.type, ctx.id)
+
+      this.log.debug(
+        'Configuring cached accessory for device',
+        ctx.type,
+        ctx.id
+      )
 
       if (!device) {
         device = shellies.createDevice(ctx.type, ctx.id, ctx.host)
