@@ -5,20 +5,20 @@ const getDeviceIdentifier = device => {
 
 const handleFailedRequest = (log, device, e, msg = null) => {
   if (msg) {
-    log(msg)
+    log.error(msg)
   }
 
   if (e.status === 401) {
-    log('Wrong username or password', getDeviceIdentifier(device))
+    log.error('Wrong username or password', getDeviceIdentifier(device))
   } else if (e.status && e.response) {
     if (e.response.error) {
-      log(
+      log.error(
         'Error:',
         e.response.error.message,
         getDeviceIdentifier(device)
       )
     } else {
-      log(
+      log.error(
         'Error:',
         e.status,
         e.message,
@@ -27,16 +27,16 @@ const handleFailedRequest = (log, device, e, msg = null) => {
     }
 
     if (e.response.body && Object.keys(e.response.body).length > 0) {
-      log(e.response.body)
+      log.error(e.response.body)
     }
   } else if (e.errno) {
-    log('Error:', e.message, getDeviceIdentifier(device))
+    log.error('Error:', e.message, getDeviceIdentifier(device))
   } else if (e.code === 'ABORTED') {
-    log('Request timeout', getDeviceIdentifier(device))
+    log.error('Request timeout', getDeviceIdentifier(device))
   } else {
-    log('Error sending request', getDeviceIdentifier(device))
+    log.error('Error sending request', getDeviceIdentifier(device))
     if (e.stack) {
-      log(e.stack)
+      log.error(e.stack)
     }
   }
 }
