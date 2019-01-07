@@ -32,6 +32,15 @@ Set the `"username"` and `"password"` options if you have restricted the web
 interface with a username and password. Note that this configuration applies
 to all Shelly devices.
 
+### Request timeout
+The `"requestTimeout"` option can be used to configure the timeout for HTTP
+requests to the Shelly devices. Specify in milliseconds. Default is 10 seconds.
+
+### Stale timeout
+Use the `"staleTimeout"` option to configure how long a device can be offline
+before it is regarded as stale and unregistered from HomeKit. Specify in
+milliseconds. Default is 8 hours.
+
 ### Automatic discovery
 That's it. There are no other configuration options. Shelly devices will be
 automatically discovered, as long as they are on the same network and subnet as
