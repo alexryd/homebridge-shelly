@@ -170,6 +170,7 @@ class Homebridge extends EventEmitter {
 
   registerPlatform() {}
   registerPlatformAccessories() {}
+  unregisterPlatformAccessories() {}
 }
 
 module.exports = Homebridge

@@ -80,6 +80,23 @@ describe('ShellyPlatform', function() {
     )
 
     it(
+      'should invoke deviceStaleHandler() when `stale` is emitted',
+      function() {
+        const handler = sinon.stub(
+          ShellyPlatform.prototype,
+          'deviceStaleHandler'
+        )
+        const device = { type: 'UNKNOWN' }
+
+        new ShellyPlatform(log, {}) // eslint-disable-line no-new
+        shellies.emit('stale', device)
+
+        handler.calledOnce.should.be.true()
+        handler.calledWith(device).should.be.true()
+      }
+    )
+
+    it(
       'should invoke start() when `didFinishLaunching` is emitted',
       function() {
         new ShellyPlatform(log, {}) // eslint-disable-line no-new
@@ -142,6 +159,59 @@ describe('ShellyPlatform', function() {
       for (const pa of registerPlatformAccessories.firstCall.args[2]) {
         pa.should.be.instanceof(homebridge.platformAccessory)
       }
+    })
+  })
+
+  describe('#deviceStaleHandler()', function() {
+    let device = null
+    let deviceWrapper = null
+
+    beforeEach(function() {
+      device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+      deviceWrapper = new ShellyPlatform.DeviceWrapper(
+        platform,
+        device,
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 0),
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 1)
+      )
+    })
+
+    it('should unregister the device\'s platform accessories', function() {
+      const unregisterPlatformAccessories = sinon.stub(
+        homebridge,
+        'unregisterPlatformAccessories'
+      )
+
+      platform.deviceWrappers.set(device, deviceWrapper)
+      platform.deviceStaleHandler(device)
+
+      unregisterPlatformAccessories.calledOnce.should.be.true()
+    })
+
+    it('should destroy the associated device wrapper', function() {
+      const destroy = sinon.stub(deviceWrapper, 'destroy')
+
+      platform.deviceWrappers.set(device, deviceWrapper)
+      platform.deviceStaleHandler(device)
+
+      destroy.calledOnce.should.be.true()
+    })
+
+    it('should remove the associated device wrapper', function() {
+      platform.deviceWrappers.set(device, deviceWrapper)
+      platform.deviceStaleHandler(device)
+      platform.deviceWrappers.has(device).should.be.false()
+    })
+
+    it('should do nothing for unknown devices', function() {
+      const unregisterPlatformAccessories = sinon.stub(
+        homebridge,
+        'unregisterPlatformAccessories'
+      )
+
+      platform.deviceStaleHandler(device)
+
+      unregisterPlatformAccessories.called.should.be.false()
     })
   })
 
@@ -344,6 +414,41 @@ describe('DeviceWrapper', function() {
       device.on('offline', () => done())
 
       deviceWrapper.loadSettings()
+    })
+  })
+
+  describe('#destroy()', function() {
+    it('should remove all event listeners from the device', function() {
+      device.eventNames().length.should.not.equal(0)
+      deviceWrapper.destroy()
+      device.eventNames().length.should.equal(0)
+    })
+
+    it('should invoke detach() on all of its accessories', function() {
+      const detach = sinon.fake()
+
+      deviceWrapper.accessories = [
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 0),
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 1),
+      ]
+
+      for (const accessory of deviceWrapper.accessories) {
+        sinon.stub(accessory, 'detach').callsFake(detach)
+      }
+
+      deviceWrapper.destroy()
+
+      detach.called.should.be.true()
+      detach.callCount.should.equal(2)
+    })
+
+    it('should remove all of its accessories', function() {
+      deviceWrapper.accessories = [
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 0),
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 1),
+      ]
+      deviceWrapper.destroy()
+      deviceWrapper.accessories.length.should.equal(0)
     })
   })
 })

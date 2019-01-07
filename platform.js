@@ -16,23 +16,8 @@ module.exports = homebridge => {
       this.accessories = accessories
 
       device
-        .on('online', () => {
-          platform.log.debug(
-            'Device',
-            device.type,
-            device.id,
-            'came online'
-          )
-          this.loadSettings()
-        })
-        .on('offline', () => {
-          platform.log.debug(
-            'Device',
-            device.type,
-            device.id,
-            'went offline'
-          )
-        })
+        .on('online', this.deviceOnlineHandler, this)
+        .on('offline', this.deviceOfflineHandler, this)
 
       if (device.online) {
         this.loadSettings()
@@ -41,6 +26,26 @@ module.exports = homebridge => {
 
     get platformAccessories() {
       return this.accessories.map(a => a.platformAccessory)
+    }
+
+    deviceOnlineHandler() {
+      this.platform.log.debug(
+        'Device',
+        this.device.type,
+        this.device.id,
+        'came online'
+      )
+
+      this.loadSettings()
+    }
+
+    deviceOfflineHandler() {
+      this.platform.log.debug(
+        'Device',
+        this.device.type,
+        this.device.id,
+        'went offline'
+      )
     }
 
     loadSettings() {
@@ -64,6 +69,17 @@ module.exports = homebridge => {
           })
       }
     }
+
+    destroy() {
+      this.device
+        .removeListener('online', this.deviceOnlineHandler, this)
+        .removeListener('offline', this.deviceOfflineHandler, this)
+
+      for (const accessory of this.accessories) {
+        accessory.detach()
+      }
+      this.accessories.length = 0
+    }
   }
 
   class ShellyPlatform {
@@ -85,7 +101,8 @@ module.exports = homebridge => {
       }
 
       shellies
-        .on('discover', this.discoverDeviceHandler.bind(this))
+        .on('discover', this.discoverDeviceHandler, this)
+        .on('stale', this.deviceStaleHandler, this)
         .on('unknown', (type, id, host) => {
           log.debug(
             'Unknown device',
@@ -147,6 +164,29 @@ module.exports = homebridge => {
       } else {
         this.log.debug('Unknown device, so skipping it')
       }
+    }
+
+    deviceStaleHandler(device) {
+      const deviceWrapper = this.deviceWrappers.get(device)
+      if (!deviceWrapper) {
+        return
+      }
+
+      this.log.debug(
+        'Device',
+        device.type,
+        device.id,
+        'is stale. Unregistering its accessories.'
+      )
+
+      homebridge.unregisterPlatformAccessories(
+        'homebridge-shelly',
+        'Shelly',
+        deviceWrapper.platformAccessories
+      )
+
+      deviceWrapper.destroy()
+      this.deviceWrappers.delete(device)
     }
 
     configureAccessory(platformAccessory) {
