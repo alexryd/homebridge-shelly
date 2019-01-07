@@ -1,11 +1,11 @@
 
 const getDeviceIdentifier = device => {
-  return `(device ${device.id}, at ${device.host})`
+  return `(device ${device.type} ${device.id}, at ${device.host})`
 }
 
-const handleFailedRequest = (log, device, e, msg = null) => {
-  if (msg) {
-    log.error(msg)
+const handleFailedRequest = (log, device, e, ...msg) => {
+  if (msg.length > 0) {
+    log.error.apply(log, msg)
   }
 
   if (e.status === 401) {
