@@ -143,6 +143,7 @@ module.exports = homebridge => {
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
           if (d['relay' + this.index] === newValue) {
+            callback()
             return
           }
 
