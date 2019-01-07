@@ -239,3 +239,109 @@ describe('ShellyPlatform', function() {
     })
   })
 })
+
+describe('DeviceWrapper', function() {
+  let platform = null
+  let device = null
+  let deviceWrapper = null
+
+  beforeEach(function() {
+    platform = new ShellyPlatform(log, {})
+    device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+    deviceWrapper = new ShellyPlatform.DeviceWrapper(platform, device)
+  })
+
+  afterEach(function() {
+    sinon.restore()
+    device.removeAllListeners()
+  })
+
+  describe('#constructor()', function() {
+    it('should invoke loadSettings() if the device is online', function() {
+      const loadSettings = sinon.stub(
+        ShellyPlatform.DeviceWrapper.prototype,
+        'loadSettings'
+      )
+
+      // eslint-disable-next-line no-new
+      new ShellyPlatform.DeviceWrapper(platform, device)
+
+      loadSettings.calledOnce.should.be.true()
+    })
+
+    it('should not invoke loadSettings() if the device is offline', function() {
+      const loadSettings = sinon.stub(
+        ShellyPlatform.DeviceWrapper.prototype,
+        'loadSettings'
+      )
+
+      device.online = false
+      // eslint-disable-next-line no-new
+      new ShellyPlatform.DeviceWrapper(platform, device)
+
+      loadSettings.called.should.be.false()
+    })
+
+    it('should invoke loadSettings() when the device goes online', function() {
+      const loadSettings = sinon.stub(
+        ShellyPlatform.DeviceWrapper.prototype,
+        'loadSettings'
+      )
+
+      device.online = false
+      // eslint-disable-next-line no-new
+      new ShellyPlatform.DeviceWrapper(platform, device)
+
+      device.online = true
+      loadSettings.calledOnce.should.be.true()
+    })
+  })
+
+  describe('#platformAccessories', function() {
+    it('should return all platform accessories', function() {
+      deviceWrapper.accessories = [
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 0),
+        new ShellyPlatform.Shelly2RelayAccessory(log, device, 1),
+      ]
+      const platformAccessories = deviceWrapper.platformAccessories
+
+      platformAccessories.length.should.equal(2)
+
+      for (const pa of platformAccessories) {
+        pa.should.be.instanceof(homebridge.platformAccessory)
+      }
+    })
+  })
+
+  describe('#loadSettings()', function() {
+    it('should not do anything when settings are loaded', function() {
+      const getSettings = sinon.stub(device, 'getSettings')
+
+      device.settings = {}
+      deviceWrapper.loadSettings()
+
+      getSettings.called.should.be.false()
+    })
+
+    it('should load settings', function(done) {
+      const settings = {}
+      const getSettings = sinon.stub(device, 'getSettings').resolves(settings)
+
+      device.on('change:settings', s => {
+        s.should.equal(settings)
+        getSettings.calledOnce.should.be.true()
+        done()
+      })
+
+      deviceWrapper.loadSettings()
+    })
+
+    it('should set the device to offline on errors', function(done) {
+      sinon.stub(device, 'getSettings').rejects()
+
+      device.on('offline', () => done())
+
+      deviceWrapper.loadSettings()
+    })
+  })
+})
