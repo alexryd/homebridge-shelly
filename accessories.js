@@ -87,13 +87,8 @@ module.exports = homebridge => {
     }
 
     identify(paired, callback) {
-      this.log.info(
-        'Device with ID',
-        this.device.id,
-        'and address',
-        this.device.host,
-        'identified'
-      )
+      const d = this.device
+      this.log.info('Device', d.type, d.id, 'at', d.host, 'identified')
       callback()
     }
   }
@@ -158,14 +153,25 @@ module.exports = homebridge => {
     }
 
     async identify(paired, callback) {
-      const currentState = this.device['relay' + this.index]
+      const d = this.device
+      const currentState = d['relay' + this.index]
+
+      this.log.info(
+        'Relay #' + this.index,
+        'on device',
+        d.type,
+        d.id,
+        'at',
+        d.host,
+        'identified'
+      )
 
       try {
-        await this.device.setRelay(this.index, !currentState)
+        await d.setRelay(this.index, !currentState)
       } catch (e) {
         handleFailedRequest(
           this.log,
-          this.device,
+          d,
           e,
           'Failed to identify device'
         )
@@ -175,12 +181,12 @@ module.exports = homebridge => {
 
       setTimeout(async () => {
         try {
-          await this.device.setRelay(this.index, currentState)
+          await d.setRelay(this.index, currentState)
           callback()
         } catch (e) {
           handleFailedRequest(
             this.log,
-            this.device,
+            d,
             e,
             'Failed to identify device'
           )
