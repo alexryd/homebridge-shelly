@@ -153,5 +153,10 @@ module.exports = homebridge => {
     }
   }
 
+  ShellyPlatform.DeviceWrapper = DeviceWrapper
+  ShellyPlatform.Shelly1RelayAccessory = Shelly1RelayAccessory
+  ShellyPlatform.Shelly2RelayAccessory = Shelly2RelayAccessory
+  ShellyPlatform.Shelly4ProRelayAccessory = Shelly4ProRelayAccessory
+
   return ShellyPlatform
 }
