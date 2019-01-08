@@ -27,7 +27,7 @@
     "url": "https://github.com/alexryd/homebridge-shelly.git"
   },
   "dependencies": {
-    "shellies": "^0.7.0"
+    "shellies": "^0.7.1"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
