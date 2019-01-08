@@ -324,6 +324,7 @@ describe('DeviceWrapper', function() {
   afterEach(function() {
     sinon.restore()
     device.removeAllListeners()
+    homebridge.removeAllListeners()
   })
 
   describe('#constructor()', function() {
@@ -366,6 +367,20 @@ describe('DeviceWrapper', function() {
       d.online = true
       loadSettings.calledOnce.should.be.true()
     })
+
+    it('should invoke changeHostHandler() when the host changes', function() {
+      const changeHostHandler = sinon.stub(
+        ShellyPlatform.DeviceWrapper.prototype,
+        'changeHostHandler'
+      )
+      const d = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+
+      // eslint-disable-next-line no-new
+      new ShellyPlatform.DeviceWrapper(platform, d)
+
+      d.host = '192.168.1.3'
+      changeHostHandler.calledOnce.should.be.true()
+    })
   })
 
   describe('#platformAccessories', function() {
@@ -381,6 +396,21 @@ describe('DeviceWrapper', function() {
       for (const pa of platformAccessories) {
         pa.should.be.instanceof(homebridge.platformAccessory)
       }
+    })
+  })
+
+  describe('#changeHostHandler()', function() {
+    it('should invoke updatePlatformAccessories()', function() {
+      const updatePlatformAccessories = sinon.stub(
+        homebridge,
+        'updatePlatformAccessories'
+      )
+
+      deviceWrapper.changeHostHandler('192.168.1.3', '192.168.1.2', device)
+
+      updatePlatformAccessories.calledOnce.should.be.true()
+      updatePlatformAccessories
+        .calledWith(deviceWrapper.platformAccessories).should.be.true()
     })
   })
 

@@ -18,6 +18,7 @@ module.exports = homebridge => {
       device
         .on('online', this.deviceOnlineHandler, this)
         .on('offline', this.deviceOfflineHandler, this)
+        .on('change:host', this.changeHostHandler, this)
 
       if (device.online) {
         this.loadSettings()
@@ -48,6 +49,20 @@ module.exports = homebridge => {
       )
     }
 
+    changeHostHandler(newValue, oldValue) {
+      this.platform.log.debug(
+        'Device',
+        this.device.type,
+        this.device.id,
+        'changed host from',
+        oldValue,
+        'to',
+        newValue
+      )
+
+      homebridge.updatePlatformAccessories(this.platformAccessories)
+    }
+
     loadSettings() {
       const d = this.device
 
@@ -74,6 +89,7 @@ module.exports = homebridge => {
       this.device
         .removeListener('online', this.deviceOnlineHandler, this)
         .removeListener('offline', this.deviceOfflineHandler, this)
+        .removeListener('change:host', this.changeHostHandler, this)
 
       for (const accessory of this.accessories) {
         accessory.detach()
