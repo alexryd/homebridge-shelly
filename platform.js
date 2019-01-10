@@ -130,11 +130,18 @@ module.exports = homebridge => {
           )
         })
 
-      homebridge.on('didFinishLaunching', () => { shellies.start() })
+      homebridge.on('didFinishLaunching', () => {
+        const num = this.deviceWrappers.size
+        this.log.info(
+          `${num} ${num === 1 ? 'device' : 'devices'} loaded from cache`
+        )
+
+        shellies.start()
+      })
     }
 
     discoverDeviceHandler(device) {
-      this.log.debug(
+      this.log.info(
         'New device discovered:',
         device.type,
         device.id,
