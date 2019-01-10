@@ -310,6 +310,24 @@ describe('ShellyRelayAccessory', function() {
   })
 
   describe('#setupEventHandlers()', function() {
+    it(
+      'should not set the relay state when it has not changed',
+      function(done) {
+        const setRelay = sinon.stub(device, 'setRelay').resolves()
+
+        device['relay' + accessory.index].should.be.false()
+
+        accessory.platformAccessory
+          .getService(Service.Switch)
+          .getCharacteristic(Characteristic.On)
+          .emit('set', false, e => {
+            setRelay.called.should.be.false()
+            should.not.exist(e)
+            done()
+          })
+      }
+    )
+
     it('should set the relay state when On is set', function(done) {
       const setRelay = sinon.stub(device, 'setRelay').resolves()
 
