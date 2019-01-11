@@ -4,7 +4,7 @@
   "description": "Shelly plugin for Homebridge",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --exit",
+    "test": "mocha --exit 'test/**/test-*.js'",
     "eslint": "eslint ."
   },
   "pre-commit": [
