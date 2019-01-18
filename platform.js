@@ -6,6 +6,7 @@ module.exports = homebridge => {
   const {
     Shelly1RelayAccessory,
     Shelly2RelayAccessory,
+    Shelly2RollerShutterAccessory,
     Shelly4ProRelayAccessory,
   } = require('./accessories')(homebridge)
 
@@ -19,6 +20,7 @@ module.exports = homebridge => {
         .on('online', this.deviceOnlineHandler, this)
         .on('offline', this.deviceOfflineHandler, this)
         .on('change:host', this.changeHostHandler, this)
+        .on('change:mode', this.changeModeHandler, this)
 
       if (device.online) {
         this.loadSettings()
@@ -63,6 +65,22 @@ module.exports = homebridge => {
       homebridge.updatePlatformAccessories(this.platformAccessories)
     }
 
+    changeModeHandler(newValue, oldValue) {
+      this.platform.log.debug(
+        'Device',
+        this.device.type,
+        this.device.id,
+        'changed mode from',
+        oldValue,
+        'to',
+        newValue
+      )
+
+      // re-add the device since we need to replace its accessories
+      this.platform.removeDevice(this.device)
+      this.platform.addDevice(this.device)
+    }
+
     loadSettings() {
       const d = this.device
 
@@ -90,6 +108,7 @@ module.exports = homebridge => {
         .removeListener('online', this.deviceOnlineHandler, this)
         .removeListener('offline', this.deviceOfflineHandler, this)
         .removeListener('change:host', this.changeHostHandler, this)
+        .removeListener('change:mode', this.changeModeHandler, this)
 
       for (const accessory of this.accessories) {
         accessory.detach()
@@ -149,6 +168,23 @@ module.exports = homebridge => {
         device.host
       )
 
+      if (!this.addDevice(device)) {
+        this.log.info('Unknown device, so skipping it')
+      }
+    }
+
+    deviceStaleHandler(device) {
+      this.log.info(
+        'Device',
+        device.type,
+        device.id,
+        'is stale. Unregistering its accessories.'
+      )
+
+      this.removeDevice(device)
+    }
+
+    addDevice(device) {
       const type = device.type
       let deviceWrapper = null
 
@@ -159,12 +195,20 @@ module.exports = homebridge => {
           new Shelly1RelayAccessory(this.log, device)
         )
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new Shelly2RelayAccessory(this.log, device, 0),
-          new Shelly2RelayAccessory(this.log, device, 1)
-        )
+        if (device.mode === 'roller') {
+          deviceWrapper = new DeviceWrapper(
+            this,
+            device,
+            new Shelly2RollerShutterAccessory(this.log, device)
+          )
+        } else {
+          deviceWrapper = new DeviceWrapper(
+            this,
+            device,
+            new Shelly2RelayAccessory(this.log, device, 0),
+            new Shelly2RelayAccessory(this.log, device, 1)
+          )
+        }
       } else if (type === 'SHSW-44') {
         deviceWrapper = new DeviceWrapper(
           this,
@@ -184,23 +228,16 @@ module.exports = homebridge => {
           'Shelly',
           deviceWrapper.platformAccessories
         )
-      } else {
-        this.log.debug('Unknown device, so skipping it')
       }
+
+      return deviceWrapper
     }
 
-    deviceStaleHandler(device) {
+    removeDevice(device) {
       const deviceWrapper = this.deviceWrappers.get(device)
       if (!deviceWrapper) {
         return
       }
-
-      this.log.debug(
-        'Device',
-        device.type,
-        device.id,
-        'is stale. Unregistering its accessories.'
-      )
 
       homebridge.unregisterPlatformAccessories(
         'homebridge-shelly',
@@ -241,14 +278,24 @@ module.exports = homebridge => {
           new Shelly1RelayAccessory(this.log, device, platformAccessory)
         )
       } else if (type === 'SHSW-21' || type === 'SHSW-22') {
-        deviceWrapper.accessories.push(
-          new Shelly2RelayAccessory(
-            this.log,
-            device,
-            ctx.index,
-            platformAccessory
+        if (ctx.mode === 'roller') {
+          deviceWrapper.accessories.push(
+            new Shelly2RollerShutterAccessory(
+              this.log,
+              device,
+              platformAccessory
+            )
           )
-        )
+        } else {
+          deviceWrapper.accessories.push(
+            new Shelly2RelayAccessory(
+              this.log,
+              device,
+              ctx.index,
+              platformAccessory
+            )
+          )
+        }
       } else if (type === 'SHSW-44') {
         deviceWrapper.accessories.push(
           new Shelly4ProRelayAccessory(
@@ -265,6 +312,7 @@ module.exports = homebridge => {
   ShellyPlatform.DeviceWrapper = DeviceWrapper
   ShellyPlatform.Shelly1RelayAccessory = Shelly1RelayAccessory
   ShellyPlatform.Shelly2RelayAccessory = Shelly2RelayAccessory
+  ShellyPlatform.Shelly2RollerShutterAccessory = Shelly2RollerShutterAccessory
   ShellyPlatform.Shelly4ProRelayAccessory = Shelly4ProRelayAccessory
 
   return ShellyPlatform

@@ -2,7 +2,8 @@ const EventEmitter = require('events')
 
 class Accessory {}
 Accessory.Categories = {
-  SWITCH: 'SWITCH'
+  SWITCH: 'SWITCH',
+  WINDOW_COVERING: 'WINDOW_COVERING',
 }
 
 class Characteristic extends EventEmitter {
@@ -25,8 +26,16 @@ class Characteristic extends EventEmitter {
 
   setValue(value) {
     this.value = value
+    this.emit('change', value)
   }
 }
+
+class CurrentPosition extends Characteristic {
+  constructor() {
+    super('CurrentPosition', 'CurrentPosition')
+  }
+}
+Characteristic.CurrentPosition = CurrentPosition
 
 class FirmwareRevision extends Characteristic {
   constructor() {
@@ -63,12 +72,29 @@ class On extends Characteristic {
 }
 Characteristic.On = On
 
+class PositionState extends Characteristic {
+  constructor() {
+    super('PositionState', 'PositionState')
+  }
+}
+PositionState.STOPPED = 0
+PositionState.INCREASING = 1
+PositionState.DECREASING = 2
+Characteristic.PositionState = PositionState
+
 class SerialNumber extends Characteristic {
   constructor() {
     super('SerialNumber', 'SerialNumber')
   }
 }
 Characteristic.SerialNumber = SerialNumber
+
+class TargetPosition extends Characteristic {
+  constructor() {
+    super('TargetPosition', 'TargetPosition')
+  }
+}
+Characteristic.TargetPosition = TargetPosition
 
 Characteristic.Formats = {
   FLOAT: 'FLOAT',
@@ -151,6 +177,17 @@ class Switch extends Service {
   }
 }
 Service.Switch = Switch
+
+class WindowCovering extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(CurrentPosition)
+    this.addCharacteristic(PositionState)
+    this.addCharacteristic(TargetPosition)
+  }
+}
+Service.WindowCovering = WindowCovering
 
 class Homebridge extends EventEmitter {
   constructor() {

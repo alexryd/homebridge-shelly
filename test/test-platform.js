@@ -108,6 +108,26 @@ describe('ShellyPlatform', function() {
   })
 
   describe('#discoverDeviceHandler()', function() {
+    it('should invoke addDevice()', function() {
+      const addDevice = sinon.stub(platform, 'addDevice')
+      const device = {}
+      platform.discoverDeviceHandler(device)
+      addDevice.calledOnce.should.be.true()
+      addDevice.calledWith(device).should.be.true()
+    })
+  })
+
+  describe('#deviceStaleHandler()', function() {
+    it('should invoke removeDevice()', function() {
+      const removeDevice = sinon.stub(platform, 'removeDevice')
+      const device = {}
+      platform.deviceStaleHandler(device)
+      removeDevice.calledOnce.should.be.true()
+      removeDevice.calledWith(device).should.be.true()
+    })
+  })
+
+  describe('#addDevice()', function() {
     let registerPlatformAccessories = null
 
     beforeEach(function() {
@@ -118,12 +138,12 @@ describe('ShellyPlatform', function() {
     })
 
     it('should do nothing with unknown devices', function() {
-      platform.discoverDeviceHandler({ type: 'UNKNOWN' })
+      platform.addDevice({ type: 'UNKNOWN' })
       registerPlatformAccessories.called.should.be.false()
     })
 
     it('should register 1 accessory for Shelly1 devices', function() {
-      platform.discoverDeviceHandler(
+      platform.addDevice(
         shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
       )
 
@@ -133,22 +153,42 @@ describe('ShellyPlatform', function() {
         .should.be.instanceof(homebridge.platformAccessory)
     })
 
-    it('should register 2 accessories for Shelly2 devices', function() {
-      platform.discoverDeviceHandler(
-        shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
-      )
+    it(
+      'should register 1 accessory for Shelly2 devices in roller mode',
+      function() {
+        const device = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
+        device.mode = 'roller'
+        platform.addDevice(device)
 
-      platform.deviceWrappers.size.should.equal(1)
-      registerPlatformAccessories.calledOnce.should.be.true()
-      registerPlatformAccessories.firstCall.args[2].length.should.equal(2)
+        platform.deviceWrappers.size.should.equal(1)
+        registerPlatformAccessories.calledOnce.should.be.true()
+        registerPlatformAccessories.firstCall.args[2].length.should.equal(1)
 
-      for (const pa of registerPlatformAccessories.firstCall.args[2]) {
-        pa.should.be.instanceof(homebridge.platformAccessory)
+        for (const pa of registerPlatformAccessories.firstCall.args[2]) {
+          pa.should.be.instanceof(homebridge.platformAccessory)
+        }
       }
-    })
+    )
+
+    it(
+      'should register 2 accessories for Shelly2 devices in relay mode',
+      function() {
+        const device = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
+        device.mode = 'relay'
+        platform.addDevice(device)
+
+        platform.deviceWrappers.size.should.equal(1)
+        registerPlatformAccessories.calledOnce.should.be.true()
+        registerPlatformAccessories.firstCall.args[2].length.should.equal(2)
+
+        for (const pa of registerPlatformAccessories.firstCall.args[2]) {
+          pa.should.be.instanceof(homebridge.platformAccessory)
+        }
+      }
+    )
 
     it('should register 4 accessories for Shelly4Pro devices', function() {
-      platform.discoverDeviceHandler(
+      platform.addDevice(
         shellies.createDevice('SHSW-44', 'ABC123', '192.168.1.2')
       )
 
@@ -162,12 +202,12 @@ describe('ShellyPlatform', function() {
     })
   })
 
-  describe('#deviceStaleHandler()', function() {
+  describe('#removeDevice()', function() {
     let device = null
     let deviceWrapper = null
 
     beforeEach(function() {
-      device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+      device = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
       deviceWrapper = new ShellyPlatform.DeviceWrapper(
         platform,
         device,
@@ -183,7 +223,7 @@ describe('ShellyPlatform', function() {
       )
 
       platform.deviceWrappers.set(device, deviceWrapper)
-      platform.deviceStaleHandler(device)
+      platform.removeDevice(device)
 
       unregisterPlatformAccessories.calledOnce.should.be.true()
     })
@@ -192,14 +232,14 @@ describe('ShellyPlatform', function() {
       const destroy = sinon.stub(deviceWrapper, 'destroy')
 
       platform.deviceWrappers.set(device, deviceWrapper)
-      platform.deviceStaleHandler(device)
+      platform.removeDevice(device)
 
       destroy.calledOnce.should.be.true()
     })
 
     it('should remove the associated device wrapper', function() {
       platform.deviceWrappers.set(device, deviceWrapper)
-      platform.deviceStaleHandler(device)
+      platform.removeDevice(device)
       platform.deviceWrappers.has(device).should.be.false()
     })
 
@@ -209,7 +249,7 @@ describe('ShellyPlatform', function() {
         'unregisterPlatformAccessories'
       )
 
-      platform.deviceStaleHandler(device)
+      platform.removeDevice(device)
 
       unregisterPlatformAccessories.called.should.be.false()
     })
@@ -227,6 +267,7 @@ describe('ShellyPlatform', function() {
         host: '192.168.1.2',
       }
       platformAccessory.addService(new homebridge.hap.Service.Switch())
+      platformAccessory.addService(new homebridge.hap.Service.WindowCovering())
     })
 
     it('should create a new device when needed', function() {
@@ -282,18 +323,38 @@ describe('ShellyPlatform', function() {
         .should.be.instanceof(ShellyPlatform.Shelly1RelayAccessory)
     })
 
-    it('should create accessories for Shelly2 devices', function() {
-      platformAccessory.context.type = 'SHSW-21'
-      platformAccessory.context.index = 0
-      platform.configureAccessory(platformAccessory)
+    it(
+      'should create accessories for Shelly2 devices in roller mode',
+      function() {
+        platformAccessory.context.type = 'SHSW-21'
+        platformAccessory.context.mode = 'roller'
+        platform.configureAccessory(platformAccessory)
 
-      const deviceWrapper = platform.deviceWrappers.values().next().value
+        const deviceWrapper = platform.deviceWrappers.values().next().value
 
-      deviceWrapper.device.type.should.equal('SHSW-21')
-      deviceWrapper.accessories.length.should.equal(1)
-      deviceWrapper.accessories[0]
-        .should.be.instanceof(ShellyPlatform.Shelly2RelayAccessory)
-    })
+        deviceWrapper.device.type.should.equal('SHSW-21')
+        deviceWrapper.accessories.length.should.equal(1)
+        deviceWrapper.accessories[0]
+          .should.be.instanceof(ShellyPlatform.Shelly2RollerShutterAccessory)
+      }
+    )
+
+    it(
+      'should create accessories for Shelly2 devices in relay mode',
+      function() {
+        platformAccessory.context.type = 'SHSW-21'
+        platformAccessory.context.mode = 'relay'
+        platformAccessory.context.index = 0
+        platform.configureAccessory(platformAccessory)
+
+        const deviceWrapper = platform.deviceWrappers.values().next().value
+
+        deviceWrapper.device.type.should.equal('SHSW-21')
+        deviceWrapper.accessories.length.should.equal(1)
+        deviceWrapper.accessories[0]
+          .should.be.instanceof(ShellyPlatform.Shelly2RelayAccessory)
+      }
+    )
 
     it('should create accessories for Shelly4Pro devices', function() {
       platformAccessory.context.type = 'SHSW-44'
@@ -381,6 +442,20 @@ describe('DeviceWrapper', function() {
       d.host = '192.168.1.3'
       changeHostHandler.calledOnce.should.be.true()
     })
+
+    it('should invoke changeModeHandler() when the mode changes', function() {
+      const changeModeHandler = sinon.stub(
+        ShellyPlatform.DeviceWrapper.prototype,
+        'changeModeHandler'
+      )
+      const d = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
+
+      // eslint-disable-next-line no-new
+      new ShellyPlatform.DeviceWrapper(platform, d)
+
+      d.mode = 'roller'
+      changeModeHandler.calledOnce.should.be.true()
+    })
   })
 
   describe('#platformAccessories', function() {
@@ -411,6 +486,20 @@ describe('DeviceWrapper', function() {
       updatePlatformAccessories.calledOnce.should.be.true()
       updatePlatformAccessories
         .calledWith(deviceWrapper.platformAccessories).should.be.true()
+    })
+  })
+
+  describe('#changeModeHandler()', function() {
+    it('should remove and re-add its device', function() {
+      const removeDevice = sinon.stub(platform, 'removeDevice')
+      const addDevice = sinon.stub(platform, 'addDevice')
+
+      deviceWrapper.changeModeHandler('roller', 'relay', device)
+
+      removeDevice.calledOnce.should.be.true()
+      removeDevice.calledWith(device).should.be.true()
+      addDevice.calledOnce.should.be.true()
+      addDevice.calledWith(device).should.be.true()
     })
   })
 
