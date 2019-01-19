@@ -99,6 +99,27 @@ describe('Shelly2RollerShutterAccessory', function() {
 
   describe('#setupEventHandlers()', function() {
     it(
+      'should not set the roller position when it has not changed',
+      function(done) {
+        const setRollerPosition = sinon.stub(
+          device,
+          'setRollerPosition'
+        ).resolves()
+
+        accessory.targetPosition = 70
+
+        accessory.platformAccessory
+          .getService(Service.WindowCovering)
+          .getCharacteristic(Characteristic.TargetPosition)
+          .emit('set', 70, e => {
+            setRollerPosition.called.should.be.false()
+            should.not.exist(e)
+            done()
+          })
+      }
+    )
+
+    it(
       'should set the roller position when TargetPosition is set',
       function(done) {
         const setRollerPosition = sinon.stub(

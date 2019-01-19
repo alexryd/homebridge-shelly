@@ -15,10 +15,14 @@ module.exports = homebridge => {
     constructor(log, device, platformAccessory = null) {
       super(log, device, platformAccessory)
 
+      this.targetPosition = null
+
       this.getCurrentPosition()
         .then(position => {
           const coveringService = this.platformAccessory
             .getService(Service.WindowCovering)
+
+          this.targetPosition = position
 
           coveringService
             .getCharacteristic(Characteristic.CurrentPosition)
@@ -64,6 +68,11 @@ module.exports = homebridge => {
         .getService(Service.WindowCovering)
         .getCharacteristic(Characteristic.TargetPosition)
         .on('set', async (newValue, callback) => {
+          if (newValue === this.targetPosition) {
+            callback()
+            return
+          }
+
           this.log.debug(
             'Setting target roller shutter position of device',
             d.type,
@@ -74,6 +83,7 @@ module.exports = homebridge => {
 
           try {
             await d.setRollerPosition(newValue)
+            this.targetPosition = newValue
             callback()
           } catch (e) {
             handleFailedRequest(
