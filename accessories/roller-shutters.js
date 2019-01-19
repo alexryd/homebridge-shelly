@@ -129,6 +129,28 @@ module.exports = homebridge => {
           coveringService
             .getCharacteristic(Characteristic.CurrentPosition)
             .setValue(position)
+
+          let targetPosition = null
+
+          if (newValue === 'stop') {
+            targetPosition = position
+          } else if (newValue === 'open' && this.targetPosition <= position) {
+            // we don't know what the target position is here, but we set it
+            // to 100 so that the interface shows that the roller is opening
+            targetPosition = 100
+          } else if (newValue === 'close' && this.targetPosition >= position) {
+            // we don't know what the target position is here, but we set it
+            // to 0 so that the interface shows that the roller is closing
+            targetPosition = 0
+          }
+
+          if (targetPosition !== null) {
+            this.targetPosition = targetPosition
+
+            coveringService
+              .getCharacteristic(Characteristic.TargetPosition)
+              .setValue(targetPosition)
+          }
         })
         .catch(e => {
           handleFailedRequest(

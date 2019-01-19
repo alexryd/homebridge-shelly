@@ -196,6 +196,62 @@ describe('Shelly2RollerShutterAccessory', function() {
       device.rollerState = 'open'
     })
 
+    it('should set TargetPosition when stopping', function(done) {
+      const getCurrentPosition = sinon.stub(
+        accessory,
+        'getCurrentPosition'
+      )
+
+      accessory.platformAccessory
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.TargetPosition)
+        .on('change', value => {
+          value.should.equal(10)
+          done()
+        })
+
+      getCurrentPosition.resolves(10)
+      accessory.rollerStateChangeHandler('stop')
+    })
+
+    it('should properly set TargetPosition when opening', function(done) {
+      const getCurrentPosition = sinon.stub(
+        accessory,
+        'getCurrentPosition'
+      )
+
+      accessory.platformAccessory
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.TargetPosition)
+        .on('change', value => {
+          value.should.equal(100)
+          done()
+        })
+
+      getCurrentPosition.resolves(10)
+      accessory.targetPosition = 0
+      accessory.rollerStateChangeHandler('open')
+    })
+
+    it('should properly set TargetPosition when closing', function(done) {
+      const getCurrentPosition = sinon.stub(
+        accessory,
+        'getCurrentPosition'
+      )
+
+      accessory.platformAccessory
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.TargetPosition)
+        .on('change', value => {
+          value.should.equal(0)
+          done()
+        })
+
+      getCurrentPosition.resolves(10)
+      accessory.targetPosition = 100
+      accessory.rollerStateChangeHandler('close')
+    })
+
     it('should handle failed requests', function() {
       const getCurrentPosition = sinon.stub(
         accessory,
