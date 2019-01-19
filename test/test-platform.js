@@ -275,6 +275,14 @@ describe('ShellyPlatform', function() {
       shellies.size.should.equal(1)
     })
 
+    it('should set the mode on new devices', function() {
+      const ctx = platformAccessory.context
+      ctx.type = 'SHSW-21'
+      ctx.mode = 'roller'
+      platform.configureAccessory(platformAccessory)
+      shellies.getDevice(ctx.type, ctx.id).mode.should.equal('roller')
+    })
+
     it('should reuse existing devices', function() {
       shellies.addDevice(
         shellies.createDevice(
