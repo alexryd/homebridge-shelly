@@ -1,13 +1,16 @@
 # homebridge-shelly
 [![NPM Version](https://img.shields.io/npm/v/homebridge-shelly.svg)](https://www.npmjs.com/package/homebridge-shelly)
 
-[Shelly](https://shelly.cloud) plugin for [Homebridge](https://homebridge.io).
+[Shelly](https://shelly.cloud) plugin for [Homebridge](https://homebridge.io),
+enabling HomeKit support for Shelly devices.
 
 ## Supported devices
 Currently the following Shelly devices are supported:
 * [Shelly1](https://shelly.cloud/shelly1-open-source/)
-* [Shelly2](https://shelly.cloud/shelly2/) in relay mode
+* [Shelly2](https://shelly.cloud/shelly2/)
 * [Shelly4Pro](https://shelly.cloud/shelly-4-pro/)
+
+To use Shelly2 in roller shutter mode the device must have been calibrated.
 
 ## Installation
 1. Install homebridge by following
