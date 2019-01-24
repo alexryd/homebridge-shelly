@@ -155,7 +155,7 @@ module.exports = homebridge => {
           `${num} ${num === 1 ? 'device' : 'devices'} loaded from cache`
         )
 
-        shellies.start()
+        shellies.start(config.networkInterface)
       })
     }
 
