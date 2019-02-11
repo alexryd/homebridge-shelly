@@ -44,7 +44,7 @@ module.exports = homebridge => {
         setBatteryLevel(
           new Service.BatteryService().setCharacteristic(
             Characteristic.ChargingState,
-            Characteristic.ChargingState.NOT_CHARGING
+            Characteristic.ChargingState.NOT_CHARGEABLE
           ),
           this.device.battery
         )
