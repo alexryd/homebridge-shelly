@@ -211,6 +211,17 @@ describe('ShellyPlatform', function() {
         pa.should.be.instanceof(homebridge.platformAccessory)
       }
     })
+
+    it('should register 1 accessory for Shelly H&T devices', function() {
+      platform.addDevice(
+        shellies.createDevice('SHHT-1', 'ABC123', '192.168.1.2')
+      )
+
+      platform.deviceWrappers.size.should.equal(1)
+      registerPlatformAccessories.calledOnce.should.be.true()
+      registerPlatformAccessories.firstCall.args[2][0]
+        .should.be.instanceof(homebridge.platformAccessory)
+    })
   })
 
   describe('#removeDevice()', function() {
@@ -386,6 +397,18 @@ describe('ShellyPlatform', function() {
       deviceWrapper.accessories.length.should.equal(1)
       deviceWrapper.accessories[0]
         .should.be.instanceof(ShellyPlatform.Shelly4ProRelayAccessory)
+    })
+
+    it('should create accessories for Shelly H&T devices', function() {
+      platformAccessory.context.type = 'SHHT-1'
+      platform.configureAccessory(platformAccessory)
+
+      const deviceWrapper = platform.deviceWrappers.values().next().value
+
+      deviceWrapper.device.type.should.equal('SHHT-1')
+      deviceWrapper.accessories.length.should.equal(1)
+      deviceWrapper.accessories[0]
+        .should.be.instanceof(ShellyPlatform.ShellyHTAccessory)
     })
   })
 })

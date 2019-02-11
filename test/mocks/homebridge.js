@@ -2,6 +2,7 @@ const EventEmitter = require('events')
 
 class Accessory {}
 Accessory.Categories = {
+  SENSOR: 'SENSOR',
   SWITCH: 'SWITCH',
   WINDOW_COVERING: 'WINDOW_COVERING',
 }
@@ -18,6 +19,7 @@ class Characteristic extends EventEmitter {
 
   setProps(props) {
     this.props = props
+    return this
   }
 
   getDefaultValue() {
@@ -27,8 +29,26 @@ class Characteristic extends EventEmitter {
   setValue(value) {
     this.value = value
     this.emit('change', value)
+    return this
   }
 }
+
+class BatteryLevel extends Characteristic {
+  constructor() {
+    super('BatteryLevel', 'BatteryLevel')
+  }
+}
+Characteristic.BatteryLevel = BatteryLevel
+
+class ChargingState extends Characteristic {
+  constructor() {
+    super('ChargingState', 'ChargingState')
+  }
+}
+ChargingState.NOT_CHARGING = 0
+ChargingState.CHARGING = 1
+ChargingState.NOT_CHARGEABLE = 2
+Characteristic.ChargingState = ChargingState
 
 class CurrentPosition extends Characteristic {
   constructor() {
@@ -36,6 +56,20 @@ class CurrentPosition extends Characteristic {
   }
 }
 Characteristic.CurrentPosition = CurrentPosition
+
+class CurrentRelativeHumidity extends Characteristic {
+  constructor() {
+    super('CurrentRelativeHumidity', 'CurrentRelativeHumidity')
+  }
+}
+Characteristic.CurrentRelativeHumidity = CurrentRelativeHumidity
+
+class CurrentTemperature extends Characteristic {
+  constructor() {
+    super('CurrentTemperature', 'CurrentTemperature')
+  }
+}
+Characteristic.CurrentTemperature = CurrentTemperature
 
 class FirmwareRevision extends Characteristic {
   constructor() {
@@ -88,6 +122,15 @@ class SerialNumber extends Characteristic {
   }
 }
 Characteristic.SerialNumber = SerialNumber
+
+class StatusLowBattery extends Characteristic {
+  constructor() {
+    super('StatusLowBattery', 'StatusLowBattery')
+  }
+}
+StatusLowBattery.BATTERY_LEVEL_NORMAL = 0
+StatusLowBattery.BATTERY_LEVEL_LOW = 1
+Characteristic.StatusLowBattery = StatusLowBattery
 
 class TargetPosition extends Characteristic {
   constructor() {
@@ -169,6 +212,27 @@ class AccessoryInformation extends Service {
 }
 Service.AccessoryInformation = AccessoryInformation
 
+class BatteryService extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(BatteryLevel)
+    this.addCharacteristic(ChargingState)
+    this.addCharacteristic(StatusLowBattery)
+  }
+}
+Service.BatteryService = BatteryService
+
+class HumiditySensor extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(CurrentRelativeHumidity)
+    this.addCharacteristic(StatusLowBattery)
+  }
+}
+Service.HumiditySensor = HumiditySensor
+
 class Switch extends Service {
   constructor() {
     super()
@@ -177,6 +241,16 @@ class Switch extends Service {
   }
 }
 Service.Switch = Switch
+
+class TemperatureSensor extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(CurrentTemperature)
+    this.addCharacteristic(StatusLowBattery)
+  }
+}
+Service.TemperatureSensor = TemperatureSensor
 
 class WindowCovering extends Service {
   constructor() {
