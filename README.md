@@ -12,6 +12,7 @@ Currently the following Shelly devices are supported:
 * [Shelly4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/) <sup>2</sup>
 
+### Notes
 <sup>1</sup> To use Shelly2 in roller shutter mode the device must have been
 calibrated.  
 <sup>2</sup> There is currently a bug in the Shelly H&T firmware that makes it
