@@ -199,7 +199,7 @@ module.exports = homebridge => {
       if (d.name) {
         return `${d.name} #${this.index}`
       } else {
-        return `Shelly2 ${d.id} #${this.index}`
+        return `${d.type} ${d.id} #${this.index}`
       }
     }
   }

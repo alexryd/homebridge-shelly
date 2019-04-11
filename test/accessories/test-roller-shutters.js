@@ -22,7 +22,7 @@ describe('Shelly2RollerShutterAccessory', function() {
   let accessory = null
 
   beforeEach(function() {
-    device = shellies.createDevice('SHSW-22', 'ABC123', '192.168.1.2')
+    device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2')
     getStatus = sinon.stub(device, 'getStatus').resolves({
       rollers: [
         { current_pos: 40 },
