@@ -8,13 +8,14 @@ enabling HomeKit support for Shelly devices.
 ## Supported devices
 Currently the following Shelly devices are supported:
 * [Shelly1](https://shelly.cloud/shelly1-open-source/)
-* [Shelly2](https://shelly.cloud/shelly2/) <sup>1</sup>
+* Shelly2 <sup>1</sup>
+* [Shelly2.5](https://shelly.cloud/shelly-25-wifi-smart-relay-roller-shutter-home-automation/) <sup>1</sup>
 * [Shelly4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
 
 ### Notes
-<sup>1</sup> To use Shelly2 in roller shutter mode the device must have been
-calibrated.
+<sup>1</sup> To use Shelly2 or Shelly2.5 in roller shutter mode the device must
+have been calibrated.
 
 ## Installation
 1. Install homebridge by following
