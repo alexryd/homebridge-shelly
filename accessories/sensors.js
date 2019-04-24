@@ -20,6 +20,11 @@ module.exports = homebridge => {
   }
 
   class ShellyHTAccessory extends ShellyAccessory {
+    get name() {
+      const d = this.device
+      return d.name || `Shelly H&T ${d.id}`
+    }
+
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
 

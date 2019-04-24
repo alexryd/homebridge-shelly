@@ -69,6 +69,18 @@ describe('Shelly2RollerShutterAccessory', function() {
     })
   })
 
+  describe('#name', function() {
+    it('should return the device name when one is set', function() {
+      device.name = 'foo'
+      accessory.name.should.equal(device.name)
+    })
+
+    it('should generate a proper name when no device name is set', function() {
+      accessory.name.should.be.ok()
+      accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+
   describe('#createPlatformAccessory()', function() {
     it('should set the correct category', function() {
       const pa = accessory.createPlatformAccessory()

@@ -42,6 +42,12 @@ module.exports = homebridge => {
         })
     }
 
+    get name() {
+      const d = this.device
+      const n = d.type === 'SHSW-25' ? '2.5' : '2'
+      return d.name || `Shelly ${n} ${d.id}`
+    }
+
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
 

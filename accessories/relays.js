@@ -178,7 +178,7 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
-      return d.name || `Shelly1 ${d.id}`
+      return d.name || `Shelly 1 ${d.id}`
     }
   }
 
@@ -210,7 +210,8 @@ module.exports = homebridge => {
       if (d.name) {
         return `${d.name} #${this.index}`
       } else {
-        return `${d.type} ${d.id} #${this.index}`
+        const n = d.type === 'SHSW-25' ? '2.5' : '2'
+        return `Shelly ${n} ${d.id} #${this.index}`
       }
     }
   }
@@ -225,7 +226,7 @@ module.exports = homebridge => {
       if (d.name) {
         return `${d.name} #${this.index}`
       } else {
-        return `Shelly4Pro ${d.id} #${this.index}`
+        return `Shelly 4Pro ${d.id} #${this.index}`
       }
     }
   }
