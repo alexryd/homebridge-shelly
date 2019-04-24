@@ -139,16 +139,6 @@ module.exports = homebridge => {
       shellies
         .on('discover', this.discoverDeviceHandler, this)
         .on('stale', this.deviceStaleHandler, this)
-        .on('unknown', (type, id, host) => {
-          log.debug(
-            'Unknown device',
-            type,
-            id,
-            'at',
-            host,
-            'discovered'
-          )
-        })
 
       homebridge.on('didFinishLaunching', () => {
         const num = this.deviceWrappers.size
@@ -160,17 +150,28 @@ module.exports = homebridge => {
       })
     }
 
-    discoverDeviceHandler(device) {
-      this.log.info(
-        'New device discovered:',
-        device.type,
-        device.id,
-        'at',
-        device.host
-      )
+    discoverDeviceHandler(device, unknown) {
+      if (!unknown) {
+        this.log.info(
+          'New device discovered:',
+          device.type,
+          device.id,
+          'at',
+          device.host
+        )
 
-      if (!this.addDevice(device)) {
-        this.log.info('Unknown device, so skipping it')
+        if (!this.addDevice(device)) {
+          this.log.info('Unknown device, so skipping it')
+        }
+      } else {
+        this.log.info(
+          'Unknown device',
+          device.type,
+          device.id,
+          'at',
+          device.host,
+          'discovered'
+        )
       }
     }
 
