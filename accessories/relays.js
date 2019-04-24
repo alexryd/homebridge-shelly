@@ -230,11 +230,24 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyPlugRelayAccessory extends ShellyRelayAccessory {
+    constructor(log, device, platformAccessory = null) {
+      super(log, device, 0, 0, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      const n = d.type === 'SHPLG2-1' ? 'Plug S' : 'Plug'
+      return d.name || `Shelly ${n} ${d.id}`
+    }
+  }
+
   return {
     ShellyRelayAccessory,
     Shelly1RelayAccessory,
     Shelly1PMRelayAccessory,
     Shelly2RelayAccessory,
     Shelly4ProRelayAccessory,
+    ShellyPlugRelayAccessory,
   }
 }

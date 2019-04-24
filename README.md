@@ -13,6 +13,8 @@ Currently the following Shelly devices are supported:
 * [Shelly 2.5](https://shelly.cloud/shelly-25-wifi-smart-relay-roller-shutter-home-automation/) <sup>1</sup>
 * [Shelly 4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
+* [Shelly Plug](https://shelly.cloud/shelly-plug/)
+* [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
 
 ### Notes
 <sup>1</sup> To use Shelly2 or Shelly2.5 in roller shutter mode the device must

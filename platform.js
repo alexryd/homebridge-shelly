@@ -10,6 +10,7 @@ module.exports = homebridge => {
     Shelly2RollerShutterAccessory,
     Shelly4ProRelayAccessory,
     ShellyHTAccessory,
+    ShellyPlugRelayAccessory,
   } = require('./accessories')(homebridge)
 
   class DeviceWrapper {
@@ -233,6 +234,12 @@ module.exports = homebridge => {
           device,
           new ShellyHTAccessory(this.log, device)
         )
+      } else if (type === 'SHPLG-1' || type === 'SHPLG2-1') {
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
+          new ShellyPlugRelayAccessory(this.log, device)
+        )
       }
 
       if (deviceWrapper) {
@@ -341,6 +348,14 @@ module.exports = homebridge => {
             platformAccessory
           )
         )
+      } else if (type === 'SHPLG-1' || type === 'SHPLG2-1') {
+        deviceWrapper.accessories.push(
+          new ShellyPlugRelayAccessory(
+            this.log,
+            device,
+            platformAccessory
+          )
+        )
       }
     }
   }
@@ -352,6 +367,7 @@ module.exports = homebridge => {
   ShellyPlatform.Shelly2RollerShutterAccessory = Shelly2RollerShutterAccessory
   ShellyPlatform.Shelly4ProRelayAccessory = Shelly4ProRelayAccessory
   ShellyPlatform.ShellyHTAccessory = ShellyHTAccessory
+  ShellyPlatform.ShellyPlugRelayAccessory = ShellyPlugRelayAccessory
 
   return ShellyPlatform
 }
