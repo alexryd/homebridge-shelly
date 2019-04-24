@@ -27,7 +27,7 @@ describe('ShellyRelayAccessory', function() {
   let accessory = null
 
   beforeEach(function() {
-    device = shellies.createDevice('SHSW-22', 'ABC123', '192.168.1.2')
+    device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2')
     accessory = new ShellyRelayAccessory(log, device, 1, 1)
   })
 

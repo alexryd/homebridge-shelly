@@ -195,9 +195,7 @@ module.exports = homebridge => {
           device,
           new Shelly1RelayAccessory(this.log, device)
         )
-      } else if (type === 'SHSW-21' ||
-                 type === 'SHSW-22' ||
-                 type === 'SHSW-25') {
+      } else if (type === 'SHSW-21' || type === 'SHSW-25') {
         if (device.mode === 'roller') {
           deviceWrapper = new DeviceWrapper(
             this,
@@ -291,9 +289,7 @@ module.exports = homebridge => {
         deviceWrapper.accessories.push(
           new Shelly1RelayAccessory(this.log, device, platformAccessory)
         )
-      } else if (type === 'SHSW-21' ||
-                 type === 'SHSW-22' ||
-                 type === 'SHSW-25') {
+      } else if (type === 'SHSW-21' || type === 'SHSW-25') {
         if (ctx.mode === 'roller') {
           deviceWrapper.accessories.push(
             new Shelly2RollerShutterAccessory(
