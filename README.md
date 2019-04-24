@@ -15,6 +15,7 @@ Currently the following Shelly devices are supported:
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
 * [Shelly Plug](https://shelly.cloud/shelly-plug/)
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
+* [Shelly Sense](https://shelly.cloud/shelly-sense/)
 
 ### Notes
 <sup>1</sup> To use Shelly2 or Shelly2.5 in roller shutter mode the device must
