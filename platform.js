@@ -5,6 +5,7 @@ const { handleFailedRequest } = require('./error-handlers')
 module.exports = homebridge => {
   const {
     Shelly1RelayAccessory,
+    Shelly1PMRelayAccessory,
     Shelly2RelayAccessory,
     Shelly2RollerShutterAccessory,
     Shelly4ProRelayAccessory,
@@ -220,6 +221,12 @@ module.exports = homebridge => {
           new Shelly4ProRelayAccessory(this.log, device, 2),
           new Shelly4ProRelayAccessory(this.log, device, 3)
         )
+      } else if (type === 'SHSW-PM') {
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
+          new Shelly1PMRelayAccessory(this.log, device)
+        )
       } else if (type === 'SHHT-1') {
         deviceWrapper = new DeviceWrapper(
           this,
@@ -318,6 +325,14 @@ module.exports = homebridge => {
             platformAccessory
           )
         )
+      } else if (type === 'SHSW-PM') {
+        deviceWrapper.accessories.push(
+          new Shelly1PMRelayAccessory(
+            this.log,
+            device,
+            platformAccessory
+          )
+        )
       } else if (type === 'SHHT-1') {
         deviceWrapper.accessories.push(
           new ShellyHTAccessory(
@@ -332,6 +347,7 @@ module.exports = homebridge => {
 
   ShellyPlatform.DeviceWrapper = DeviceWrapper
   ShellyPlatform.Shelly1RelayAccessory = Shelly1RelayAccessory
+  ShellyPlatform.Shelly1PMRelayAccessory = Shelly1PMRelayAccessory
   ShellyPlatform.Shelly2RelayAccessory = Shelly2RelayAccessory
   ShellyPlatform.Shelly2RollerShutterAccessory = Shelly2RollerShutterAccessory
   ShellyPlatform.Shelly4ProRelayAccessory = Shelly4ProRelayAccessory

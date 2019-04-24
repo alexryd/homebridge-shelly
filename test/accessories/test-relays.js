@@ -18,6 +18,7 @@ const {
 const {
   ShellyRelayAccessory,
   Shelly1RelayAccessory,
+  Shelly1PMRelayAccessory,
   Shelly2RelayAccessory,
   Shelly4ProRelayAccessory,
 } = require('../../accessories/relays')(homebridge)
@@ -195,6 +196,28 @@ describe('Shelly1RelayAccessory', function() {
   beforeEach(function() {
     device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
     accessory = new Shelly1RelayAccessory(log, device)
+  })
+
+  describe('#name', function() {
+    it('should return the device name when one is set', function() {
+      device.name = 'foo'
+      accessory.name.should.equal(device.name)
+    })
+
+    it('should generate a proper name when no device name is set', function() {
+      accessory.name.should.be.ok()
+      accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+})
+
+describe('Shelly1PMRelayAccessory', function() {
+  let device = null
+  let accessory = null
+
+  beforeEach(function() {
+    device = shellies.createDevice('SHSW-PM', 'ABC123', '192.168.1.2')
+    accessory = new Shelly1PMRelayAccessory(log, device)
   })
 
   describe('#name', function() {
