@@ -50,6 +50,13 @@ ChargingState.CHARGING = 1
 ChargingState.NOT_CHARGEABLE = 2
 Characteristic.ChargingState = ChargingState
 
+class CurrentAmbientLightLevel extends Characteristic {
+  constructor() {
+    super('CurrentAmbientLightLevel', 'CurrentAmbientLightLevel')
+  }
+}
+Characteristic.CurrentAmbientLightLevel = CurrentAmbientLightLevel
+
 class CurrentPosition extends Characteristic {
   constructor() {
     super('CurrentPosition', 'CurrentPosition')
@@ -98,6 +105,13 @@ class Model extends Characteristic {
   }
 }
 Characteristic.Model = Model
+
+class MotionDetected extends Characteristic {
+  constructor() {
+    super('MotionDetected', 'MotionDetected')
+  }
+}
+Characteristic.MotionDetected = MotionDetected
 
 class On extends Characteristic {
   constructor() {
@@ -232,6 +246,24 @@ class HumiditySensor extends Service {
   }
 }
 Service.HumiditySensor = HumiditySensor
+
+class LightSensor extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(CurrentAmbientLightLevel)
+  }
+}
+Service.LightSensor = LightSensor
+
+class MotionSensor extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(MotionDetected)
+  }
+}
+Service.MotionSensor = MotionSensor
 
 class Switch extends Service {
   constructor() {

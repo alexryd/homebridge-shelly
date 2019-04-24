@@ -14,6 +14,7 @@ module.exports = homebridge => {
 
   const {
     ShellyHTAccessory,
+    ShellySenseAccessory,
   } = require('./sensors')(homebridge)
 
   return {
@@ -24,5 +25,6 @@ module.exports = homebridge => {
     Shelly4ProRelayAccessory,
     ShellyHTAccessory,
     ShellyPlugRelayAccessory,
+    ShellySenseAccessory,
   }
 }
