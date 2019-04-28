@@ -3,6 +3,7 @@
   "version": "0.8.2",
   "description": "Shelly plugin for Homebridge",
   "main": "index.js",
+  "bin": "bin/homebridge-shelly",
   "scripts": {
     "test": "mocha --exit 'test/**/test-*.js'",
     "eslint": "eslint ."
@@ -27,6 +28,8 @@
     "url": "https://github.com/alexryd/homebridge-shelly.git"
   },
   "dependencies": {
+    "colors": "^1.3.3",
+    "command-line-commands": "^2.0.1",
     "shellies": "^0.10.0"
   },
   "devDependencies": {

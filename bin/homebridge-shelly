@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+/* eslint-disable no-console */
+
+const colors = require('colors/safe')
+const commandLineCommands = require('command-line-commands')
+const shellies = require('shellies')
+
+const packageVersion = require('../package.json').version
+
+const v = (key, val) => {
+  return colors.gray(key + ':') + ' ' + val
+}
+
+const describe = async host => {
+  if (!host) {
+    console.error('Error: No host specified')
+    process.exit(1)
+  }
+
+  const description = await shellies.Coap.getDescription(host)
+  const status = await shellies.Coap.getStatus(host)
+  const device = shellies.createDevice(
+    status.deviceType,
+    status.deviceId,
+    status.host
+  )
+
+  console.log(v('Type', device.type))
+  console.log(v('Description', JSON.stringify(description.payload)))
+  console.log(v('Status', JSON.stringify(status.payload)))
+}
+
+const commands = new Map()
+commands.set('describe', describe)
+
+const main = async () => {
+  try {
+    const { command, argv } = commandLineCommands(
+      Array.from(commands.keys())
+    )
+
+    await commands.get(command).apply(this, argv)
+  } catch (e) {
+    if (e.name === 'INVALID_COMMAND') {
+      console.log('homebridge-shelly', packageVersion)
+      console.log('')
+      console.log('Valid commands:', Array.from(commands.keys()).join(', '))
+    } else {
+      console.error(e)
+      process.exit(1)
+    }
+  }
+}
+
+main()
