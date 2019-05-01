@@ -1,6 +1,11 @@
 
 module.exports = homebridge => {
   const {
+    ShellyRGBW2ColorLightbulbAccessory,
+    ShellyRGBW2WhiteLightbulbAccessory,
+  } = require('./lightbulbs')(homebridge)
+
+  const {
     Shelly1RelayAccessory,
     Shelly1PMRelayAccessory,
     Shelly2RelayAccessory,
@@ -25,6 +30,8 @@ module.exports = homebridge => {
     Shelly4ProRelayAccessory,
     ShellyHTAccessory,
     ShellyPlugRelayAccessory,
+    ShellyRGBW2ColorLightbulbAccessory,
+    ShellyRGBW2WhiteLightbulbAccessory,
     ShellySenseAccessory,
   }
 }
