@@ -289,12 +289,7 @@ module.exports = homebridge => {
       )
 
       if (!device) {
-        device = shellies.createDevice(ctx.type, ctx.id, ctx.host)
-
-        if (ctx.mode && device.hasOwnProperty('mode')) {
-          device.mode = ctx.mode
-        }
-
+        device = shellies.createDevice(ctx.type, ctx.id, ctx.host, ctx.mode)
         shellies.addDevice(device)
       }
 
