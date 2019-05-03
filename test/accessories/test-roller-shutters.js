@@ -18,55 +18,15 @@ const {
 
 describe('Shelly2RollerShutterAccessory', function() {
   let device = null
-  let getStatus = null
   let accessory = null
 
   beforeEach(function() {
-    device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2')
-    getStatus = sinon.stub(device, 'getStatus').resolves({
-      rollers: [
-        { current_pos: 40 },
-      ],
-    })
+    device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2', 'roller')
     accessory = new Shelly2RollerShutterAccessory(log, device)
   })
 
   afterEach(function() {
     sinon.restore()
-  })
-
-  describe('#constructor()', function() {
-    it('should load the current position', function() {
-      const getCurrentPosition = sinon.stub(
-        Shelly2RollerShutterAccessory.prototype,
-        'getCurrentPosition'
-      ).resolves(20)
-
-      // eslint-disable-next-line no-new
-      new Shelly2RollerShutterAccessory(log, device)
-      getCurrentPosition.calledOnce.should.be.true()
-    })
-
-    it('should set the current and target position', function() {
-      const coveringService = accessory.platformAccessory
-        .getService(Service.WindowCovering)
-
-      coveringService.getCharacteristic(Characteristic.CurrentPosition).value
-        .should.equal(40)
-      coveringService.getCharacteristic(Characteristic.TargetPosition).value
-        .should.equal(40)
-    })
-
-    it('should handle failed requests', function() {
-      const getCurrentPosition = sinon.stub(
-        Shelly2RollerShutterAccessory.prototype,
-        'getCurrentPosition'
-      ).rejects({})
-
-      // eslint-disable-next-line no-new
-      should(() => new Shelly2RollerShutterAccessory(log, device)).not.throw()
-      getCurrentPosition.calledOnce.should.be.true()
-    })
   })
 
   describe('#name', function() {
@@ -106,6 +66,28 @@ describe('Shelly2RollerShutterAccessory', function() {
         .getCharacteristic(Characteristic.PositionState)
         .value
         .should.equal(Characteristic.PositionState.INCREASING)
+    })
+
+    it('should set CurrentPosition to the roller position', function() {
+      device.rollerPosition = 64
+
+      const pa = accessory.createPlatformAccessory()
+      pa
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.CurrentPosition)
+        .value
+        .should.equal(device.rollerPosition)
+    })
+
+    it('should set TargetPosition to the target position', function() {
+      accessory.targetPosition = 92
+
+      const pa = accessory.createPlatformAccessory()
+      pa
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.TargetPosition)
+        .value
+        .should.equal(accessory.targetPosition)
     })
   })
 
@@ -189,31 +171,27 @@ describe('Shelly2RollerShutterAccessory', function() {
         )
       }
     )
+  })
 
-    it('should update CurrentPosition', function(done) {
-      const getCurrentPosition = sinon.stub(
-        accessory,
-        'getCurrentPosition'
-      )
+  describe('#rollerPositionChangeHandler()', function() {
+    it(
+      'should update CurrentPosition when the roller position changes',
+      function() {
+        const currentPosition = accessory.platformAccessory
+          .getService(Service.WindowCovering)
+          .getCharacteristic(Characteristic.CurrentPosition)
 
-      accessory.platformAccessory
-        .getService(Service.WindowCovering)
-        .getCharacteristic(Characteristic.CurrentPosition)
-        .on('change', value => {
-          value.should.equal(10)
-          done()
-        })
+        device.rollerPosition = 23
+        currentPosition.value.should.equal(23)
 
-      getCurrentPosition.resolves(10)
-      device.rollerState = 'open'
-    })
+        device.rollerPosition = 77
+        currentPosition.value.should.equal(77)
+      }
+    )
+  })
 
+  describe('#_updateTargetPosition()', function() {
     it('should set TargetPosition when stopping', function(done) {
-      const getCurrentPosition = sinon.stub(
-        accessory,
-        'getCurrentPosition'
-      )
-
       accessory.platformAccessory
         .getService(Service.WindowCovering)
         .getCharacteristic(Characteristic.TargetPosition)
@@ -222,16 +200,12 @@ describe('Shelly2RollerShutterAccessory', function() {
           done()
         })
 
-      getCurrentPosition.resolves(10)
-      accessory.rollerStateChangeHandler('stop')
+      device.rollerState = 'stop'
+      device.rollerPosition = 10
+      accessory._updateTargetPosition()
     })
 
     it('should properly set TargetPosition when opening', function(done) {
-      const getCurrentPosition = sinon.stub(
-        accessory,
-        'getCurrentPosition'
-      )
-
       accessory.platformAccessory
         .getService(Service.WindowCovering)
         .getCharacteristic(Characteristic.TargetPosition)
@@ -240,17 +214,13 @@ describe('Shelly2RollerShutterAccessory', function() {
           done()
         })
 
-      getCurrentPosition.resolves(10)
+      device.rollerState = 'open'
+      device.rollerPosition = 10
       accessory.targetPosition = 0
-      accessory.rollerStateChangeHandler('open')
+      accessory._updateTargetPosition()
     })
 
     it('should properly set TargetPosition when closing', function(done) {
-      const getCurrentPosition = sinon.stub(
-        accessory,
-        'getCurrentPosition'
-      )
-
       accessory.platformAccessory
         .getService(Service.WindowCovering)
         .getCharacteristic(Characteristic.TargetPosition)
@@ -259,38 +229,10 @@ describe('Shelly2RollerShutterAccessory', function() {
           done()
         })
 
-      getCurrentPosition.resolves(10)
+      device.rollerState = 'close'
+      device.rollerPosition = 10
       accessory.targetPosition = 100
-      accessory.rollerStateChangeHandler('close')
-    })
-
-    it('should handle failed requests', function() {
-      const getCurrentPosition = sinon.stub(
-        accessory,
-        'getCurrentPosition'
-      ).rejects({})
-
-      should(() => accessory.rollerStateChangeHandler(60)).not.throw()
-      getCurrentPosition.calledOnce.should.be.true()
-    })
-  })
-
-  describe('#getCurrentPosition()', function() {
-    it('should resolve with the current roller position', function() {
-      return accessory.getCurrentPosition().should.be.fulfilledWith(40)
-    })
-
-    it('should reject when getStatus() rejects', async function() {
-      const error = new Error()
-      getStatus.reset()
-      getStatus.rejects(error)
-
-      try {
-        await accessory.getCurrentPosition()
-        'unreachable'.should.equal(1)
-      } catch (e) {
-        e.should.equal(error)
-      }
+      accessory._updateTargetPosition()
     })
   })
 

@@ -13,33 +13,10 @@ module.exports = homebridge => {
 
   class Shelly2RollerShutterAccessory extends ShellyAccessory {
     constructor(log, device, platformAccessory = null) {
-      super(log, device, platformAccessory)
-
-      this.targetPosition = null
-
-      this.getCurrentPosition()
-        .then(position => {
-          const coveringService = this.platformAccessory
-            .getService(Service.WindowCovering)
-
-          this.targetPosition = position
-
-          coveringService
-            .getCharacteristic(Characteristic.CurrentPosition)
-            .setValue(position)
-
-          coveringService
-            .getCharacteristic(Characteristic.TargetPosition)
-            .setValue(position)
-        })
-        .catch(e => {
-          handleFailedRequest(
-            log,
-            device,
-            e,
-            'Failed to load current roller shutter position'
-          )
-        })
+      super(log, device, platformAccessory, {
+        targetPosition: device.rollerPosition,
+        _updatingTargetPosition: false,
+      })
     }
 
     get name() {
@@ -58,6 +35,14 @@ module.exports = homebridge => {
         .setCharacteristic(
           Characteristic.PositionState,
           positionStates.get(this.device.rollerState)
+        )
+        .setCharacteristic(
+          Characteristic.CurrentPosition,
+          this.device.rollerPosition
+        )
+        .setCharacteristic(
+          Characteristic.TargetPosition,
+          this.targetPosition
         )
 
       pa.addService(coveringService)
@@ -102,75 +87,87 @@ module.exports = homebridge => {
           }
         })
 
-      d.on('change:rollerState', this.rollerStateChangeHandler, this)
+      d
+        .on('change:rollerState', this.rollerStateChangeHandler, this)
+        .on('change:rollerPosition', this.rollerPositionChangeHandler, this)
     }
 
     rollerStateChangeHandler(newValue) {
-      const d = this.device
-      const coveringService = this.platformAccessory
-        .getService(Service.WindowCovering)
-
       this.log.debug(
         'Roller shutter state of device',
-        d.type,
-        d.id,
+        this.device.type,
+        this.device.id,
         'changed to',
         newValue
       )
 
-      coveringService
+      this.platformAccessory
+        .getService(Service.WindowCovering)
         .getCharacteristic(Characteristic.PositionState)
         .setValue(positionStates.get(newValue))
 
-      this.getCurrentPosition()
-        .then(position => {
-          this.log.debug(
-            'Setting current roller shutter position of device',
-            d.type,
-            d.id,
-            'to',
-            position
-          )
-
-          coveringService
-            .getCharacteristic(Characteristic.CurrentPosition)
-            .setValue(position)
-
-          let targetPosition = null
-
-          if (newValue === 'stop') {
-            targetPosition = position
-          } else if (newValue === 'open' && this.targetPosition <= position) {
-            // we don't know what the target position is here, but we set it
-            // to 100 so that the interface shows that the roller is opening
-            targetPosition = 100
-          } else if (newValue === 'close' && this.targetPosition >= position) {
-            // we don't know what the target position is here, but we set it
-            // to 0 so that the interface shows that the roller is closing
-            targetPosition = 0
-          }
-
-          if (targetPosition !== null) {
-            this.targetPosition = targetPosition
-
-            coveringService
-              .getCharacteristic(Characteristic.TargetPosition)
-              .setValue(targetPosition)
-          }
-        })
-        .catch(e => {
-          handleFailedRequest(
-            this.log,
-            d,
-            e,
-            'Failed to load current roller shutter position'
-          )
-        })
+      this._updateTargetPosition()
     }
 
-    async getCurrentPosition() {
-      const status = await this.device.getStatus()
-      return status.rollers[0].current_pos
+    rollerPositionChangeHandler(newValue) {
+      this.log.debug(
+        'Roller position of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.platformAccessory
+        .getService(Service.WindowCovering)
+        .getCharacteristic(Characteristic.CurrentPosition)
+        .setValue(newValue)
+
+      this._updateTargetPosition()
+    }
+
+    _updateTargetPosition() {
+      if (this._updatingTargetPosition) {
+        return
+      }
+      this._updatingTargetPosition = true
+
+      setImmediate(() => {
+        const state = this.device.rollerState
+        const position = this.device.rollerPosition
+        let targetPosition = null
+
+        if (state === 'stop') {
+          targetPosition = position
+        } else if (state === 'open' && this.targetPosition <= position) {
+          // we don't know what the target position is here, but we set it
+          // to 100 so that the interface shows that the roller is opening
+          targetPosition = 100
+        } else if (state === 'close' && this.targetPosition >= position) {
+          // we don't know what the target position is here, but we set it
+          // to 0 so that the interface shows that the roller is closing
+          targetPosition = 0
+        }
+
+        if (targetPosition !== null && targetPosition !== this.targetPosition) {
+          this.log.debug(
+            'Setting target roller shutter position of device',
+            this.device.type,
+            this.device.id,
+            'to',
+            targetPosition
+          )
+
+          this.targetPosition = targetPosition
+
+          this.platformAccessory
+            .getService(Service.WindowCovering)
+            .getCharacteristic(Characteristic.TargetPosition)
+            .setValue(targetPosition)
+        }
+
+        this._updatingTargetPosition = false
+      })
     }
 
     detach() {
@@ -180,6 +177,11 @@ module.exports = homebridge => {
         .removeListener(
           'change:rollerState',
           this.rollerStateChangeHandler,
+          this
+        )
+        .removeListener(
+          'change:rollerPosition',
+          this.rollerPositionChangeHandler,
           this
         )
     }
