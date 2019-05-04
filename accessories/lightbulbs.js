@@ -43,10 +43,13 @@ module.exports = homebridge => {
           Characteristic.Saturation,
           this.saturation
         )
-        .setCharacteristic(
+
+      if (this.device.hasOwnProperty('gain')) {
+        lightbulbService.setCharacteristic(
           Characteristic.Brightness,
           this.device.gain
         )
+      }
 
       pa.addService(lightbulbService)
 
@@ -112,38 +115,41 @@ module.exports = homebridge => {
           callback()
         })
 
-      lightbulbService
-        .getCharacteristic(Characteristic.Brightness)
-        .on('set', async (newValue, callback) => {
-          if (this.device.gain === newValue) {
-            callback()
-            return
-          }
-
-          try {
-            this.log.debug(
-              'Setting gain on device',
-              d.type,
-              d.id,
-              'to',
-              newValue
-            )
-            await d.setColor({
-              gain: newValue,
-            })
-            callback()
-          } catch (e) {
-            handleFailedRequest(this.log, d, e, 'Failed to set gain')
-            callback(e)
-          }
-        })
-
       d
         .on('change:switch', this.changeSwitchHandler, this)
         .on('change:red', this.changeColorHandler, this)
         .on('change:green', this.changeColorHandler, this)
         .on('change:blue', this.changeColorHandler, this)
-        .on('change:gain', this.changeGainHandler, this)
+
+      if (this.device.hasOwnProperty('gain')) {
+        lightbulbService
+          .getCharacteristic(Characteristic.Brightness)
+          .on('set', async (newValue, callback) => {
+            if (this.device.gain === newValue) {
+              callback()
+              return
+            }
+
+            try {
+              this.log.debug(
+                'Setting gain on device',
+                d.type,
+                d.id,
+                'to',
+                newValue
+              )
+              await d.setColor({
+                gain: newValue,
+              })
+              callback()
+            } catch (e) {
+              handleFailedRequest(this.log, d, e, 'Failed to set gain')
+              callback(e)
+            }
+          })
+
+        d.on('change:gain', this.changeGainHandler, this)
+      }
     }
 
     changeSwitchHandler(newValue) {
@@ -419,6 +425,18 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyBulbColorLightbulbAccessory
+    extends ShellyColorLightbulbAccessory {
+    constructor(log, device, platformAccessory = null) {
+      super(log, device, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly Bulb ${d.id}`
+    }
+  }
+
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
     get name() {
@@ -480,6 +498,7 @@ module.exports = homebridge => {
   }
 
   return {
+    ShellyBulbColorLightbulbAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   }
