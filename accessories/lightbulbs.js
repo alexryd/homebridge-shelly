@@ -258,50 +258,35 @@ module.exports = homebridge => {
     }
   }
 
-  class ShellyRGBW2ColorLightbulbAccessory
-    extends ShellyColorLightbulbAccessory {
-    get name() {
-      const d = this.device
-      return d.name || `Shelly RGBW2 ${d.id}`
-    }
-
-    createPlatformAccessory() {
-      const pa = super.createPlatformAccessory()
-      pa.context.mode = 'color'
-      return pa
-    }
-  }
-
-  class ShellyRGBW2WhiteLightbulbAccessory extends ShellyAccessory {
-    constructor(log, device, index, platformAccessory = null) {
-      super(log, device, platformAccessory, { index })
-    }
-
-    get name() {
-      const d = this.device
-      if (d.name) {
-        return `${d.name} #${this.index}`
-      } else {
-        return `Shelly RGBW2 ${d.id} #${this.index}`
-      }
+  class ShellyWhiteLightbulbAccessory extends ShellyAccessory {
+    constructor(log, device, switchProperty = 'switch',
+      brightnessProperty = 'brightness', platformAccessory = null,
+      props = null) {
+      super(
+        log,
+        device,
+        platformAccessory,
+        Object.assign({
+          _switchProperty: switchProperty,
+          _brightnessProperty: brightnessProperty,
+        }, props)
+      )
     }
 
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
 
       pa.category = Accessory.Categories.LIGHTBULB
-      pa.context.mode = 'white'
-      pa.context.index = this.index
 
       pa.addService(
         new Service.Lightbulb()
           .setCharacteristic(
             Characteristic.On,
-            this.device['whiteSwitch' + this.index]
+            this.device[this._switchProperty]
           )
           .setCharacteristic(
             Characteristic.Brightness,
-            this.device['brightness' + this.index]
+            this.device[this._brightnessProperty]
           )
       )
 
@@ -312,28 +297,28 @@ module.exports = homebridge => {
       super.setupEventHandlers()
 
       const d = this.device
-      const i = this.index
       const lightbulbService = this.platformAccessory
         .getService(Service.Lightbulb)
 
       lightbulbService
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
-          if (d['whiteSwitch' + i] === newValue) {
+          if (d[this._switchProperty] === newValue) {
             callback()
             return
           }
 
           try {
             this.log.debug(
-              'Setting state of switch #' + i,
+              'Setting state of',
+              this._switchProperty,
               'on device',
               d.type,
               d.id,
               'to',
               newValue
             )
-            await d.setWhiteChannel(i, d['brightness' + i], newValue)
+            await this.setSwitch(newValue)
             callback()
           } catch (e) {
             handleFailedRequest(this.log, d, e, 'Failed to set switch state')
@@ -344,21 +329,22 @@ module.exports = homebridge => {
       lightbulbService
         .getCharacteristic(Characteristic.Brightness)
         .on('set', async (newValue, callback) => {
-          if (d['brightness' + i] === newValue) {
+          if (d[this._brightnessProperty] === newValue) {
             callback()
             return
           }
 
           try {
             this.log.debug(
-              'Setting brightness for channel #' + i,
+              'Setting',
+              this._brightnessProperty,
               'on device',
               d.type,
               d.id,
               'to',
               newValue
             )
-            await d.setWhiteChannel(i, newValue, d['whiteSwitch' + i])
+            await this.setBrightness(newValue)
             callback()
           } catch (e) {
             handleFailedRequest(this.log, d, e, 'Failed to set brightness')
@@ -367,13 +353,18 @@ module.exports = homebridge => {
         })
 
       d
-        .on('change:whiteSwitch' + i, this.changeSwitchHandler, this)
-        .on('change:brightness' + i, this.changeBrightnessHandler, this)
+        .on(`change:${this._switchProperty}`, this.changeSwitchHandler, this)
+        .on(
+          `change:${this._brightnessProperty}`,
+          this.changeBrightnessHandler,
+          this
+        )
     }
 
     changeSwitchHandler(newValue) {
       this.log.debug(
-        'State of switch #' + this.index,
+        'State of',
+        this._switchProperty,
         'on device',
         this.device.type,
         this.device.id,
@@ -389,7 +380,7 @@ module.exports = homebridge => {
 
     changeBrightnessHandler(newValue) {
       this.log.debug(
-        'Brightness of channel #' + this.index,
+        this._brightnessProperty,
         'on device',
         this.device.type,
         this.device.id,
@@ -408,15 +399,83 @@ module.exports = homebridge => {
 
       this.device
         .removeListener(
-          'change:whiteSwitch' + this.index,
+          `change:${this._switchProperty}`,
           this.changeSwitchHandler,
           this
         )
         .removeListener(
-          'change:brightness' + this.index,
+          `change:${this._brightnessProperty}`,
           this.changeBrightnessHandler,
           this
         )
+    }
+
+    setSwitch(newValue) {
+      // subclasses should override this
+    }
+
+    setBrightness(newValue) {
+      // subclasses should override this
+    }
+  }
+
+  class ShellyRGBW2ColorLightbulbAccessory
+    extends ShellyColorLightbulbAccessory {
+    get name() {
+      const d = this.device
+      return d.name || `Shelly RGBW2 ${d.id}`
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+      pa.context.mode = 'color'
+      return pa
+    }
+  }
+
+  class ShellyRGBW2WhiteLightbulbAccessory
+    extends ShellyWhiteLightbulbAccessory {
+    constructor(log, device, index, platformAccessory = null) {
+      super(
+        log,
+        device,
+        `switch${index}`,
+        `brightness${index}`,
+        platformAccessory,
+        { index }
+      )
+    }
+
+    get name() {
+      const d = this.device
+      if (d.name) {
+        return `${d.name} #${this.index}`
+      } else {
+        return `Shelly RGBW2 ${d.id} #${this.index}`
+      }
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+      pa.context.mode = 'white'
+      pa.context.index = this.index
+      return pa
+    }
+
+    setSwitch(newValue) {
+      return this.device.setWhiteChannel(
+        this.index,
+        this.device[this._brightnessProperty],
+        newValue
+      )
+    }
+
+    setBrightness(newValue) {
+      return this.device.setWhiteChannel(
+        this.index,
+        newValue,
+        this.device[this._switchProperty]
+      )
     }
   }
 
