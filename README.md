@@ -12,14 +12,19 @@ Currently the following devices are supported:
 * Shelly 2 <sup>1</sup>
 * [Shelly 2.5](https://shelly.cloud/shelly-25-wifi-smart-relay-roller-shutter-home-automation/) <sup>1</sup>
 * [Shelly 4Pro](https://shelly.cloud/shelly-4-pro/)
+* [Shelly Bulb](https://shelly.cloud/shelly-bulb/) <sup>2</sup>
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
 * [Shelly Plug](https://shelly.cloud/shelly-plug/)
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
+* [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
 
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
 must have been calibrated.
+
+<sup>2</sup> Because of a bug in the Shelly firmware there is currently no
+support for dimming the Shelly Bulb.
 
 ## Installation
 1. Install homebridge by following
