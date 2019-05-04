@@ -8,48 +8,47 @@ module.exports = homebridge => {
   const Service = homebridge.hap.Service
   const ShellyAccessory = require('./base')(homebridge)
 
-  class ShellyRGBW2ColorLightbulbAccessory extends ShellyAccessory {
-    constructor(log, device, platformAccessory = null) {
+  class ShellyColorLightbulbAccessory extends ShellyAccessory {
+    constructor(log, device, platformAccessory = null, props = null) {
       const hsv = colorConvert.rgb.hsv(device.red, device.green, device.blue)
 
-      super(log, device, platformAccessory, {
-        hue: hsv[0],
-        saturation: hsv[1],
-        _updatingDeviceColor: false,
-        _updatingHueSaturation: false,
-      })
-    }
-
-    get name() {
-      const d = this.device
-      return d.name || `Shelly RGBW2 ${d.id}`
+      super(
+        log,
+        device,
+        platformAccessory,
+        Object.assign({
+          hue: hsv[0],
+          saturation: hsv[1],
+          _updatingDeviceColor: false,
+          _updatingHueSaturation: false,
+        }, props)
+      )
     }
 
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
 
       pa.category = Accessory.Categories.LIGHTBULB
-      pa.context.mode = 'color'
 
-      pa.addService(
-        new Service.Lightbulb()
-          .setCharacteristic(
-            Characteristic.On,
-            this.device.colorSwitch
-          )
-          .setCharacteristic(
-            Characteristic.Hue,
-            this.hue
-          )
-          .setCharacteristic(
-            Characteristic.Saturation,
-            this.saturation
-          )
-          .setCharacteristic(
-            Characteristic.Brightness,
-            this.device.gain
-          )
-      )
+      const lightbulbService = new Service.Lightbulb()
+        .setCharacteristic(
+          Characteristic.On,
+          this.device.switch
+        )
+        .setCharacteristic(
+          Characteristic.Hue,
+          this.hue
+        )
+        .setCharacteristic(
+          Characteristic.Saturation,
+          this.saturation
+        )
+        .setCharacteristic(
+          Characteristic.Brightness,
+          this.device.gain
+        )
+
+      pa.addService(lightbulbService)
 
       return pa
     }
@@ -64,7 +63,7 @@ module.exports = homebridge => {
       lightbulbService
         .getCharacteristic(Characteristic.On)
         .on('set', async (newValue, callback) => {
-          if (d.colorSwitch === newValue) {
+          if (d.switch === newValue) {
             callback()
             return
           }
@@ -78,7 +77,7 @@ module.exports = homebridge => {
               newValue
             )
             await d.setColor({
-              colorSwitch: newValue,
+              switch: newValue,
             })
             callback()
           } catch (e) {
@@ -140,7 +139,7 @@ module.exports = homebridge => {
         })
 
       d
-        .on('change:colorSwitch', this.changeSwitchHandler, this)
+        .on('change:switch', this.changeSwitchHandler, this)
         .on('change:red', this.changeColorHandler, this)
         .on('change:green', this.changeColorHandler, this)
         .on('change:blue', this.changeColorHandler, this)
@@ -251,11 +250,25 @@ module.exports = homebridge => {
       super.detach()
 
       this.device
-        .removeListener('change:colorSwitch', this.changeSwitchHandler, this)
+        .removeListener('change:switch', this.changeSwitchHandler, this)
         .removeListener('change:red', this.changeColorHandler, this)
         .removeListener('change:green', this.changeColorHandler, this)
         .removeListener('change:blue', this.changeColorHandler, this)
         .removeListener('change:gain', this.changeGainHandler, this)
+    }
+  }
+
+  class ShellyRGBW2ColorLightbulbAccessory
+    extends ShellyColorLightbulbAccessory {
+    get name() {
+      const d = this.device
+      return d.name || `Shelly RGBW2 ${d.id}`
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+      pa.context.mode = 'color'
+      return pa
     }
   }
 
