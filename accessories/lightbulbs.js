@@ -2,6 +2,32 @@ const colorConvert = require('color-convert')
 
 const { handleFailedRequest } = require('../error-handlers')
 
+const getHueSaturation = (colorMode, red, green, blue, white = 0) => {
+  const hsv = colorConvert.rgb.hsv(red, green, blue)
+  const hue = hsv[0]
+  const saturation = colorMode === 'rgbw'
+    // in rgbw mode we use the white component as the saturation, otherwise we
+    // calculate it from the red, green and blue components
+    ? 100 - Math.round(white / 255 * 100)
+    : hsv[1]
+  return { hue, saturation }
+}
+
+const getRedGreenBlue = (colorMode, hue, saturation) => {
+  const rgb = colorConvert.hsv.rgb(
+    hue,
+    // in rgbw mode we set the saturation to 100 here when converting to RGB
+    // and then set the white component to the actual saturation
+    colorMode === 'rgbw' ? 100 : saturation,
+    100
+  )
+  const ret = { red: rgb[0], green: rgb[1], blue: rgb[2] }
+  if (colorMode === 'rgbw') {
+    ret.white = 255 - Math.round(saturation / 100 * 255)
+  }
+  return ret
+}
+
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
   const Characteristic = homebridge.hap.Characteristic
@@ -9,16 +35,28 @@ module.exports = homebridge => {
   const ShellyAccessory = require('./base')(homebridge)
 
   class ShellyColorLightbulbAccessory extends ShellyAccessory {
-    constructor(log, device, platformAccessory = null, props = null) {
-      const hsv = colorConvert.rgb.hsv(device.red, device.green, device.blue)
+    constructor(log, device, colorMode = 'rgbw', platformAccessory = null,
+      props = null) {
+      if (colorMode !== 'rgb' && colorMode !== 'rgbw') {
+        throw new Error(`Invalid color mode "${colorMode}"`)
+      }
+
+      const color = getHueSaturation(
+        colorMode,
+        device.red,
+        device.green,
+        device.blue,
+        device.white
+      )
 
       super(
         log,
         device,
         platformAccessory,
         Object.assign({
-          hue: hsv[0],
-          saturation: hsv[1],
+          colorMode,
+          hue: color.hue,
+          saturation: color.saturation,
           _updatingDeviceColor: false,
           _updatingHueSaturation: false,
         }, props)
@@ -121,6 +159,10 @@ module.exports = homebridge => {
         .on('change:green', this.changeColorHandler, this)
         .on('change:blue', this.changeColorHandler, this)
 
+      if (this.colorMode === 'rgbw') {
+        d.on('change:white', this.changeColorHandler, this)
+      }
+
       if (this.device.hasOwnProperty('gain')) {
         lightbulbService
           .getCharacteristic(Characteristic.Brightness)
@@ -194,21 +236,21 @@ module.exports = homebridge => {
 
       setImmediate(async () => {
         try {
-          const rgb = colorConvert.hsv.rgb(this.hue, this.saturation, 100)
+          const color = getRedGreenBlue(
+            this.colorMode,
+            this.hue,
+            this.saturation
+          )
 
           this.log.debug(
             'Setting color on device',
             this.device.type,
             this.device.id,
             'to',
-            rgb
+            Object.values(color).join(',')
           )
 
-          await this.device.setColor({
-            red: rgb[0],
-            green: rgb[1],
-            blue: rgb[2],
-          })
+          await this.device.setColor(color)
         } catch (e) {
           handleFailedRequest(this.log, this.device, e, 'Failed to set color')
         }
@@ -225,19 +267,27 @@ module.exports = homebridge => {
 
       setImmediate(() => {
         const d = this.device
-        const hsv = colorConvert.rgb.hsv(d.red, d.green, d.blue)
+        const color = getHueSaturation(
+          this.colorMode,
+          d.red,
+          d.green,
+          d.blue,
+          d.white
+        )
         const lightbulbService = this.platformAccessory
           .getService(Service.Lightbulb)
 
-        this.hue = hsv[0]
-        this.saturation = hsv[1]
+        this.hue = color.hue
+        this.saturation = color.saturation
 
         this.log.debug(
           'Color on device',
           d.type,
           d.id,
           'changed to',
-          [d.red, d.green, d.blue]
+          (this.colorMode === 'rgbw'
+            ? [d.red, d.green, d.blue, d.white]
+            : [d.red, d.green, d.blue]).join(',')
         )
 
         lightbulbService
@@ -260,6 +310,7 @@ module.exports = homebridge => {
         .removeListener('change:red', this.changeColorHandler, this)
         .removeListener('change:green', this.changeColorHandler, this)
         .removeListener('change:blue', this.changeColorHandler, this)
+        .removeListener('change:white', this.changeColorHandler, this)
         .removeListener('change:gain', this.changeGainHandler, this)
     }
   }
@@ -428,7 +479,7 @@ module.exports = homebridge => {
   class ShellyBulbColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
     constructor(log, device, platformAccessory = null) {
-      super(log, device, platformAccessory)
+      super(log, device, 'rgbw', platformAccessory)
     }
 
     get name() {
@@ -439,6 +490,10 @@ module.exports = homebridge => {
 
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
+    constructor(log, device, platformAccessory = null) {
+      super(log, device, 'rgb', platformAccessory)
+    }
+
     get name() {
       const d = this.device
       return d.name || `Shelly RGBW2 ${d.id}`
