@@ -313,6 +313,28 @@ module.exports = homebridge => {
         .removeListener('change:white', this.changeColorHandler, this)
         .removeListener('change:gain', this.changeGainHandler, this)
     }
+
+    identify(paired, callback) {
+      super.identify(paired, async () => {
+        const d = this.device
+        const currentSwitchState = d.switch
+
+        try {
+          await d.setColor({ switch: !currentSwitchState })
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          await d.setColor({ switch: currentSwitchState })
+          callback()
+        } catch (e) {
+          handleFailedRequest(
+            this.log,
+            d,
+            e,
+            'Failed to identify device'
+          )
+          callback(e)
+        }
+      })
+    }
   }
 
   class ShellyWhiteLightbulbAccessory extends ShellyAccessory {
@@ -465,6 +487,28 @@ module.exports = homebridge => {
           this.changeBrightnessHandler,
           this
         )
+    }
+
+    identify(paired, callback) {
+      super.identify(paired, async () => {
+        const d = this.device
+        const currentSwitchState = d[this._switchProperty]
+
+        try {
+          await this.setSwitch(!currentSwitchState)
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          await this.setSwitch(currentSwitchState)
+          callback()
+        } catch (e) {
+          handleFailedRequest(
+            this.log,
+            d,
+            e,
+            'Failed to identify device'
+          )
+          callback(e)
+        }
+      })
     }
 
     setSwitch(newValue) {
