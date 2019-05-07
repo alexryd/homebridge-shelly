@@ -154,13 +154,13 @@ module.exports = homebridge => {
         })
 
       d
-        .on('change:switch', this.changeSwitchHandler, this)
-        .on('change:red', this.changeColorHandler, this)
-        .on('change:green', this.changeColorHandler, this)
-        .on('change:blue', this.changeColorHandler, this)
+        .on('change:switch', this.switchChangeHandler, this)
+        .on('change:red', this.colorChangeHandler, this)
+        .on('change:green', this.colorChangeHandler, this)
+        .on('change:blue', this.colorChangeHandler, this)
 
       if (this.colorMode === 'rgbw') {
-        d.on('change:white', this.changeColorHandler, this)
+        d.on('change:white', this.colorChangeHandler, this)
       }
 
       if (this.device.hasOwnProperty('gain')) {
@@ -190,11 +190,11 @@ module.exports = homebridge => {
             }
           })
 
-        d.on('change:gain', this.changeGainHandler, this)
+        d.on('change:gain', this.gainChangeHandler, this)
       }
     }
 
-    changeSwitchHandler(newValue) {
+    switchChangeHandler(newValue) {
       this.log.debug(
         'Switch state on device',
         this.device.type,
@@ -209,11 +209,11 @@ module.exports = homebridge => {
         .setValue(newValue)
     }
 
-    changeColorHandler() {
+    colorChangeHandler() {
       this._updateHueSaturation()
     }
 
-    changeGainHandler(newValue) {
+    gainChangeHandler(newValue) {
       this.log.debug(
         'Gain on device',
         this.device.type,
@@ -306,12 +306,12 @@ module.exports = homebridge => {
       super.detach()
 
       this.device
-        .removeListener('change:switch', this.changeSwitchHandler, this)
-        .removeListener('change:red', this.changeColorHandler, this)
-        .removeListener('change:green', this.changeColorHandler, this)
-        .removeListener('change:blue', this.changeColorHandler, this)
-        .removeListener('change:white', this.changeColorHandler, this)
-        .removeListener('change:gain', this.changeGainHandler, this)
+        .removeListener('change:switch', this.switchChangeHandler, this)
+        .removeListener('change:red', this.colorChangeHandler, this)
+        .removeListener('change:green', this.colorChangeHandler, this)
+        .removeListener('change:blue', this.colorChangeHandler, this)
+        .removeListener('change:white', this.colorChangeHandler, this)
+        .removeListener('change:gain', this.gainChangeHandler, this)
     }
 
     identify(paired, callback) {
@@ -432,15 +432,15 @@ module.exports = homebridge => {
         })
 
       d
-        .on(`change:${this._switchProperty}`, this.changeSwitchHandler, this)
+        .on(`change:${this._switchProperty}`, this.switchChangeHandler, this)
         .on(
           `change:${this._brightnessProperty}`,
-          this.changeBrightnessHandler,
+          this.brightnessChangeHandler,
           this
         )
     }
 
-    changeSwitchHandler(newValue) {
+    switchChangeHandler(newValue) {
       this.log.debug(
         'State of',
         this._switchProperty,
@@ -457,7 +457,7 @@ module.exports = homebridge => {
         .setValue(newValue)
     }
 
-    changeBrightnessHandler(newValue) {
+    brightnessChangeHandler(newValue) {
       this.log.debug(
         this._brightnessProperty,
         'on device',
@@ -479,12 +479,12 @@ module.exports = homebridge => {
       this.device
         .removeListener(
           `change:${this._switchProperty}`,
-          this.changeSwitchHandler,
+          this.switchChangeHandler,
           this
         )
         .removeListener(
           `change:${this._brightnessProperty}`,
-          this.changeBrightnessHandler,
+          this.brightnessChangeHandler,
           this
         )
     }
