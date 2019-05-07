@@ -580,7 +580,7 @@ module.exports = homebridge => {
     }
 
     setSwitch(newValue) {
-      return this.device.setWhiteChannel(
+      return this.device.setWhite(
         this.index,
         this.device[this._brightnessProperty],
         newValue
@@ -588,7 +588,7 @@ module.exports = homebridge => {
     }
 
     setBrightness(newValue) {
-      return this.device.setWhiteChannel(
+      return this.device.setWhite(
         this.index,
         newValue,
         this.device[this._switchProperty]
