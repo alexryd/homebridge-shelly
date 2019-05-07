@@ -597,6 +597,10 @@ module.exports = homebridge => {
   }
 
   return {
+    _getHueSaturation: getHueSaturation,
+    _getRedGreenBlue: getRedGreenBlue,
+    ShellyColorLightbulbAccessory,
+    ShellyWhiteLightbulbAccessory,
     ShellyBulbColorLightbulbAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
