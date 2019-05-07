@@ -2,6 +2,7 @@ const EventEmitter = require('events')
 
 class Accessory {}
 Accessory.Categories = {
+  LIGHTBULB: 'LIGHTBULB',
   SENSOR: 'SENSOR',
   SWITCH: 'SWITCH',
   WINDOW_COVERING: 'WINDOW_COVERING',
@@ -39,6 +40,13 @@ class BatteryLevel extends Characteristic {
   }
 }
 Characteristic.BatteryLevel = BatteryLevel
+
+class Brightness extends Characteristic {
+  constructor() {
+    super('Brightness', 'Brightness')
+  }
+}
+Characteristic.Brightness = Brightness
 
 class ChargingState extends Characteristic {
   constructor() {
@@ -92,6 +100,13 @@ class HardwareRevision extends Characteristic {
 }
 Characteristic.HardwareRevision = HardwareRevision
 
+class Hue extends Characteristic {
+  constructor() {
+    super('Hue', 'Hue')
+  }
+}
+Characteristic.Hue = Hue
+
 class Manufacturer extends Characteristic {
   constructor() {
     super('Manufacturer', 'Manufacturer')
@@ -129,6 +144,13 @@ PositionState.STOPPED = 0
 PositionState.INCREASING = 1
 PositionState.DECREASING = 2
 Characteristic.PositionState = PositionState
+
+class Saturation extends Characteristic {
+  constructor() {
+    super('Saturation', 'Saturation')
+  }
+}
+Characteristic.Saturation = Saturation
 
 class SerialNumber extends Characteristic {
   constructor() {
@@ -246,6 +268,18 @@ class HumiditySensor extends Service {
   }
 }
 Service.HumiditySensor = HumiditySensor
+
+class Lightbulb extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(On)
+    this.addCharacteristic(Hue)
+    this.addCharacteristic(Saturation)
+    this.addCharacteristic(Brightness)
+  }
+}
+Service.Lightbulb = Lightbulb
 
 class LightSensor extends Service {
   constructor() {
