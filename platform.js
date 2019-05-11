@@ -4,14 +4,14 @@ const { handleFailedRequest } = require('./error-handlers')
 
 module.exports = homebridge => {
   const {
-    Shelly1RelayAccessory,
-    Shelly1PMRelayAccessory,
-    Shelly2RelayAccessory,
+    Shelly1PMSwitchAccessory,
+    Shelly1SwitchAccessory,
+    Shelly2SwitchAccessory,
     Shelly2RollerShutterAccessory,
-    Shelly4ProRelayAccessory,
+    Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
     ShellyHTAccessory,
-    ShellyPlugRelayAccessory,
+    ShellyPlugSwitchAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
     ShellySenseAccessory,
@@ -200,7 +200,7 @@ module.exports = homebridge => {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly1RelayAccessory(this.log, device)
+          new Shelly1SwitchAccessory(this.log, device)
         )
       } else if (type === 'SHSW-21' || type === 'SHSW-25') {
         if (device.mode === 'roller') {
@@ -213,24 +213,24 @@ module.exports = homebridge => {
           deviceWrapper = new DeviceWrapper(
             this,
             device,
-            new Shelly2RelayAccessory(this.log, device, 0),
-            new Shelly2RelayAccessory(this.log, device, 1)
+            new Shelly2SwitchAccessory(this.log, device, 0),
+            new Shelly2SwitchAccessory(this.log, device, 1)
           )
         }
       } else if (type === 'SHSW-44') {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly4ProRelayAccessory(this.log, device, 0),
-          new Shelly4ProRelayAccessory(this.log, device, 1),
-          new Shelly4ProRelayAccessory(this.log, device, 2),
-          new Shelly4ProRelayAccessory(this.log, device, 3)
+          new Shelly4ProSwitchAccessory(this.log, device, 0),
+          new Shelly4ProSwitchAccessory(this.log, device, 1),
+          new Shelly4ProSwitchAccessory(this.log, device, 2),
+          new Shelly4ProSwitchAccessory(this.log, device, 3)
         )
       } else if (type === 'SHSW-PM') {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new Shelly1PMRelayAccessory(this.log, device)
+          new Shelly1PMSwitchAccessory(this.log, device)
         )
       } else if (type === 'SHBLB-1') {
         deviceWrapper = new DeviceWrapper(
@@ -248,7 +248,7 @@ module.exports = homebridge => {
         deviceWrapper = new DeviceWrapper(
           this,
           device,
-          new ShellyPlugRelayAccessory(this.log, device)
+          new ShellyPlugSwitchAccessory(this.log, device)
         )
       } else if (type === 'SHRGBW2') {
         if (device.mode === 'white') {
@@ -330,7 +330,7 @@ module.exports = homebridge => {
 
       if (type === 'SHSW-1') {
         deviceWrapper.accessories.push(
-          new Shelly1RelayAccessory(this.log, device, platformAccessory)
+          new Shelly1SwitchAccessory(this.log, device, platformAccessory)
         )
       } else if (type === 'SHSW-21' || type === 'SHSW-25') {
         if (ctx.mode === 'roller') {
@@ -343,7 +343,7 @@ module.exports = homebridge => {
           )
         } else {
           deviceWrapper.accessories.push(
-            new Shelly2RelayAccessory(
+            new Shelly2SwitchAccessory(
               this.log,
               device,
               ctx.index,
@@ -353,7 +353,7 @@ module.exports = homebridge => {
         }
       } else if (type === 'SHSW-44') {
         deviceWrapper.accessories.push(
-          new Shelly4ProRelayAccessory(
+          new Shelly4ProSwitchAccessory(
             this.log,
             device,
             ctx.index,
@@ -362,7 +362,7 @@ module.exports = homebridge => {
         )
       } else if (type === 'SHSW-PM') {
         deviceWrapper.accessories.push(
-          new Shelly1PMRelayAccessory(
+          new Shelly1PMSwitchAccessory(
             this.log,
             device,
             platformAccessory
@@ -386,7 +386,7 @@ module.exports = homebridge => {
         )
       } else if (type === 'SHPLG-1' || type === 'SHPLG2-1') {
         deviceWrapper.accessories.push(
-          new ShellyPlugRelayAccessory(
+          new ShellyPlugSwitchAccessory(
             this.log,
             device,
             platformAccessory
@@ -424,15 +424,15 @@ module.exports = homebridge => {
   }
 
   ShellyPlatform.DeviceWrapper = DeviceWrapper
-  ShellyPlatform.Shelly1RelayAccessory = Shelly1RelayAccessory
-  ShellyPlatform.Shelly1PMRelayAccessory = Shelly1PMRelayAccessory
-  ShellyPlatform.Shelly2RelayAccessory = Shelly2RelayAccessory
+  ShellyPlatform.Shelly1PMSwitchAccessory = Shelly1PMSwitchAccessory
+  ShellyPlatform.Shelly1SwitchAccessory = Shelly1SwitchAccessory
+  ShellyPlatform.Shelly2SwitchAccessory = Shelly2SwitchAccessory
   ShellyPlatform.Shelly2RollerShutterAccessory = Shelly2RollerShutterAccessory
-  ShellyPlatform.Shelly4ProRelayAccessory = Shelly4ProRelayAccessory
+  ShellyPlatform.Shelly4ProSwitchAccessory = Shelly4ProSwitchAccessory
   ShellyPlatform.ShellyBulbColorLightbulbAccessory =
     ShellyBulbColorLightbulbAccessory
   ShellyPlatform.ShellyHTAccessory = ShellyHTAccessory
-  ShellyPlatform.ShellyPlugRelayAccessory = ShellyPlugRelayAccessory
+  ShellyPlatform.ShellyPlugSwitchAccessory = ShellyPlugSwitchAccessory
   ShellyPlatform.ShellyRGBW2ColorLightbulbAccessory =
     ShellyRGBW2ColorLightbulbAccessory
   ShellyPlatform.ShellyRGBW2WhiteLightbulbAccessory =

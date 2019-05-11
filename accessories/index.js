@@ -7,14 +7,6 @@ module.exports = homebridge => {
   } = require('./lightbulbs')(homebridge)
 
   const {
-    Shelly1RelayAccessory,
-    Shelly1PMRelayAccessory,
-    Shelly2RelayAccessory,
-    Shelly4ProRelayAccessory,
-    ShellyPlugRelayAccessory,
-  } = require('./relays')(homebridge)
-
-  const {
     Shelly2RollerShutterAccessory,
   } = require('./roller-shutters')(homebridge)
 
@@ -23,15 +15,23 @@ module.exports = homebridge => {
     ShellySenseAccessory,
   } = require('./sensors')(homebridge)
 
+  const {
+    Shelly1PMSwitchAccessory,
+    Shelly1SwitchAccessory,
+    Shelly2SwitchAccessory,
+    Shelly4ProSwitchAccessory,
+    ShellyPlugSwitchAccessory,
+  } = require('./switches')(homebridge)
+
   return {
-    Shelly1RelayAccessory,
-    Shelly1PMRelayAccessory,
-    Shelly2RelayAccessory,
+    Shelly1PMSwitchAccessory,
+    Shelly1SwitchAccessory,
     Shelly2RollerShutterAccessory,
-    Shelly4ProRelayAccessory,
+    Shelly2SwitchAccessory,
+    Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
     ShellyHTAccessory,
-    ShellyPlugRelayAccessory,
+    ShellyPlugSwitchAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
     ShellySenseAccessory,

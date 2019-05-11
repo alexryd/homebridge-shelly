@@ -16,21 +16,21 @@ const {
   ConsumptionCharacteristic
 } = require('../../characteristics')(homebridge)
 const {
-  ShellyRelayAccessory,
-  Shelly1RelayAccessory,
-  Shelly1PMRelayAccessory,
-  Shelly2RelayAccessory,
-  Shelly4ProRelayAccessory,
-  ShellyPlugRelayAccessory,
-} = require('../../accessories/relays')(homebridge)
+  ShellySwitchAccessory,
+  Shelly1PMSwitchAccessory,
+  Shelly1SwitchAccessory,
+  Shelly2SwitchAccessory,
+  Shelly4ProSwitchAccessory,
+  ShellyPlugSwitchAccessory,
+} = require('../../accessories/switches')(homebridge)
 
-describe('ShellyRelayAccessory', function() {
+describe('ShellySwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2')
-    accessory = new ShellyRelayAccessory(log, device, 1, 1)
+    accessory = new ShellySwitchAccessory(log, device, 1, 1)
   })
 
   afterEach(function() {
@@ -82,7 +82,7 @@ describe('ShellyRelayAccessory', function() {
     it(
       'should not set Consumption for devices without power meters',
       function() {
-        const a = new ShellyRelayAccessory(log, device, 0)
+        const a = new ShellySwitchAccessory(log, device, 0)
         const pa = a.createPlatformAccessory()
         let found = false
 
@@ -190,13 +190,13 @@ describe('ShellyRelayAccessory', function() {
   })
 })
 
-describe('Shelly1RelayAccessory', function() {
+describe('Shelly1SwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
-    accessory = new Shelly1RelayAccessory(log, device)
+    accessory = new Shelly1SwitchAccessory(log, device)
   })
 
   describe('#name', function() {
@@ -212,13 +212,13 @@ describe('Shelly1RelayAccessory', function() {
   })
 })
 
-describe('Shelly1PMRelayAccessory', function() {
+describe('Shelly1PMSwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-PM', 'ABC123', '192.168.1.2')
-    accessory = new Shelly1PMRelayAccessory(log, device)
+    accessory = new Shelly1PMSwitchAccessory(log, device)
   })
 
   describe('#name', function() {
@@ -234,13 +234,13 @@ describe('Shelly1PMRelayAccessory', function() {
   })
 })
 
-describe('Shelly2RelayAccessory', function() {
+describe('Shelly2SwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
-    accessory = new Shelly2RelayAccessory(log, device, 0)
+    accessory = new Shelly2SwitchAccessory(log, device, 0)
   })
 
   describe('#name', function() {
@@ -256,13 +256,13 @@ describe('Shelly2RelayAccessory', function() {
   })
 })
 
-describe('Shelly4ProRelayAccessory', function() {
+describe('Shelly4ProSwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-44', 'ABC123', '192.168.1.2')
-    accessory = new Shelly4ProRelayAccessory(log, device, 0)
+    accessory = new Shelly4ProSwitchAccessory(log, device, 0)
   })
 
   describe('#name', function() {
@@ -278,13 +278,13 @@ describe('Shelly4ProRelayAccessory', function() {
   })
 })
 
-describe('ShellyPlugRelayAccessory', function() {
+describe('ShellyPlugSwitchAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHPLG-1', 'ABC123', '192.168.1.2')
-    accessory = new ShellyPlugRelayAccessory(log, device)
+    accessory = new ShellyPlugSwitchAccessory(log, device)
   })
 
   describe('#name', function() {

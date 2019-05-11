@@ -9,7 +9,7 @@ module.exports = homebridge => {
   const Service = homebridge.hap.Service
   const ShellyAccessory = require('./base')(homebridge)
 
-  class ShellyRelayAccessory extends ShellyAccessory {
+  class ShellySwitchAccessory extends ShellyAccessory {
     constructor(log, device, index, powerMeterIndex = null,
       platformAccessory = null
     ) {
@@ -150,7 +150,7 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly1RelayAccessory extends ShellyRelayAccessory {
+  class Shelly1SwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, platformAccessory = null) {
       super(log, device, 0, null, platformAccessory)
     }
@@ -161,7 +161,7 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly1PMRelayAccessory extends ShellyRelayAccessory {
+  class Shelly1PMSwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, platformAccessory = null) {
       super(log, device, 0, 0, platformAccessory)
     }
@@ -172,7 +172,7 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly2RelayAccessory extends ShellyRelayAccessory {
+  class Shelly2SwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, index, platformAccessory = null) {
       const powerMeterIndex = device.type === 'SHSW-21' ? 0 : index
       super(log, device, index, powerMeterIndex, platformAccessory)
@@ -195,7 +195,7 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly4ProRelayAccessory extends ShellyRelayAccessory {
+  class Shelly4ProSwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, index, platformAccessory = null) {
       super(log, device, index, index, platformAccessory)
     }
@@ -210,7 +210,7 @@ module.exports = homebridge => {
     }
   }
 
-  class ShellyPlugRelayAccessory extends ShellyRelayAccessory {
+  class ShellyPlugSwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, platformAccessory = null) {
       super(log, device, 0, 0, platformAccessory)
     }
@@ -223,11 +223,11 @@ module.exports = homebridge => {
   }
 
   return {
-    ShellyRelayAccessory,
-    Shelly1RelayAccessory,
-    Shelly1PMRelayAccessory,
-    Shelly2RelayAccessory,
-    Shelly4ProRelayAccessory,
-    ShellyPlugRelayAccessory,
+    ShellySwitchAccessory,
+    Shelly1SwitchAccessory,
+    Shelly1PMSwitchAccessory,
+    Shelly2SwitchAccessory,
+    Shelly4ProSwitchAccessory,
+    ShellyPlugSwitchAccessory,
   }
 }
