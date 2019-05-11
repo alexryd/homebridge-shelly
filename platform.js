@@ -193,89 +193,10 @@ module.exports = homebridge => {
     }
 
     addDevice(device) {
-      const type = device.type
-      let deviceWrapper = null
+      const accessories = this.createAccessoriesForDevice(device)
 
-      if (type === 'SHSW-1') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new Shelly1SwitchAccessory(this.log, device)
-        )
-      } else if (type === 'SHSW-21' || type === 'SHSW-25') {
-        if (device.mode === 'roller') {
-          deviceWrapper = new DeviceWrapper(
-            this,
-            device,
-            new Shelly2WindowCoveringAccessory(this.log, device)
-          )
-        } else {
-          deviceWrapper = new DeviceWrapper(
-            this,
-            device,
-            new Shelly2SwitchAccessory(this.log, device, 0),
-            new Shelly2SwitchAccessory(this.log, device, 1)
-          )
-        }
-      } else if (type === 'SHSW-44') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new Shelly4ProSwitchAccessory(this.log, device, 0),
-          new Shelly4ProSwitchAccessory(this.log, device, 1),
-          new Shelly4ProSwitchAccessory(this.log, device, 2),
-          new Shelly4ProSwitchAccessory(this.log, device, 3)
-        )
-      } else if (type === 'SHSW-PM') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new Shelly1PMSwitchAccessory(this.log, device)
-        )
-      } else if (type === 'SHBLB-1') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new ShellyBulbColorLightbulbAccessory(this.log, device)
-        )
-      } else if (type === 'SHHT-1') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new ShellyHTAccessory(this.log, device)
-        )
-      } else if (type === 'SHPLG-1' || type === 'SHPLG2-1') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new ShellyPlugSwitchAccessory(this.log, device)
-        )
-      } else if (type === 'SHRGBW2') {
-        if (device.mode === 'white') {
-          deviceWrapper = new DeviceWrapper(
-            this,
-            device,
-            new ShellyRGBW2WhiteLightbulbAccessory(this.log, device, 0),
-            new ShellyRGBW2WhiteLightbulbAccessory(this.log, device, 1),
-            new ShellyRGBW2WhiteLightbulbAccessory(this.log, device, 2),
-            new ShellyRGBW2WhiteLightbulbAccessory(this.log, device, 3)
-          )
-        } else {
-          deviceWrapper = new DeviceWrapper(
-            this,
-            device,
-            new ShellyRGBW2ColorLightbulbAccessory(this.log, device)
-          )
-        }
-      } else if (type === 'SHSEN-1') {
-        deviceWrapper = new DeviceWrapper(
-          this,
-          device,
-          new ShellySenseAccessory(this.log, device)
-        )
-      }
-
-      if (deviceWrapper) {
+      if (accessories && accessories.length > 0) {
+        const deviceWrapper = new DeviceWrapper(this, device, ...accessories)
         this.deviceWrappers.set(device, deviceWrapper)
 
         homebridge.registerPlatformAccessories(
@@ -283,9 +204,11 @@ module.exports = homebridge => {
           'Shelly',
           deviceWrapper.platformAccessories
         )
+
+        return deviceWrapper
       }
 
-      return deviceWrapper
+      return null
     }
 
     removeDevice(device) {
@@ -306,13 +229,14 @@ module.exports = homebridge => {
 
     configureAccessory(platformAccessory) {
       const ctx = platformAccessory.context
-      let device = shellies.getDevice(ctx.type, ctx.id)
 
       this.log.debug(
         'Configuring cached accessory for device',
         ctx.type,
         ctx.id
       )
+
+      let device = shellies.getDevice(ctx.type, ctx.id)
 
       if (!device) {
         device = shellies.createDevice(ctx.type, ctx.id, ctx.host, ctx.mode)
@@ -326,100 +250,82 @@ module.exports = homebridge => {
         this.deviceWrappers.set(device, deviceWrapper)
       }
 
-      const type = device.type
+      const accessory = this.createAccessory(device, platformAccessory, ctx)
 
-      if (type === 'SHSW-1') {
-        deviceWrapper.accessories.push(
-          new Shelly1SwitchAccessory(this.log, device, platformAccessory)
-        )
-      } else if (type === 'SHSW-21' || type === 'SHSW-25') {
-        if (ctx.mode === 'roller') {
-          deviceWrapper.accessories.push(
-            new Shelly2WindowCoveringAccessory(
-              this.log,
-              device,
-              platformAccessory
-            )
-          )
-        } else {
-          deviceWrapper.accessories.push(
-            new Shelly2SwitchAccessory(
-              this.log,
-              device,
-              ctx.index,
-              platformAccessory
-            )
-          )
-        }
-      } else if (type === 'SHSW-44') {
-        deviceWrapper.accessories.push(
-          new Shelly4ProSwitchAccessory(
-            this.log,
-            device,
-            ctx.index,
-            platformAccessory
-          )
-        )
-      } else if (type === 'SHSW-PM') {
-        deviceWrapper.accessories.push(
-          new Shelly1PMSwitchAccessory(
-            this.log,
-            device,
-            platformAccessory
-          )
-        )
-      } else if (type === 'SHBLB-1') {
-        deviceWrapper.accessories.push(
-          new ShellyBulbColorLightbulbAccessory(
-            this.log,
-            device,
-            platformAccessory
-          )
-        )
-      } else if (type === 'SHHT-1') {
-        deviceWrapper.accessories.push(
-          new ShellyHTAccessory(
-            this.log,
-            device,
-            platformAccessory
-          )
-        )
-      } else if (type === 'SHPLG-1' || type === 'SHPLG2-1') {
-        deviceWrapper.accessories.push(
-          new ShellyPlugSwitchAccessory(
-            this.log,
-            device,
-            platformAccessory
-          )
-        )
-      } else if (type === 'SHRGBW2') {
-        if (device.mode === 'white') {
-          deviceWrapper.accessories.push(
-            new ShellyRGBW2WhiteLightbulbAccessory(
-              this.log,
-              device,
-              ctx.index,
-              platformAccessory
-            )
-          )
-        } else {
-          deviceWrapper.accessories.push(
-            new ShellyRGBW2ColorLightbulbAccessory(
-              this.log,
-              device,
-              platformAccessory
-            )
-          )
-        }
-      } else if (type === 'SHSEN-1') {
-        deviceWrapper.accessories.push(
-          new ShellySenseAccessory(
-            this.log,
-            device,
-            platformAccessory
-          )
+      if (accessory) {
+        deviceWrapper.accessories.push(accessory)
+      }
+    }
+
+    createAccessoriesForDevice(device) {
+      const type = device.type
+      const mode = device.mode
+
+      const multiple = num => {
+        return Array.from(
+          { length: num },
+          (_, i) => this.createAccessory(device, null, { index: i })
         )
       }
+
+      if (type === 'SHRGBW2' && mode === 'white') {
+        return multiple(4)
+      } else if (type === 'SHSW-21' && mode !== 'roller') {
+        return multiple(2)
+      } else if (type === 'SHSW-25' && mode !== 'roller') {
+        return multiple(2)
+      } else if (type === 'SHSW-44') {
+        return multiple(4)
+      }
+
+      const accessory = this.createAccessory(device, null, {})
+      if (accessory) {
+        return [accessory]
+      }
+
+      return null
+    }
+
+    createAccessory(device, pa, ctx) {
+      const log = this.log
+
+      switch (device.type) {
+        case 'SHBLB-1':
+          return new ShellyBulbColorLightbulbAccessory(log, device, pa)
+        case 'SHHT-1':
+          return new ShellyHTAccessory(log, device, pa)
+        case 'SHPLG-1':
+        case 'SHPLG2-1':
+          return new ShellyPlugSwitchAccessory(log, device, pa)
+        case 'SHRGBW2':
+          if (device.mode === 'white') {
+            return new ShellyRGBW2WhiteLightbulbAccessory(
+              log,
+              device,
+              ctx.index,
+              pa
+            )
+          } else {
+            return new ShellyRGBW2ColorLightbulbAccessory(log, device, pa)
+          }
+        case 'SHSEN-1':
+          return new ShellySenseAccessory(log, device, pa)
+        case 'SHSW-1':
+          return new Shelly1SwitchAccessory(log, device, pa)
+        case 'SHSW-21':
+        case 'SHSW-25':
+          if (device.mode === 'roller') {
+            return new Shelly2WindowCoveringAccessory(log, device, pa)
+          } else {
+            return new Shelly2SwitchAccessory(log, device, ctx.index, pa)
+          }
+        case 'SHSW-44':
+          return new Shelly4ProSwitchAccessory(log, device, ctx.index, pa)
+        case 'SHSW-PM':
+          return new Shelly1PMSwitchAccessory(log, device, pa)
+      }
+
+      return null
     }
   }
 
