@@ -330,20 +330,6 @@ module.exports = homebridge => {
   }
 
   ShellyPlatform.DeviceWrapper = DeviceWrapper
-  ShellyPlatform.Shelly1PMSwitchAccessory = Shelly1PMSwitchAccessory
-  ShellyPlatform.Shelly1SwitchAccessory = Shelly1SwitchAccessory
-  ShellyPlatform.Shelly2SwitchAccessory = Shelly2SwitchAccessory
-  ShellyPlatform.Shelly2WindowCoveringAccessory = Shelly2WindowCoveringAccessory
-  ShellyPlatform.Shelly4ProSwitchAccessory = Shelly4ProSwitchAccessory
-  ShellyPlatform.ShellyBulbColorLightbulbAccessory =
-    ShellyBulbColorLightbulbAccessory
-  ShellyPlatform.ShellyHTAccessory = ShellyHTAccessory
-  ShellyPlatform.ShellyPlugSwitchAccessory = ShellyPlugSwitchAccessory
-  ShellyPlatform.ShellyRGBW2ColorLightbulbAccessory =
-    ShellyRGBW2ColorLightbulbAccessory
-  ShellyPlatform.ShellyRGBW2WhiteLightbulbAccessory =
-   ShellyRGBW2WhiteLightbulbAccessory
-  ShellyPlatform.ShellySenseAccessory = ShellySenseAccessory
 
   return ShellyPlatform
 }

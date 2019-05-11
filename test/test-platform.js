@@ -233,8 +233,7 @@ describe('ShellyPlatform', function() {
       deviceWrapper = new ShellyPlatform.DeviceWrapper(
         platform,
         device,
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 0),
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 1)
+        ...platform.createAccessoriesForDevice(device)
       )
     })
 
@@ -341,8 +340,6 @@ describe('ShellyPlatform', function() {
 
       deviceWrapper.device.type.should.equal('SHSW-1')
       deviceWrapper.accessories.length.should.equal(1)
-      deviceWrapper.accessories[0]
-        .should.be.instanceof(ShellyPlatform.Shelly1SwitchAccessory)
     })
 
     it(
@@ -356,8 +353,6 @@ describe('ShellyPlatform', function() {
 
         deviceWrapper.device.type.should.equal('SHSW-21')
         deviceWrapper.accessories.length.should.equal(1)
-        deviceWrapper.accessories[0]
-          .should.be.instanceof(ShellyPlatform.Shelly2WindowCoveringAccessory)
       }
     )
 
@@ -373,8 +368,6 @@ describe('ShellyPlatform', function() {
 
         deviceWrapper.device.type.should.equal('SHSW-21')
         deviceWrapper.accessories.length.should.equal(1)
-        deviceWrapper.accessories[0]
-          .should.be.instanceof(ShellyPlatform.Shelly2SwitchAccessory)
       }
     )
 
@@ -387,8 +380,6 @@ describe('ShellyPlatform', function() {
 
       deviceWrapper.device.type.should.equal('SHSW-44')
       deviceWrapper.accessories.length.should.equal(1)
-      deviceWrapper.accessories[0]
-        .should.be.instanceof(ShellyPlatform.Shelly4ProSwitchAccessory)
     })
 
     it('should create accessories for Shelly H&T devices', function() {
@@ -399,8 +390,6 @@ describe('ShellyPlatform', function() {
 
       deviceWrapper.device.type.should.equal('SHHT-1')
       deviceWrapper.accessories.length.should.equal(1)
-      deviceWrapper.accessories[0]
-        .should.be.instanceof(ShellyPlatform.ShellyHTAccessory)
     })
   })
 })
@@ -412,7 +401,7 @@ describe('DeviceWrapper', function() {
 
   beforeEach(function() {
     platform = new ShellyPlatform(log, {})
-    device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+    device = shellies.createDevice('SHSW-21', 'ABC123', '192.168.1.2')
     deviceWrapper = new ShellyPlatform.DeviceWrapper(platform, device)
   })
 
@@ -494,10 +483,7 @@ describe('DeviceWrapper', function() {
 
   describe('#platformAccessories', function() {
     it('should return all platform accessories', function() {
-      deviceWrapper.accessories = [
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 0),
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 1),
-      ]
+      deviceWrapper.accessories = platform.createAccessoriesForDevice(device)
       const platformAccessories = deviceWrapper.platformAccessories
 
       platformAccessories.length.should.equal(2)
@@ -580,10 +566,7 @@ describe('DeviceWrapper', function() {
     it('should invoke detach() on all of its accessories', function() {
       const detach = sinon.fake()
 
-      deviceWrapper.accessories = [
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 0),
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 1),
-      ]
+      deviceWrapper.accessories = platform.createAccessoriesForDevice(device)
 
       for (const accessory of deviceWrapper.accessories) {
         sinon.stub(accessory, 'detach').callsFake(detach)
@@ -596,10 +579,7 @@ describe('DeviceWrapper', function() {
     })
 
     it('should remove all of its accessories', function() {
-      deviceWrapper.accessories = [
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 0),
-        new ShellyPlatform.Shelly2SwitchAccessory(log, device, 1),
-      ]
+      deviceWrapper.accessories = platform.createAccessoriesForDevice(device)
       deviceWrapper.destroy()
       deviceWrapper.accessories.length.should.equal(0)
     })
