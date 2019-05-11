@@ -7,7 +7,7 @@ module.exports = homebridge => {
     Shelly1PMSwitchAccessory,
     Shelly1SwitchAccessory,
     Shelly2SwitchAccessory,
-    Shelly2RollerShutterAccessory,
+    Shelly2WindowCoveringAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
     ShellyHTAccessory,
@@ -207,7 +207,7 @@ module.exports = homebridge => {
           deviceWrapper = new DeviceWrapper(
             this,
             device,
-            new Shelly2RollerShutterAccessory(this.log, device)
+            new Shelly2WindowCoveringAccessory(this.log, device)
           )
         } else {
           deviceWrapper = new DeviceWrapper(
@@ -335,7 +335,7 @@ module.exports = homebridge => {
       } else if (type === 'SHSW-21' || type === 'SHSW-25') {
         if (ctx.mode === 'roller') {
           deviceWrapper.accessories.push(
-            new Shelly2RollerShutterAccessory(
+            new Shelly2WindowCoveringAccessory(
               this.log,
               device,
               platformAccessory
@@ -427,7 +427,7 @@ module.exports = homebridge => {
   ShellyPlatform.Shelly1PMSwitchAccessory = Shelly1PMSwitchAccessory
   ShellyPlatform.Shelly1SwitchAccessory = Shelly1SwitchAccessory
   ShellyPlatform.Shelly2SwitchAccessory = Shelly2SwitchAccessory
-  ShellyPlatform.Shelly2RollerShutterAccessory = Shelly2RollerShutterAccessory
+  ShellyPlatform.Shelly2WindowCoveringAccessory = Shelly2WindowCoveringAccessory
   ShellyPlatform.Shelly4ProSwitchAccessory = Shelly4ProSwitchAccessory
   ShellyPlatform.ShellyBulbColorLightbulbAccessory =
     ShellyBulbColorLightbulbAccessory

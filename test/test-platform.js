@@ -357,7 +357,7 @@ describe('ShellyPlatform', function() {
         deviceWrapper.device.type.should.equal('SHSW-21')
         deviceWrapper.accessories.length.should.equal(1)
         deviceWrapper.accessories[0]
-          .should.be.instanceof(ShellyPlatform.Shelly2RollerShutterAccessory)
+          .should.be.instanceof(ShellyPlatform.Shelly2WindowCoveringAccessory)
       }
     )
 

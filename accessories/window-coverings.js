@@ -11,7 +11,7 @@ module.exports = homebridge => {
   positionStates.set('open', Characteristic.PositionState.INCREASING)
   positionStates.set('close', Characteristic.PositionState.DECREASING)
 
-  class Shelly2RollerShutterAccessory extends ShellyAccessory {
+  class Shelly2WindowCoveringAccessory extends ShellyAccessory {
     constructor(log, device, platformAccessory = null) {
       super(log, device, platformAccessory, {
         targetPosition: device.rollerPosition,
@@ -188,6 +188,6 @@ module.exports = homebridge => {
   }
 
   return {
-    Shelly2RollerShutterAccessory,
+    Shelly2WindowCoveringAccessory,
   }
 }

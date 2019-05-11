@@ -13,16 +13,16 @@ const Characteristic = homebridge.hap.Characteristic
 const Service = homebridge.hap.Service
 
 const {
-  Shelly2RollerShutterAccessory,
-} = require('../../accessories/roller-shutters')(homebridge)
+  Shelly2WindowCoveringAccessory,
+} = require('../../accessories/window-coverings')(homebridge)
 
-describe('Shelly2RollerShutterAccessory', function() {
+describe('Shelly2WindowCoveringAccessory', function() {
   let device = null
   let accessory = null
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2', 'roller')
-    accessory = new Shelly2RollerShutterAccessory(log, device)
+    accessory = new Shelly2WindowCoveringAccessory(log, device)
   })
 
   afterEach(function() {
