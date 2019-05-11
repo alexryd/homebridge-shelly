@@ -65,6 +65,34 @@ Use the `"staleTimeout"` option to configure how long a device can be offline
 before it is regarded as stale and unregistered from HomeKit. Specify in
 milliseconds. Default is 8 hours.
 
+### Device specific configurations
+Configurations for specific Shelly devices can be set using the `"devices"`
+array. Each object in the array must contain an `"id"` property with the ID of
+the Shelly device that you want to target. IDs are always made up of 6
+hexadecimal characters and can be found in the Shelly Cloud app or the web
+interface of a device, under *Settings -> Device info -> Device ID*.
+
+#### General configurations
+* `"exclude"` - set to `true` to exclude the device from Homebridge.
+
+#### Shelly RGBW2 configurations
+* `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
+  channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
+
+#### Example configuration
+```json
+"platforms": [
+  {
+    "platform": "Shelly",
+    "name": "Shelly",
+    "devices": [
+      { "id": "74B5A3", "exclude": true },
+      { "id": "6A78BB", "colorMode": "rgb" }
+    ]
+  }
+]
+```
+
 ## Unsupported devices
 If you have a Shelly device that is not yet supported by this plugin you can
 help adding support for it by following these steps:
