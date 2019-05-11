@@ -534,8 +534,8 @@ module.exports = homebridge => {
 
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, 'rgb', platformAccessory)
+    constructor(log, device, colorMode = 'rgbw', platformAccessory = null) {
+      super(log, device, colorMode, platformAccessory)
     }
 
     get name() {

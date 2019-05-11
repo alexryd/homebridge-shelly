@@ -323,6 +323,7 @@ module.exports = homebridge => {
 
     createAccessory(device, pa, ctx) {
       const log = this.log
+      const config = this.getDeviceConfig(device)
 
       switch (device.type) {
         case 'SHBLB-1':
@@ -341,7 +342,12 @@ module.exports = homebridge => {
               pa
             )
           } else {
-            return new ShellyRGBW2ColorLightbulbAccessory(log, device, pa)
+            return new ShellyRGBW2ColorLightbulbAccessory(
+              log,
+              device,
+              config.colorMode,
+              pa
+            )
           }
         case 'SHSEN-1':
           return new ShellySenseAccessory(log, device, pa)
