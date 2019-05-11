@@ -128,19 +128,10 @@ module.exports = homebridge => {
     constructor(log, config) {
       this.log = log
       this.config = config
+      this.deviceConfigs = new Map()
       this.deviceWrappers = new Map()
 
-      if (config.username && config.password) {
-        shellies.setAuthCredentials(config.username, config.password)
-      }
-
-      if (typeof config.requestTimeout === 'number') {
-        shellies.request.timeout(config.requestTimeout)
-      }
-
-      if (typeof config.staleTimeout === 'number') {
-        shellies.staleTimeout = config.staleTimeout
-      }
+      this.configure()
 
       shellies
         .on('discover', this.discoverDeviceHandler, this)
@@ -156,7 +147,51 @@ module.exports = homebridge => {
       })
     }
 
+    configure() {
+      const config = this.config
+
+      if (config.username && config.password) {
+        shellies.setAuthCredentials(config.username, config.password)
+      }
+
+      if (typeof config.requestTimeout === 'number') {
+        shellies.request.timeout(config.requestTimeout)
+      }
+
+      if (typeof config.staleTimeout === 'number') {
+        shellies.staleTimeout = config.staleTimeout
+      }
+
+      if (Array.isArray(config.devices)) {
+        for (const c of config.devices) {
+          let id = c.id
+          if (!id) {
+            continue
+          }
+
+          id = id.toUpperCase().trim()
+
+          this.deviceConfigs.set(id, c)
+        }
+      }
+    }
+
+    getDeviceConfig(device) {
+      return this.deviceConfigs.get(device.id) || {}
+    }
+
     discoverDeviceHandler(device, unknown) {
+      if (this.getDeviceConfig(device).exclude) {
+        this.log.info(
+          'Excluding device',
+          device.type,
+          device.id,
+          'at',
+          device.host,
+        )
+        return
+      }
+
       if (!unknown) {
         this.log.info(
           'New device discovered:',

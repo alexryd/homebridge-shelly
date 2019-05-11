@@ -29,38 +29,15 @@ describe('ShellyPlatform', function() {
   })
 
   describe('#constructor()', function() {
-    it(
-      'should invoke setAuthCredentials() when credentials are given',
-      function() {
-        const setAuthCredentials = sinon.stub(shellies, 'setAuthCredentials')
+    it('should invoke configure()', function() {
+      const configure = sinon.stub(
+        ShellyPlatform.prototype,
+        'configure'
+      )
 
-        new ShellyPlatform(log, { // eslint-disable-line no-new
-          username: 'foo',
-          password: 'bar',
-        })
+      new ShellyPlatform(log, {}) // eslint-disable-line no-new
 
-        setAuthCredentials.calledOnce.should.be.true()
-        setAuthCredentials.calledWith('foo', 'bar').should.be.true()
-      }
-    )
-
-    it('should set the request timeout when given', function() {
-      const timeout = sinon.stub(shellies.request, 'timeout')
-
-      new ShellyPlatform(log, { // eslint-disable-line no-new
-        requestTimeout: 1000,
-      })
-
-      timeout.calledOnce.should.be.true()
-      timeout.calledWith(1000).should.be.true()
-    })
-
-    it('should set the stale timeout when given', function() {
-      new ShellyPlatform(log, { // eslint-disable-line no-new
-        staleTimeout: 1000,
-      })
-
-      shellies.staleTimeout.should.equal(1000)
+      configure.calledOnce.should.be.true()
     })
 
     it(
@@ -116,6 +93,76 @@ describe('ShellyPlatform', function() {
       homebridge.emit('didFinishLaunching')
 
       start.calledWith(networkInterface).should.be.true()
+    })
+  })
+
+  describe('#configure()', function() {
+    it(
+      'should invoke setAuthCredentials() when credentials are given',
+      function() {
+        const setAuthCredentials = sinon.stub(shellies, 'setAuthCredentials')
+
+        platform.config = {
+          username: 'foo',
+          password: 'bar',
+        }
+        platform.configure()
+
+        setAuthCredentials.calledOnce.should.be.true()
+        setAuthCredentials.calledWith('foo', 'bar').should.be.true()
+      }
+    )
+
+    it('should set the request timeout when given', function() {
+      const timeout = sinon.stub(shellies.request, 'timeout')
+
+      platform.config = {
+        requestTimeout: 1000,
+      }
+      platform.configure()
+
+      timeout.calledOnce.should.be.true()
+      timeout.calledWith(1000).should.be.true()
+    })
+
+    it('should set the stale timeout when given', function() {
+      platform.config = {
+        staleTimeout: 1000,
+      }
+      platform.configure()
+
+      shellies.staleTimeout.should.equal(1000)
+    })
+
+    it('should skip invalid device config arrays', function() {
+      platform.config = {
+        devices: 'foo',
+      }
+      platform.configure()
+      platform.deviceConfigs.size.should.equal(0)
+    })
+
+    it('should skip device configs with no IDs', function() {
+      platform.config = {
+        devices: [
+          { foo: 'bar' },
+        ],
+      }
+      platform.configure()
+      platform.deviceConfigs.size.should.equal(0)
+    })
+
+    it('should properly setup device configs', function() {
+      platform.config = {
+        devices: [
+          { id: 'abc123', foo: 'bar' },
+          { id: 'ABC124', bar: 'foo' },
+        ],
+      }
+      platform.configure()
+      platform.deviceConfigs.size.should.equal(2)
+      platform.deviceConfigs.get('ABC123').should.be.ok()
+      platform.deviceConfigs.get('ABC124').should.be.ok()
     })
   })
 
