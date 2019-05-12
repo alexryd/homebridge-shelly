@@ -74,6 +74,9 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 
 #### General configurations
 * `"exclude"` - set to `true` to exclude the device from Homebridge.
+* `"username"` and `"password"` - set these if you have restricted the web
+  interface of the device with a username and password. This will override the
+  global `"username"` and `"password"` options.
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
@@ -87,6 +90,7 @@ interface of a device, under *Settings -> Device info -> Device ID*.
     "name": "Shelly",
     "devices": [
       { "id": "74B5A3", "exclude": true },
+      { "id": "A612F0", "username": "admin", "password": "pa$$word" },
       { "id": "6A78BB", "colorMode": "rgb" }
     ]
   }

@@ -18,10 +18,15 @@ module.exports = homebridge => {
   } = require('./accessories')(homebridge)
 
   class DeviceWrapper {
-    constructor(platform, device, ...accessories) {
+    constructor(platform, device, config, ...accessories) {
       this.platform = platform
       this.device = device
+      this.config = config || {}
       this.accessories = accessories
+
+      if (config && config.username && config.password) {
+        device.setAuthCredentials(config.username, config.password)
+      }
 
       device
         .on('online', this.deviceOnlineHandler, this)
@@ -231,7 +236,13 @@ module.exports = homebridge => {
       const accessories = this.createAccessoriesForDevice(device)
 
       if (accessories && accessories.length > 0) {
-        const deviceWrapper = new DeviceWrapper(this, device, ...accessories)
+        const deviceWrapper = new DeviceWrapper(
+          this,
+          device,
+          this.getDeviceConfig(device),
+          ...accessories
+        )
+
         this.deviceWrappers.set(device, deviceWrapper)
 
         homebridge.registerPlatformAccessories(
@@ -281,7 +292,11 @@ module.exports = homebridge => {
       let deviceWrapper = this.deviceWrappers.get(device)
 
       if (!deviceWrapper) {
-        deviceWrapper = new DeviceWrapper(this, device)
+        deviceWrapper = new DeviceWrapper(
+          this,
+          device,
+          this.getDeviceConfig(device)
+        )
         this.deviceWrappers.set(device, deviceWrapper)
       }
 

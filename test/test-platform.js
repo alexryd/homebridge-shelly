@@ -225,6 +225,7 @@ describe('ShellyPlatform', function() {
       deviceWrapper = new ShellyPlatform.DeviceWrapper(
         platform,
         device,
+        {},
         ...platform.createAccessoriesForDevice(device)
       )
     })
@@ -570,6 +571,23 @@ describe('DeviceWrapper', function() {
   })
 
   describe('#constructor()', function() {
+    it(
+      'should invoke setAuthCredentials() when credentials are given',
+      function() {
+        const d = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
+        const setAuthCredentials = sinon.stub(d, 'setAuthCredentials')
+
+        // eslint-disable-next-line no-new
+        new ShellyPlatform.DeviceWrapper(platform, d, {
+          username: 'foo',
+          password: 'bar',
+        })
+
+        setAuthCredentials.calledOnce.should.be.true()
+        setAuthCredentials.calledWith('foo', 'bar').should.be.true()
+      }
+    )
+
     it('should invoke loadSettings() if the device is online', function() {
       const loadSettings = sinon.stub(
         ShellyPlatform.DeviceWrapper.prototype,
