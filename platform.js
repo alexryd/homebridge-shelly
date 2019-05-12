@@ -10,6 +10,7 @@ module.exports = homebridge => {
     Shelly2WindowCoveringAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyHDSwitchAccessory,
     ShellyHTAccessory,
     ShellyPlugSwitchAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
@@ -322,6 +323,8 @@ module.exports = homebridge => {
         return multiple(4)
       } else if (type === 'SHSW-21' && mode !== 'roller') {
         return multiple(2)
+      } else if (type === 'SHSW-22') {
+        return multiple(2)
       } else if (type === 'SHSW-25' && mode !== 'roller') {
         return multiple(2)
       } else if (type === 'SHSW-44') {
@@ -375,6 +378,8 @@ module.exports = homebridge => {
           } else {
             return new Shelly2SwitchAccessory(log, device, ctx.index, pa)
           }
+        case 'SHSW-22':
+          return new ShellyHDSwitchAccessory(log, device, ctx.index, pa)
         case 'SHSW-44':
           return new Shelly4ProSwitchAccessory(log, device, ctx.index, pa)
         case 'SHSW-PM':

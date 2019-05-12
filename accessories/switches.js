@@ -210,6 +210,21 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyHDSwitchAccessory extends ShellySwitchAccessory {
+    constructor(log, device, index, platformAccessory = null) {
+      super(log, device, index, index, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      if (d.name) {
+        return `${d.name} #${this.index}`
+      } else {
+        return `Shelly HD ${d.id} #${this.index}`
+      }
+    }
+  }
+
   class ShellyPlugSwitchAccessory extends ShellySwitchAccessory {
     constructor(log, device, platformAccessory = null) {
       super(log, device, 0, 0, platformAccessory)
@@ -228,6 +243,7 @@ module.exports = homebridge => {
     Shelly1PMSwitchAccessory,
     Shelly2SwitchAccessory,
     Shelly4ProSwitchAccessory,
+    ShellyHDSwitchAccessory,
     ShellyPlugSwitchAccessory,
   }
 }

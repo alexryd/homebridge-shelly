@@ -390,6 +390,13 @@ describe('ShellyPlatform', function() {
       }
     )
 
+    it('should create 2 accessories for Shelly HD devices', function() {
+      const accessories = platform.createAccessoriesForDevice(
+        shellies.createDevice('SHSW-22', 'ABC123', '192.168.1.2')
+      )
+      accessories.length.should.equal(2)
+    })
+
     it(
       'should create 1 accessory for Shelly 2.5 devices in roller mode',
       function() {
@@ -538,6 +545,12 @@ describe('ShellyPlatform', function() {
         should(accessory).be.ok()
       }
     )
+
+    it('should create accessories for Shelly HD devices', function() {
+      const device = shellies.createDevice('SHSW-22', '192.168.1.2', 'ABC123')
+      const accessory = platform.createAccessory(device, null, { index: 0 })
+      should(accessory).be.ok()
+    })
 
     it('should create accessories for Shelly 4Pro devices', function() {
       const device = shellies.createDevice('SHSW-44', '192.168.1.2', 'ABC123')

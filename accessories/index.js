@@ -16,6 +16,7 @@ module.exports = homebridge => {
     Shelly1SwitchAccessory,
     Shelly2SwitchAccessory,
     Shelly4ProSwitchAccessory,
+    ShellyHDSwitchAccessory,
     ShellyPlugSwitchAccessory,
   } = require('./switches')(homebridge)
 
@@ -30,6 +31,7 @@ module.exports = homebridge => {
     Shelly2WindowCoveringAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyHDSwitchAccessory,
     ShellyHTAccessory,
     ShellyPlugSwitchAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
