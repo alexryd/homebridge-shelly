@@ -349,6 +349,7 @@ module.exports = homebridge => {
         case 'SHHT-1':
           return new ShellyHTAccessory(log, device, pa)
         case 'SHPLG-1':
+        case 'SHPLG-S':
         case 'SHPLG2-1':
           return new ShellyPlugSwitchAccessory(log, device, pa)
         case 'SHRGBW2':

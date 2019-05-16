@@ -232,7 +232,7 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
-      const n = d.type === 'SHPLG2-1' ? 'Plug S' : 'Plug'
+      const n = d.type === 'SHPLG-S' ? 'Plug S' : 'Plug'
       return d.name || `Shelly ${n} ${d.id}`
     }
   }

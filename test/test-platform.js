@@ -445,7 +445,7 @@ describe('ShellyPlatform', function() {
     })
 
     it('should create accessories for Shelly Plug S devices', function() {
-      const device = shellies.createDevice('SHPLG2-1', '192.168.1.2', 'ABC123')
+      const device = shellies.createDevice('SHPLG-S', '192.168.1.2', 'ABC123')
       const accessory = platform.createAccessory(device)
       should(accessory).be.ok()
     })
