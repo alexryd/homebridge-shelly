@@ -22,7 +22,7 @@ Currently the following devices are supported:
 
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
-must have been calibrated.
+must have been calibrated and be running firmware version 1.4.9 or later.
 
 <sup>2</sup> Because of a bug in the Shelly firmware there is currently no
 support for dimming the Shelly Bulb.
