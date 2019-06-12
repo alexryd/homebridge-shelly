@@ -29,6 +29,10 @@ describe('ShellyPlatform', function() {
   })
 
   describe('#constructor()', function() {
+    it('should not throw when no config is given', function() {
+      should(() => new ShellyPlatform(log)).not.throw()
+    })
+
     it('should invoke configure()', function() {
       const configure = sinon.stub(
         ShellyPlatform.prototype,

@@ -133,7 +133,7 @@ module.exports = homebridge => {
   class ShellyPlatform {
     constructor(log, config) {
       this.log = log
-      this.config = config
+      this.config = config || {}
       this.deviceConfigs = new Map()
       this.deviceWrappers = new Map()
 
@@ -149,7 +149,7 @@ module.exports = homebridge => {
           `${num} ${num === 1 ? 'device' : 'devices'} loaded from cache`
         )
 
-        shellies.start(config.networkInterface)
+        shellies.start(this.config.networkInterface)
       })
     }
 
