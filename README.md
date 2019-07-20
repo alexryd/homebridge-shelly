@@ -112,4 +112,4 @@ I develop this plugin in my spare time. If you like it and you find it useful,
 please consider donating a small amount by clicking the button below. That will
 allow me to buy new Shelly devices so that I can add support for them.
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=P52VXJECUYTG8&source=url)
+<a href='https://ko-fi.com/S6S3ZKXP' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
