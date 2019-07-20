@@ -71,7 +71,7 @@ describe('ShellySwitchAccessory', function() {
       const pa = accessory.createPlatformAccessory()
       let value = null
 
-      for (let c of pa.getService(Service.Switch).characteristics.values()) {
+      for (const c of pa.getService(Service.Switch).characteristics.values()) {
         if (c.UUID === ConsumptionCharacteristic.UUID) {
           value = c.value
         }
@@ -85,9 +85,10 @@ describe('ShellySwitchAccessory', function() {
       function() {
         const a = new ShellySwitchAccessory(device, 0, {}, log)
         const pa = a.createPlatformAccessory()
+        const switchService = pa.getService(Service.Switch)
         let found = false
 
-        for (let c of pa.getService(Service.Switch).characteristics.values()) {
+        for (const c of switchService.characteristics.values()) {
           if (c.UUID === ConsumptionCharacteristic.UUID) {
             found = true
             break
@@ -167,7 +168,7 @@ describe('ShellySwitchAccessory', function() {
       const pa = accessory.platformAccessory
       let consumption = null
 
-      for (let c of pa.getService(Service.Switch).characteristics.values()) {
+      for (const c of pa.getService(Service.Switch).characteristics.values()) {
         if (c.UUID === ConsumptionCharacteristic.UUID) {
           consumption = c
           break

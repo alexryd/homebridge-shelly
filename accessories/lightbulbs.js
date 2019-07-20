@@ -87,7 +87,7 @@ module.exports = homebridge => {
           this.saturation
         )
 
-      if (this.device.hasOwnProperty('gain')) {
+      if (Object.prototype.hasOwnProperty.call(this.device, 'gain')) {
         lightbulbService.setCharacteristic(
           Characteristic.Brightness,
           this.device.gain
@@ -168,7 +168,7 @@ module.exports = homebridge => {
         d.on('change:white', this.colorChangeHandler, this)
       }
 
-      if (this.device.hasOwnProperty('gain')) {
+      if (Object.prototype.hasOwnProperty.call(this.device, 'gain')) {
         lightbulbService
           .getCharacteristic(Characteristic.Brightness)
           .on('set', async (newValue, callback) => {

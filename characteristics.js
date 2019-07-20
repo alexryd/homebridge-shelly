@@ -11,7 +11,7 @@ module.exports = homebridge => {
         minValue: 0,
         maxValue: 65535,
         minStep: 0.1,
-        perms: [ Characteristic.Perms.READ, Characteristic.Perms.NOTIFY ],
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY],
       })
       this.value = this.getDefaultValue()
     }

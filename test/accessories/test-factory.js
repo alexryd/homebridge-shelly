@@ -36,14 +36,14 @@ describe('AccessoryFactory', function() {
 
   describe('#getAccessoryConfig()', function() {
     it('should return the config for the given index', function() {
-      const config = { accessories: [ {}, { foo: 'bar' } ] }
+      const config = { accessories: [{}, { foo: 'bar' }] }
       AccessoryFactory.getAccessoryConfig(config, 1).foo.should.equal('bar')
     })
 
     it('should merge accessory and device configs', function() {
       const accessoryConfig = { foo: 'bar' }
       const config = {
-        accessories: [ accessoryConfig ],
+        accessories: [accessoryConfig],
         foo: 'baz',
         bar: 'baz'
       }
