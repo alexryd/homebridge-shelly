@@ -24,8 +24,10 @@ describe('ShellySensorAccessory', function() {
   beforeEach(function() {
     device = shellies.createDevice('SHSEN-1', 'ABC123', '192.168.1.2')
     accessory = new ShellySensorAccessory(
-      log,
       device,
+      0,
+      {},
+      log,
       ['motion', 'temperature', 'humidity', 'illuminance']
     )
   })
@@ -239,7 +241,7 @@ describe('ShellyHTAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHHT-1', 'ABC123', '192.168.1.2')
-    accessory = new ShellyHTAccessory(log, device)
+    accessory = new ShellyHTAccessory(device, 0, {}, log)
   })
 
   afterEach(function() {
@@ -328,7 +330,7 @@ describe('ShellySenseAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHSEN-1', 'ABC123', '192.168.1.2')
-    accessory = new ShellySenseAccessory(log, device)
+    accessory = new ShellySenseAccessory(device, 0, {}, log)
   })
 
   afterEach(function() {

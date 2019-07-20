@@ -59,7 +59,7 @@ describe('ShellyColorLightbulbAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHRGBW2', 'ABC123', '192.168.1.2', 'color')
-    accessory = new ShellyColorLightbulbAccessory(log, device)
+    accessory = new ShellyColorLightbulbAccessory(device, 0, {}, log)
   })
 
   afterEach(function() {
@@ -123,7 +123,7 @@ describe('ShellyColorLightbulbAccessory', function() {
 
     it('should skip Brightness for devices without gain', function() {
       const d = shellies.createDevice('SHBLB-1', 'ABC123', '192.168.1.2')
-      const a = new ShellyColorLightbulbAccessory(log, d)
+      const a = new ShellyColorLightbulbAccessory(d, 0, {}, log)
 
       should.not.exist(d.gain)
 
@@ -324,8 +324,11 @@ describe('ShellyWhiteLightbulbAccessory', function() {
   beforeEach(function() {
     device = shellies.createDevice('SHRGBW2', 'ABC123', '192.168.1.2', 'white')
     accessory = new ShellyWhiteLightbulbAccessory(
-      log,
       device,
+      0,
+      {},
+      log,
+      null,
       'switch0',
       'brightness0'
     )
@@ -468,7 +471,7 @@ describe('ShellyBulbColorLightbulbAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHBLB-1', 'ABC123', '192.168.1.2')
-    accessory = new ShellyBulbColorLightbulbAccessory(log, device)
+    accessory = new ShellyBulbColorLightbulbAccessory(device, 0, {}, log)
   })
 
   describe('#name', function() {
@@ -490,7 +493,7 @@ describe('ShellyRGBW2ColorLightbulbAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHRGBW2', 'ABC123', '192.168.1.2', 'color')
-    accessory = new ShellyRGBW2ColorLightbulbAccessory(log, device)
+    accessory = new ShellyRGBW2ColorLightbulbAccessory(device, 0, {}, log)
   })
 
   describe('#name', function() {
@@ -519,7 +522,7 @@ describe('ShellyRGBW2WhiteLightbulbAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHRGBW2', 'ABC123', '192.168.1.2', 'white')
-    accessory = new ShellyRGBW2WhiteLightbulbAccessory(log, device, 1)
+    accessory = new ShellyRGBW2WhiteLightbulbAccessory(device, 1, {}, log)
   })
 
   afterEach(function() {

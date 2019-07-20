@@ -22,7 +22,7 @@ describe('Shelly2WindowCoveringAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-25', 'ABC123', '192.168.1.2', 'roller')
-    accessory = new Shelly2WindowCoveringAccessory(log, device)
+    accessory = new Shelly2WindowCoveringAccessory(device, 0, {}, log)
   })
 
   afterEach(function() {

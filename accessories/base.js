@@ -6,9 +6,13 @@ module.exports = homebridge => {
   const uuid = homebridge.hap.uuid
 
   class ShellyAccessory {
-    constructor(log, device, platformAccessory = null, props = null) {
-      this.log = log
+    constructor(accessoryType, device, index, config, log,
+      platformAccessory = null, props = null) {
+      this.accessoryType = accessoryType
       this.device = device
+      this.index = index
+      this.config = config
+      this.log = log
       this.platformAccessory = platformAccessory
 
       if (props) {
@@ -25,7 +29,7 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
-      return d.name || `${d.type} ${d.id}`
+      return d.name || `${d.type} ${d.id} ${this.index}`
     }
 
     createPlatformAccessory() {
@@ -44,6 +48,8 @@ module.exports = homebridge => {
         type: d.type,
         id: d.id,
         host: d.host,
+        accessoryType: this.accessoryType,
+        index: this.index,
       }
 
       pa.updateReachability(d.online)

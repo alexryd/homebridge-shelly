@@ -19,7 +19,7 @@ describe('ShellyAccessory', function() {
 
   beforeEach(function() {
     device = shellies.createDevice('SHSW-1', 'ABC123', '192.168.1.2')
-    accessory = new ShellyAccessory(log, device)
+    accessory = new ShellyAccessory('switch', device, 0, {}, log)
   })
 
   afterEach(function() {
@@ -28,19 +28,30 @@ describe('ShellyAccessory', function() {
 
   describe('#constructor()', function() {
     it('should create a platform accessory when none is supplied', function() {
-      const a = new ShellyAccessory(log, device)
+      const a = new ShellyAccessory('switch', device, 0, {}, log)
       a.platformAccessory.should.be.ok()
     })
 
-    it('should not create a platform access when one is supplied', function() {
-      // eslint-disable-next-line new-cap
-      const platformAccessory = new homebridge.platformAccessory()
-      const a = new ShellyAccessory(log, device, platformAccessory)
-      a.platformAccessory.should.equal(platformAccessory)
-    })
+    it(
+      'should not create a platform accessory when one is supplied',
+      function() {
+        // eslint-disable-next-line new-cap
+        const platformAccessory = new homebridge.platformAccessory()
+        const a = new ShellyAccessory(
+          'switch',
+          device,
+          0,
+          {},
+          log,
+          platformAccessory
+        )
+
+        a.platformAccessory.should.equal(platformAccessory)
+      }
+    )
 
     it('should set all additional properties', function() {
-      const a = new ShellyAccessory(log, device, null, {
+      const a = new ShellyAccessory('switch', device, 0, {}, log, null, {
         foo: 'bar',
         bar: 'baz',
       })
@@ -57,7 +68,8 @@ describe('ShellyAccessory', function() {
         ShellyAccessory.prototype,
         'setupEventHandlers'
       )
-      new ShellyAccessory(log, device) // eslint-disable-line no-new
+      // eslint-disable-next-line no-new
+      new ShellyAccessory('switch', device, 0, {}, log)
 
       updateSettings.calledOnce.should.be.true()
       setupEventHandlers.calledOnce.should.be.true()
@@ -98,6 +110,12 @@ describe('ShellyAccessory', function() {
       pa.context.type.should.equal(device.type)
       pa.context.id.should.equal(device.id)
       pa.context.host.should.equal(device.host)
+    })
+
+    it('should store accessory info in the context', function() {
+      const pa = accessory.createPlatformAccessory()
+      pa.context.accessoryType.should.equal('switch')
+      pa.context.index.should.equal(0)
     })
 
     it(

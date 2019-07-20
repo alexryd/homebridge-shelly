@@ -10,17 +10,24 @@ module.exports = homebridge => {
   const ShellyAccessory = require('./base')(homebridge)
 
   class ShellySwitchAccessory extends ShellyAccessory {
-    constructor(log, device, index, powerMeterIndex = null,
-      platformAccessory = null
+    constructor(device, index, config, log, platformAccessory = null,
+      powerMeterIndex = null, props = null
     ) {
-      super(log, device, platformAccessory, { index, powerMeterIndex })
+      super(
+        'switch',
+        device,
+        index,
+        config,
+        log,
+        platformAccessory,
+        Object.assign({ powerMeterIndex }, props)
+      )
     }
 
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
 
       pa.category = Accessory.Categories.SWITCH
-      pa.context.index = this.index
 
       const switchService = new Service.Switch()
         .setCharacteristic(
@@ -151,8 +158,8 @@ module.exports = homebridge => {
   }
 
   class Shelly1SwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, 0, null, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory)
     }
 
     get name() {
@@ -162,8 +169,8 @@ module.exports = homebridge => {
   }
 
   class Shelly1PMSwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, 0, 0, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory, index)
     }
 
     get name() {
@@ -173,9 +180,16 @@ module.exports = homebridge => {
   }
 
   class Shelly2SwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, index, platformAccessory = null) {
-      const powerMeterIndex = device.type === 'SHSW-21' ? 0 : index
-      super(log, device, index, powerMeterIndex, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(
+        device,
+        index,
+        config,
+        log,
+        platformAccessory,
+        // Shelly 2 has a single power meter
+        device.type === 'SHSW-21' ? 0 : index
+      )
     }
 
     createPlatformAccessory() {
@@ -196,8 +210,8 @@ module.exports = homebridge => {
   }
 
   class Shelly4ProSwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, index, platformAccessory = null) {
-      super(log, device, index, index, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory, index)
     }
 
     get name() {
@@ -211,8 +225,8 @@ module.exports = homebridge => {
   }
 
   class ShellyHDSwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, index, platformAccessory = null) {
-      super(log, device, index, index, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory, index)
     }
 
     get name() {
@@ -226,8 +240,8 @@ module.exports = homebridge => {
   }
 
   class ShellyPlugSwitchAccessory extends ShellySwitchAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, 0, 0, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory, index)
     }
 
     get name() {

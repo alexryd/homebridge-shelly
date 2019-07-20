@@ -35,8 +35,10 @@ module.exports = homebridge => {
   const ShellyAccessory = require('./base')(homebridge)
 
   class ShellyColorLightbulbAccessory extends ShellyAccessory {
-    constructor(log, device, colorMode = 'rgbw', platformAccessory = null,
+    constructor(device, index, config, log, platformAccessory = null,
       props = null) {
+      const colorMode = config.colorMode || 'rgbw'
+
       if (colorMode !== 'rgb' && colorMode !== 'rgbw') {
         throw new Error(`Invalid color mode "${colorMode}"`)
       }
@@ -50,8 +52,11 @@ module.exports = homebridge => {
       )
 
       super(
-        log,
+        'colorLightbulb',
         device,
+        index,
+        config,
+        log,
         platformAccessory,
         Object.assign({
           colorMode,
@@ -338,12 +343,15 @@ module.exports = homebridge => {
   }
 
   class ShellyWhiteLightbulbAccessory extends ShellyAccessory {
-    constructor(log, device, switchProperty = 'switch',
-      brightnessProperty = 'brightness', platformAccessory = null,
+    constructor(device, index, config, log, platformAccessory = null,
+      switchProperty = 'switch', brightnessProperty = 'brightness',
       props = null) {
       super(
-        log,
+        'whiteLightbulb',
         device,
+        index,
+        config,
+        log,
         platformAccessory,
         Object.assign({
           _switchProperty: switchProperty,
@@ -522,8 +530,8 @@ module.exports = homebridge => {
 
   class ShellyBulbColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, 'rgbw', platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory)
     }
 
     get name() {
@@ -534,8 +542,8 @@ module.exports = homebridge => {
 
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
-    constructor(log, device, colorMode = 'rgbw', platformAccessory = null) {
-      super(log, device, colorMode, platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory)
     }
 
     get name() {
@@ -552,14 +560,15 @@ module.exports = homebridge => {
 
   class ShellyRGBW2WhiteLightbulbAccessory
     extends ShellyWhiteLightbulbAccessory {
-    constructor(log, device, index, platformAccessory = null) {
+    constructor(device, index, config, log, platformAccessory = null) {
       super(
-        log,
         device,
-        `switch${index}`,
-        `brightness${index}`,
+        index,
+        config,
+        log,
         platformAccessory,
-        { index }
+        `switch${index}`,
+        `brightness${index}`
       )
     }
 
@@ -575,7 +584,6 @@ module.exports = homebridge => {
     createPlatformAccessory() {
       const pa = super.createPlatformAccessory()
       pa.context.mode = 'white'
-      pa.context.index = this.index
       return pa
     }
 

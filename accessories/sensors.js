@@ -29,8 +29,8 @@ module.exports = homebridge => {
   }
 
   class ShellySensorAccessory extends ShellyAccessory {
-    constructor(log, device, types, platformAccessory = null) {
-      super(log, device, platformAccessory, {
+    constructor(device, index, config, log, types, platformAccessory = null) {
+      super('sensor', device, index, config, log, platformAccessory, {
         _types: new Set(types),
       })
     }
@@ -184,8 +184,15 @@ module.exports = homebridge => {
   }
 
   class ShellyHTAccessory extends ShellySensorAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, ['temperature', 'humidity'], platformAccessory)
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(
+        device,
+        index,
+        config,
+        log,
+        ['temperature', 'humidity'],
+        platformAccessory
+      )
     }
 
     get name() {
@@ -243,10 +250,12 @@ module.exports = homebridge => {
   }
 
   class ShellySenseAccessory extends ShellySensorAccessory {
-    constructor(log, device, platformAccessory = null) {
+    constructor(device, index, config, log, platformAccessory = null) {
       super(
-        log,
         device,
+        index,
+        config,
+        log,
         ['motion', 'temperature', 'humidity', 'illuminance'],
         platformAccessory
       )

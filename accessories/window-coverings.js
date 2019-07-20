@@ -12,8 +12,8 @@ module.exports = homebridge => {
   positionStates.set('close', Characteristic.PositionState.DECREASING)
 
   class Shelly2WindowCoveringAccessory extends ShellyAccessory {
-    constructor(log, device, platformAccessory = null) {
-      super(log, device, platformAccessory, {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super('windowCovering', device, index, config, log, platformAccessory, {
         targetPosition: device.rollerPosition,
         _updatingTargetPosition: false,
       })
