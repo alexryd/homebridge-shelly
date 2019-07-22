@@ -10,6 +10,7 @@ module.exports = homebridge => {
       this.config = config || {}
       this.deviceConfigs = new Map()
       this.deviceWrappers = new Map()
+      this.stalePlatformAccessories = new Set()
 
       this.configure()
 
@@ -23,6 +24,7 @@ module.exports = homebridge => {
           `${num} ${num === 1 ? 'device' : 'devices'} loaded from cache`
         )
 
+        this.handleStalePlatformAccessories()
         shellies.start(this.config.networkInterface)
       })
     }
@@ -157,12 +159,40 @@ module.exports = homebridge => {
       const ctx = platformAccessory.context
       const deviceConfig = this.getDeviceConfig(ctx.id)
 
+      if (deviceConfig.exclude ||
+          this.accessoryTypeHasChanged(ctx, deviceConfig)) {
+        this.stalePlatformAccessories.add(platformAccessory)
+        return
+      }
+
       this.log.debug(
-        'Configuring cached accessory for device',
+        'Configuring cached accessory',
+        '#' + (ctx.index || 0),
+        'for device',
         ctx.type,
         ctx.id
       )
 
+      this.createAccessoryFromContext(ctx, platformAccessory)
+    }
+
+    accessoryTypeHasChanged(ctx, deviceConfig) {
+      const accessoryConfig = AccessoryFactory.getAccessoryConfig(
+        deviceConfig,
+        ctx.index || 0
+      )
+      const defaultAccessoryType = AccessoryFactory.getDefaultAccessoryType(
+        ctx.type,
+        ctx.mode
+      )
+      const oldAccessoryType = ctx.accessoryType || defaultAccessoryType
+      const newAccessoryType = accessoryConfig.type || defaultAccessoryType
+
+      return oldAccessoryType !== newAccessoryType
+    }
+
+    createAccessoryFromContext(ctx, platformAccessory = null) {
+      const deviceConfig = this.getDeviceConfig(ctx.id)
       let device = shellies.getDevice(ctx.type, ctx.id)
 
       if (!device) {
@@ -188,6 +218,48 @@ module.exports = homebridge => {
       if (accessory) {
         deviceWrapper.accessories.push(accessory)
       }
+
+      return accessory
+    }
+
+    handleStalePlatformAccessories() {
+      if (this.stalePlatformAccessories.size > 0) {
+        homebridge.unregisterPlatformAccessories(
+          'homebridge-shelly',
+          'Shelly',
+          Array.from(this.stalePlatformAccessories)
+        )
+      }
+
+      for (const platformAccessory of this.stalePlatformAccessories) {
+        const ctx = platformAccessory.context
+        const deviceConfig = this.getDeviceConfig(ctx.id)
+
+        if (deviceConfig.exclude) {
+          continue
+        }
+
+        this.log.debug(
+          'Recreating accessory',
+          '#' + (ctx.index || 0),
+          'for device',
+          ctx.type,
+          ctx.id,
+          'since its configured type has changed'
+        )
+
+        const accessory = this.createAccessoryFromContext(ctx)
+
+        if (accessory) {
+          homebridge.registerPlatformAccessories(
+            'homebridge-shelly',
+            'Shelly',
+            [accessory.platformAccessory]
+          )
+        }
+      }
+
+      delete this.stalePlatformAccessories
     }
   }
 
