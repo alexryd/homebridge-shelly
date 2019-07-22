@@ -19,9 +19,12 @@ module.exports = homebridge => {
         .on('stale', this.deviceStaleHandler, this)
 
       homebridge.on('didFinishLaunching', () => {
-        const num = this.deviceWrappers.size
+        const num = Array.from(this.deviceWrappers.values()).reduce(
+          (n, dw) => n + dw.platformAccessories.length,
+          0
+        )
         this.log.info(
-          `${num} ${num === 1 ? 'device' : 'devices'} loaded from cache`
+          `${num} ${num === 1 ? 'accessory' : 'accessories'} loaded from cache`
         )
 
         this.handleStalePlatformAccessories()
