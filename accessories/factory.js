@@ -130,7 +130,7 @@ module.exports = homebridge => {
       const multiple = num => {
         return Array.from(
           { length: num },
-          (_, i) => this.createAccessory(device, config, i, log)
+          (_, i) => this.createAccessory(device, i, config, log)
         )
       }
 
@@ -146,7 +146,7 @@ module.exports = homebridge => {
         return multiple(4)
       }
 
-      const accessory = this.createAccessory(device, config, 0, log)
+      const accessory = this.createAccessory(device, 0, config, log)
       if (accessory) {
         return [accessory]
       }
