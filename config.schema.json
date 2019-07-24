@@ -1,0 +1,16 @@
+{
+  "pluginAlias": "Shelly",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Shelly",
+        "required": true
+      }
+    }
+  }
+}
