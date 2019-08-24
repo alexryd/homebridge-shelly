@@ -24,8 +24,7 @@ Currently the following devices are supported:
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
 must have been calibrated and be running firmware version 1.4.9 or later.
 
-<sup>2</sup> Because of a bug in the Shelly firmware there is currently no
-support for dimming the Shelly Bulb.
+<sup>2</sup> Requires firmware version 1.5.1 or later.
 
 ## Installation
 1. Install homebridge by following

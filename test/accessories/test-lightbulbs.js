@@ -120,20 +120,6 @@ describe('ShellyColorLightbulbAccessory', function() {
         .value
         .should.equal(13)
     })
-
-    it('should skip Brightness for devices without gain', function() {
-      const d = shellies.createDevice('SHBLB-1', 'ABC123', '192.168.1.2')
-      const a = new ShellyColorLightbulbAccessory(d, 0, {}, log)
-
-      should.not.exist(d.gain)
-
-      const pa = a.createPlatformAccessory()
-      should(
-        pa.getService(Service.Lightbulb)
-          .getCharacteristic(Characteristic.Brightness)
-          .value
-      ).not.be.ok()
-    })
   })
 
   describe('#setupEventHandlers()', function() {

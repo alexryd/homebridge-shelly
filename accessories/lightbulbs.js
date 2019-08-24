@@ -86,13 +86,10 @@ module.exports = homebridge => {
           Characteristic.Saturation,
           this.saturation
         )
-
-      if (Object.prototype.hasOwnProperty.call(this.device, 'gain')) {
-        lightbulbService.setCharacteristic(
+        .setCharacteristic(
           Characteristic.Brightness,
           this.device.gain
         )
-      }
 
       pa.addService(lightbulbService)
 
@@ -158,44 +155,41 @@ module.exports = homebridge => {
           callback()
         })
 
+      lightbulbService
+        .getCharacteristic(Characteristic.Brightness)
+        .on('set', async (newValue, callback) => {
+          if (this.device.gain === newValue) {
+            callback()
+            return
+          }
+
+          try {
+            this.log.debug(
+              'Setting gain on device',
+              d.type,
+              d.id,
+              'to',
+              newValue
+            )
+            await d.setColor({
+              gain: newValue,
+            })
+            callback()
+          } catch (e) {
+            handleFailedRequest(this.log, d, e, 'Failed to set gain')
+            callback(e)
+          }
+        })
+
       d
         .on('change:switch', this.switchChangeHandler, this)
         .on('change:red', this.colorChangeHandler, this)
         .on('change:green', this.colorChangeHandler, this)
         .on('change:blue', this.colorChangeHandler, this)
+        .on('change:gain', this.gainChangeHandler, this)
 
       if (this.colorMode === 'rgbw') {
         d.on('change:white', this.colorChangeHandler, this)
-      }
-
-      if (Object.prototype.hasOwnProperty.call(this.device, 'gain')) {
-        lightbulbService
-          .getCharacteristic(Characteristic.Brightness)
-          .on('set', async (newValue, callback) => {
-            if (this.device.gain === newValue) {
-              callback()
-              return
-            }
-
-            try {
-              this.log.debug(
-                'Setting gain on device',
-                d.type,
-                d.id,
-                'to',
-                newValue
-              )
-              await d.setColor({
-                gain: newValue,
-              })
-              callback()
-            } catch (e) {
-              handleFailedRequest(this.log, d, e, 'Failed to set gain')
-              callback(e)
-            }
-          })
-
-        d.on('change:gain', this.gainChangeHandler, this)
       }
     }
 
