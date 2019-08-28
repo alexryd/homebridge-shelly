@@ -21,6 +21,7 @@ const {
   Shelly1SwitchAccessory,
   Shelly2SwitchAccessory,
   Shelly4ProSwitchAccessory,
+  ShellyEMSwitchAccessory,
   ShellyHDSwitchAccessory,
   ShellyPlugSwitchAccessory,
 } = require('../../accessories/switches')(homebridge)
@@ -271,6 +272,28 @@ describe('Shelly4ProSwitchAccessory', function() {
     it('should return the device name when one is set', function() {
       device.name = 'foo'
       accessory.name.indexOf(device.name).should.not.equal(-1)
+    })
+
+    it('should generate a proper name when no device name is set', function() {
+      accessory.name.should.be.ok()
+      accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+})
+
+describe('ShellyEMSwitchAccessory', function() {
+  let device = null
+  let accessory = null
+
+  beforeEach(function() {
+    device = shellies.createDevice('SHEM', 'ABC123', '192.168.1.2')
+    accessory = new ShellyEMSwitchAccessory(device, 0, {}, log)
+  })
+
+  describe('#name', function() {
+    it('should return the device name when one is set', function() {
+      device.name = 'foo'
+      accessory.name.should.equal(device.name)
     })
 
     it('should generate a proper name when no device name is set', function() {
