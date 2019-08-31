@@ -18,7 +18,7 @@ describe('ShellyPlatform', function() {
   let start = null
 
   beforeEach(function() {
-    platform = new ShellyPlatform(log, {})
+    platform = new ShellyPlatform(log, { admin: { enabled: false } })
     start = sinon.stub(shellies, 'start')
   })
 
@@ -82,7 +82,11 @@ describe('ShellyPlatform', function() {
     it(
       'should invoke start() when `didFinishLaunching` is emitted',
       function() {
-        new ShellyPlatform(log, {}) // eslint-disable-line no-new
+        new ShellyPlatform(log, { // eslint-disable-line no-new
+          admin: {
+            enabled: false,
+          },
+        })
         homebridge.emit('didFinishLaunching')
 
         start.called.should.be.true()
@@ -94,6 +98,9 @@ describe('ShellyPlatform', function() {
 
       new ShellyPlatform(log, { // eslint-disable-line no-new
         networkInterface,
+        admin: {
+          enabled: false,
+        },
       })
       homebridge.emit('didFinishLaunching')
 
