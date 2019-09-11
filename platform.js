@@ -35,7 +35,7 @@ module.exports = homebridge => {
 
         if (!this.config.admin || this.config.admin.enabled !== false) {
           // start the admin server
-          this.adminServer = new AdminServer(this, this.config.admin || {})
+          this.adminServer = new AdminServer(this, this.config.admin || {}, log)
           this.adminServer.listen().then(port => {
             this.log.info(`Admin server is running on port ${port}`)
           })

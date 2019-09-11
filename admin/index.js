@@ -4,12 +4,13 @@ const path = require('path')
 const api = require('./api')
 
 class AdminServer {
-  constructor(platform, config) {
+  constructor(platform, config, log) {
     this.platform = platform
     this.config = config
+    this.log = log
 
     this.app = express()
-    this.app.use('/api', api(platform, config))
+    this.app.use('/api', api(platform, config, log))
     this.app.use('/', express.static(path.join(__dirname, 'static')))
   }
 
