@@ -103,3 +103,8 @@ h1 {
   padding-left: 1rem;
   border-left: 1px solid #f2f0f2;
 }
+
+#devices-list .empty-list {
+  font-style: italic;
+  color: #555;
+}

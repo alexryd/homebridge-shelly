@@ -9,8 +9,16 @@ function loadDevices() {
       var devices = result.data.slice().sort(function(a, b) {
         return String(a.type + a.id).localeCompare(b.type + b.id)
       })
-      for (var i = 0; i < devices.length; i++) {
-        renderDevice(list, devices[i])
+
+      if (devices.length > 0) {
+        for (var i = 0; i < devices.length; i++) {
+          renderDevice(list, devices[i])
+        }
+      } else {
+        list.append(
+          $('<div class="empty-list">')
+            .text('No devices discovered')
+        )
       }
     }
   })
