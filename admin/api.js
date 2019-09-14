@@ -10,7 +10,7 @@ module.exports = (platform, config, log) => {
       type: device.type,
       id: device.id,
       host: device.host,
-      online: device.id === '8A514E' ? false : device.online,
+      online: device.online,
       unknown: shellies.isUnknownDevice(device),
       excluded: !platform.deviceWrappers.has(device),
     }
