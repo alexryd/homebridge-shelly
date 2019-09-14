@@ -6,7 +6,9 @@ function loadDevices() {
   $.ajax({
     url: '/api/devices',
     success: function(result) {
-      var devices = result.data
+      var devices = result.data.slice().sort(function(a, b) {
+        return String(a.type + a.id).localeCompare(b.type + b.id)
+      })
       for (var i = 0; i < devices.length; i++) {
         renderDevice(list, devices[i])
       }
