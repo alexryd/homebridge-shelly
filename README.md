@@ -50,7 +50,8 @@ on the same network and subnet as the device running homebridge.
 ### Network interface
 Sometimes setting the `"networkInterface"` option to the local IP address of
 your device will help when your devices aren't automatically discovered, or
-you see error messages like `addMembership EADDRNOTAVAIL`.
+you see error messages like `addMembership EADDRNOTAVAIL` or
+`addMembership EADDRINUSE`.
 
 ### Authentication
 Set the `"username"` and `"password"` options if you have restricted the web
