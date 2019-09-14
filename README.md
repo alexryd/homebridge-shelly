@@ -47,6 +47,11 @@ enough:
 Your Shelly devices will then be automatically discovered, as long as they are
 on the same network and subnet as the device running homebridge.
 
+To see a list of all discovered devices, visit the administration page by going
+to `http://<IP-ADDRESS>:<PORT>/`, where IP-ADDRESS is the IP address of the
+device that you are running homebridge on, and PORT is the configured port
+number (8080 by default, see below).
+
 ### Network interface
 Sometimes setting the `"networkInterface"` option to the local IP address of
 your device will help when your devices aren't automatically discovered, or
@@ -66,6 +71,11 @@ requests to the Shelly devices. Specify in milliseconds. Default is 10 seconds.
 Use the `"staleTimeout"` option to configure how long a device can be offline
 before it is regarded as stale and unregistered from HomeKit. Specify in
 milliseconds. Set to `0` or `false` to disable. Disabled by default.
+
+### Administration interface
+By default, this plugin will launch an HTTP server on port 8080 to serve an
+administration interface. You can disable this by setting `"admin"."enabled"`
+to `false`. You can also change the port number using `"admin"."port"`.
 
 ### Device specific configurations
 Configurations for specific Shelly devices can be set using the `"devices"`
