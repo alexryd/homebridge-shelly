@@ -64,7 +64,7 @@ requests to the Shelly devices. Specify in milliseconds. Default is 10 seconds.
 ### Stale timeout
 Use the `"staleTimeout"` option to configure how long a device can be offline
 before it is regarded as stale and unregistered from HomeKit. Specify in
-milliseconds. Default is 8 hours.
+milliseconds. Set to `0` or `false` to disable. Disabled by default.
 
 ### Device specific configurations
 Configurations for specific Shelly devices can be set using the `"devices"`
