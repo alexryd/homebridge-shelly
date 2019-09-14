@@ -94,17 +94,23 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
 
-#### Example configuration
+### Example configuration
 ```json
 "platforms": [
   {
     "platform": "Shelly",
     "name": "Shelly",
+    "username": "admin",
+    "password": "pa$$word",
     "devices": [
       { "id": "74B5A3", "exclude": true },
-      { "id": "A612F0", "username": "admin", "password": "pa$$word" },
+      { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
       { "id": "6A78BB", "colorMode": "rgb" }
-    ]
+    ],
+    "admin": {
+      "enabled": true,
+      "port": 8181
+    }
   }
 ]
 ```
