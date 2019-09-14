@@ -18,6 +18,8 @@ class AdminServer {
     return new Promise((resolve, reject) => {
       const server = this.app.listen(this.config.port || 8080, () => {
         resolve(server.address().port)
+      }).on('error', e => {
+        reject(e)
       })
     })
   }
