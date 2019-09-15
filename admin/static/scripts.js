@@ -37,6 +37,10 @@ function renderDevice(list, device) {
         .text(device.host)
     )
     .append(
+      $('<div class="last-seen">')
+        .append(renderLastSeen(device))
+    )
+    .append(
       $('<div class="status-badges">')
         .append(renderStatusBadges(device))
     )
@@ -53,6 +57,37 @@ function renderDevice(list, device) {
         )
     )
     .appendTo(list)
+}
+
+function renderLastSeen(device) {
+  var lastSeen = device.lastSeen
+  var label, datetime
+  var title = 'Last seen: '
+
+  if (lastSeen === null) {
+    label = 'Unknown'
+  } else if (lastSeen < 60 * 1000) {
+    label = Math.floor(lastSeen / 1000) + ' s'
+  } else if (lastSeen < 60 * 60 * 1000) {
+    label = Math.floor(lastSeen / (60 * 1000)) + ' m'
+  } else if (lastSeen < 24 * 60 * 60 * 1000) {
+    label = Math.floor(lastSeen / (60 * 60 * 1000)) + ' h'
+  } else {
+    label = Math.floor(lastSeen / (24 * 60 * 60 * 1000)) + ' d'
+  }
+
+  if (lastSeen === null) {
+    datetime = ''
+    title += 'Unknown'
+  } else {
+    datetime = new Date(Date.now() - device.lastSeen).toISOString()
+    title += new Date(Date.now() - device.lastSeen).toLocaleString()
+  }
+
+  return $('<time>')
+    .attr('datetime', datetime)
+    .attr('title', title)
+    .text(label)
 }
 
 function renderStatusBadges(device) {

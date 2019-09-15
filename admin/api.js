@@ -6,11 +6,16 @@ module.exports = (platform, config, log) => {
   api.use(express.json())
 
   const deviceToJson = device => {
+    const lastSeen = device.lastSeen
+      ? Date.now() - device.lastSeen.getTime()
+      : null
+
     return {
       type: device.type,
       id: device.id,
       host: device.host,
       online: device.online,
+      lastSeen: lastSeen,
       unknown: shellies.isUnknownDevice(device),
       excluded: !platform.deviceWrappers.has(device),
     }

@@ -60,8 +60,14 @@ h1 {
   color: #666;
 }
 
-.device .status-badges {
+.device .last-seen {
   flex-grow: 1;
+  font-style: italic;
+  color: #555;
+  text-align: right;
+}
+
+.device .status-badges {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
