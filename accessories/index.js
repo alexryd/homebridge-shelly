@@ -18,6 +18,7 @@ module.exports = homebridge => {
 
   const {
     ShellyHTAccessory,
+    ShellyFloodAccessory,
     ShellySenseAccessory,
   } = require('./sensors')(homebridge)
 
@@ -48,6 +49,7 @@ module.exports = homebridge => {
     ShellyBulbColorLightbulbAccessory,
     ShellyEMOutletAccessory,
     ShellyEMSwitchAccessory,
+    ShellyFloodAccessory,
     ShellyHDOutletAccessory,
     ShellyHDSwitchAccessory,
     ShellyHTAccessory,

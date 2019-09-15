@@ -107,6 +107,13 @@ class Hue extends Characteristic {
 }
 Characteristic.Hue = Hue
 
+class LeakDetected extends Characteristic {
+  constructor() {
+    super('LeakDetected', 'LeakDetected')
+  }
+}
+Characteristic.LeakDetected = LeakDetected
+
 class Manufacturer extends Characteristic {
   constructor() {
     super('Manufacturer', 'Manufacturer')
@@ -268,6 +275,15 @@ class HumiditySensor extends Service {
   }
 }
 Service.HumiditySensor = HumiditySensor
+
+class LeakSensor extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(LeakDetected)
+  }
+}
+Service.LeakSensor = LeakSensor
 
 class Lightbulb extends Service {
   constructor() {

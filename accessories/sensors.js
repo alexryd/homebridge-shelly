@@ -50,6 +50,16 @@ module.exports = homebridge => {
         )
       }
 
+      if (this._types.has('flood')) {
+        pa.addService(
+          new Service.LeakSensor()
+            .setCharacteristic(
+              Characteristic.LeakDetected,
+              this.device.flood
+            )
+        )
+      }
+
       if (this._types.has('temperature')) {
         const temperatureSensor = new Service.TemperatureSensor()
         temperatureSensor
@@ -90,6 +100,9 @@ module.exports = homebridge => {
       if (this._types.has('motion')) {
         d.on('change:motion', this.motionChangeHandler, this)
       }
+      if (this._types.has('flood')) {
+        d.on('change:flood', this.floodChangeHandler, this)
+      }
       if (this._types.has('temperature')) {
         d.on('change:temperature', this.temperatureChangeHandler, this)
       }
@@ -113,6 +126,21 @@ module.exports = homebridge => {
       this.platformAccessory
         .getService(Service.MotionSensor)
         .getCharacteristic(Characteristic.MotionDetected)
+        .setValue(newValue)
+    }
+
+    floodChangeHandler(newValue) {
+      this.log.debug(
+        'Flood sensor on device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.platformAccessory
+        .getService(Service.LeakSensor)
+        .getCharacteristic(Characteristic.LeakDetected)
         .setValue(newValue)
     }
 
@@ -169,6 +197,7 @@ module.exports = homebridge => {
 
       this.device
         .removeListener('change:motion', this.motionChangeHandler, this)
+        .removeListener('change:flood', this.floodChangeHandler, this)
         .removeListener(
           'change:temperature',
           this.temperatureChangeHandler,
@@ -198,6 +227,72 @@ module.exports = homebridge => {
     get name() {
       const d = this.device
       return d.name || `Shelly H&T ${d.id}`
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+
+      pa.addService(
+        setBatteryLevel(
+          new Service.BatteryService().setCharacteristic(
+            Characteristic.ChargingState,
+            Characteristic.ChargingState.NOT_CHARGEABLE
+          ),
+          this.device.battery
+        )
+      )
+
+      return pa
+    }
+
+    setupEventHandlers() {
+      super.setupEventHandlers()
+
+      this.device.on('change:battery', this.batteryChangeHandler, this)
+    }
+
+    batteryChangeHandler(newValue) {
+      this.log.debug(
+        'Battery level for device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue,
+        '%'
+      )
+
+      setBatteryLevel(
+        this.platformAccessory.getService(Service.BatteryService),
+        newValue
+      )
+    }
+
+    detach() {
+      super.detach()
+
+      this.device.removeListener(
+        'change:battery',
+        this.batteryChangeHandler,
+        this
+      )
+    }
+  }
+
+  class ShellyFloodAccessory extends ShellySensorAccessory {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(
+        device,
+        index,
+        config,
+        log,
+        ['flood', 'temperature'],
+        platformAccessory
+      )
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly Flood ${d.id}`
     }
 
     createPlatformAccessory() {
@@ -341,6 +436,7 @@ module.exports = homebridge => {
   return {
     ShellySensorAccessory,
     ShellyHTAccessory,
+    ShellyFloodAccessory,
     ShellySenseAccessory,
   }
 }
