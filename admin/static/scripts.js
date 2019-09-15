@@ -28,21 +28,27 @@ function renderDevice(list, device) {
   $('<div class="device">')
     .toggleClass('excluded', device.excluded)
     .append(
-      $('<div class="title">')
-        .text(device.type + ' ' + device.id)
+      $('<div class="heading">')
+        .append(
+          $('<div class="title">')
+            .text(device.type + ' ' + device.id)
+        )
+        .append(
+          $('<a class="host-link" target="_blank">')
+            .attr('href', 'http://' + device.host)
+            .text(device.host)
+        )
     )
     .append(
-      $('<a class="host-link" target="_blank">')
-        .attr('href', 'http://' + device.host)
-        .text(device.host)
-    )
-    .append(
-      $('<div class="last-seen">')
-        .append(renderLastSeen(device))
-    )
-    .append(
-      $('<div class="status-badges">')
-        .append(renderStatusBadges(device))
+      $('<div class="status">')
+        .append(
+          $('<div class="status-badges">')
+            .append(renderStatusBadges(device))
+        )
+        .append(
+          $('<div class="last-seen">')
+            .append(renderLastSeen(device))
+        )
     )
     .append(
       $('<div class="actions">')
