@@ -37,7 +37,7 @@ module.exports = homebridge => {
   } = require('./window-coverings')(homebridge)
   const {
     Shelly2WindowAccessory,
-  } = require('./window')(homebridge)
+  } = require('./windows')(homebridge)
   return {
     Shelly1OutletAccessory,
     Shelly1PMOutletAccessory,
