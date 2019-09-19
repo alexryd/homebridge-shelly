@@ -6,6 +6,7 @@ Accessory.Categories = {
   SENSOR: 'SENSOR',
   SWITCH: 'SWITCH',
   WINDOW_COVERING: 'WINDOW_COVERING',
+  WINDOW: 'WINDOW',
 }
 
 class Characteristic extends EventEmitter {
@@ -343,8 +344,19 @@ class WindowCovering extends Service {
     this.addCharacteristic(TargetPosition)
   }
 }
-Service.WindowCovering = WindowCovering
 
+class Window extends Service {
+  constructor() {
+    super()
+
+    this.addCharacteristic(CurrentPosition)
+    this.addCharacteristic(PositionState)
+    this.addCharacteristic(TargetPosition)
+  }
+}
+
+Service.WindowCovering = WindowCovering
+Service.Window = Window
 class Homebridge extends EventEmitter {
   constructor() {
     super()

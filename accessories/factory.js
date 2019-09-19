@@ -8,6 +8,7 @@ module.exports = homebridge => {
     Shelly2OutletAccessory,
     Shelly2SwitchAccessory,
     Shelly2WindowCoveringAccessory,
+    Shelly2WindowAccessory,
     Shelly4ProOutletAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
@@ -96,6 +97,9 @@ module.exports = homebridge => {
         case 'SHSW-21':
         case 'SHSW-25':
           if (deviceMode === 'roller') {
+            if (deviceType === 'window') {
+              return Shelly2WindowAccessory
+            }
             return Shelly2WindowCoveringAccessory
           }
           if (accessoryType === 'outlet') {
