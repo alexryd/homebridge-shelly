@@ -106,7 +106,9 @@ interface of a device, under *Settings -> Device info -> Device ID*.
     "devices": [
       { "id": "74B5A3", "exclude": true },
       { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
-      { "id": "6A78BB", "colorMode": "rgb" }
+      { "id": "6A78BB", "colorMode": "rgb" },
+      { "id": "6878CE", "type": "window", "name": "Window entrance" },
+      { "id": "68C9C0", "name": "Ceiling 3"}
     ],
     "admin": {
       "enabled": true,
