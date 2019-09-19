@@ -178,7 +178,8 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
-      return d.name || `Shelly 1 ${d.id}`
+      const c = this.config
+      return c.name || d.name || `Shelly 1 ${d.id}`
     }
   }
 
@@ -189,6 +190,10 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
+      const c = this.config
+      if (c.name) {
+        return c.name
+      }
       return d.name || `Shelly 1PM ${d.id}`
     }
   }

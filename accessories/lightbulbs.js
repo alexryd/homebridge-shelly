@@ -530,6 +530,10 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
+      const c = this.config
+      if (c.name) {
+        return c.name
+      }
       return d.name || `Shelly Bulb ${d.id}`
     }
   }

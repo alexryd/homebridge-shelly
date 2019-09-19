@@ -129,6 +129,7 @@ module.exports = homebridge => {
 
     addDevice(device) {
       const deviceConfig = this.getDeviceConfig(device.id)
+      this.log('creating device', deviceConfig)
       const accessories = AccessoryFactory.createAccessories(
         device,
         deviceConfig,
@@ -199,6 +200,7 @@ module.exports = homebridge => {
         deviceConfig,
         ctx.index || 0
       )
+      this.log.info(accessoryConfig)
       const defaultAccessoryType = AccessoryFactory.getDefaultAccessoryType(
         ctx.type,
         ctx.mode

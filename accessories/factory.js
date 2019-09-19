@@ -96,10 +96,10 @@ module.exports = homebridge => {
           return Shelly1SwitchAccessory
         case 'SHSW-21':
         case 'SHSW-25':
+          if (accessoryType === 'window') {
+            return Shelly2WindowAccessory
+          }
           if (deviceMode === 'roller') {
-            if (deviceType === 'window') {
-              return Shelly2WindowAccessory
-            }
             return Shelly2WindowCoveringAccessory
           }
           if (accessoryType === 'outlet') {
@@ -144,7 +144,7 @@ module.exports = homebridge => {
     createAccessory(device, index, config, log,
       platformAccessory = null) {
       const accessoryConfig = this.getAccessoryConfig(config, index)
-      const accessoryType = accessoryConfig.type ||
+      const accessoryType = config.type || accessoryConfig.type ||
         this.getDefaultAccessoryType(device.type, device.mode)
       const AccessoryClass = this.getAccessoryClass(
         device.type,

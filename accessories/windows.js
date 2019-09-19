@@ -21,8 +21,9 @@ module.exports = homebridge => {
 
     get name() {
       const d = this.device
+      const c = this.config
       const n = d.type === 'SHSW-25' ? '2.5' : '2'
-      return d.name || `Shelly ${n} ${d.id}`
+      return c.name || d.name || `Fen ${n} ${d.id}`
     }
 
     createPlatformAccessory() {
