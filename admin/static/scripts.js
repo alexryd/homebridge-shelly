@@ -1,5 +1,23 @@
 /* eslint-env browser,jquery */
 
+var NAMES = {
+  'SHBLB-1': 'Shelly Bulb',
+  SHEM: 'Shelly EM',
+  'SHHT-1': 'Shelly H&T',
+  'SHPLG-1': 'Shelly Plug',
+  'SHPLG-S': 'Shelly Plug S',
+  'SHPLG2-1': 'Shelly Plug',
+  SHRGBW2: 'Shelly RGBW2',
+  'SHSEN-1': 'Shelly Sense',
+  'SHSW-1': 'Shelly 1',
+  'SHSW-21': 'Shelly 2',
+  'SHSW-22': 'Shelly 2',
+  'SHSW-25': 'Shelly 2.5',
+  'SHSW-44': 'Shelly 4Pro',
+  'SHSW-PM': 'Shelly 1PM',
+  'SHWT-1': 'Shelly Flood',
+}
+
 function loadDevices() {
   var list = $('#devices-list').empty()
 
@@ -31,7 +49,7 @@ function renderDevice(list, device) {
       $('<div class="heading">')
         .append(
           $('<div class="title">')
-            .text(device.type + ' ' + device.id)
+            .text((NAMES[device.type] || device.type) + ' ' + device.id)
         )
         .append(
           $('<a class="host-link" target="_blank">')
