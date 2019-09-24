@@ -1,9 +1,8 @@
 {
-  "name": "homebridge-shelly",
+  "name": "@hoobs/shelly",
   "version": "0.10.0",
-  "description": "Shelly plugin for Homebridge",
+  "description": "Shelly plugin for HOOBS",
   "main": "index.js",
-  "bin": "bin/homebridge-shelly",
   "scripts": {
     "test": "mocha --exit 'test/**/test-*.js'",
     "eslint": "eslint ."
@@ -13,8 +12,12 @@
     "test"
   ],
   "keywords": [
-    "homebridge",
-    "homebridge-plugin",
+    "hoobs-certified",
+    "category-climate",
+    "category-lighting",
+    "category-hubs",
+    "category-media",
+    "hoobs-plugin",
     "shelly"
   ],
   "engines": {

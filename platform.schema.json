@@ -1,0 +1,25 @@
+{
+    "plugin_alias": "Shelly",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "platform": {
+                "title": "Platform",
+                "type": "string",
+                "const": "Shelly",
+                "readOnly": true
+            },
+            "username": {
+                "title": "Username",
+                "type": "string"
+            },
+            "password": {
+                "title": "Password",
+                "type": "string",
+                "options": {
+                    "hidden": true
+                }
+            }
+        }
+    }
+}
