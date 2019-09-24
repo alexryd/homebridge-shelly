@@ -1,6 +1,6 @@
 {
   "name": "@hoobs/shelly",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Shelly plugin for HOOBS",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexryd/homebridge-shelly.git"
+    "url": "https://github.com/hoobs-org/homebridge-shelly.git"
   },
   "dependencies": {
     "color-convert": "^2.0.0",
