@@ -1,5 +1,7 @@
 const shellies = require('shellies')
 
+const AdminServer = require('./admin')
+
 module.exports = homebridge => {
   const AccessoryFactory = require('./accessories/factory')(homebridge)
   const DeviceWrapper = require('./device-wrapper')(homebridge)
@@ -11,6 +13,7 @@ module.exports = homebridge => {
       this.deviceConfigs = new Map()
       this.deviceWrappers = new Map()
       this.stalePlatformAccessories = new Set()
+      this.adminServer = null
 
       this.configure()
 
@@ -29,6 +32,18 @@ module.exports = homebridge => {
 
         this.handleStalePlatformAccessories()
         shellies.start(this.config.networkInterface)
+
+        if (!this.config.admin || this.config.admin.enabled !== false) {
+          // start the admin server
+          this.adminServer = new AdminServer(this, this.config.admin || {}, log)
+          this.adminServer.listen()
+            .then(port => {
+              this.log.info(`Admin server is running on port ${port}`)
+            })
+            .catch(e => {
+              this.log.error('Failed to launch the admin server:', e.message)
+            })
+        }
       })
     }
 

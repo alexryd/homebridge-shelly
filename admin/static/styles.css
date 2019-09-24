@@ -1,0 +1,171 @@
+html {
+  font-size: 14px;
+}
+
+body {
+  margin: 0;
+  padding: 1.6rem 1.4rem;
+  background-color: #f8f6f8;
+  font-family: sans-serif;
+}
+
+a {
+  color: #2959a3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+h1 {
+  margin: 0 0 1.8rem;
+  font-size: 1.6rem;
+}
+
+#devices-list {
+  margin: 0.8rem 0 2rem;
+}
+
+.device {
+  margin-bottom: 0.1rem;
+  padding: 0.8rem 1rem;
+  background-color: #fff;
+}
+
+.device .heading {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7em;
+  white-space: nowrap;
+}
+
+.device .title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.device.excluded .title {
+  color: #666;
+}
+
+.device .host-link {
+  color: #333;
+}
+
+.device.excluded .host-link {
+  color: #666;
+}
+
+.device .status {
+  display: flex;
+  align-items: center;
+}
+
+.device .last-seen {
+  font-style: italic;
+  color: #555;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.device .status-badges {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-right: 0.5rem;
+}
+
+.device .status-badge {
+  margin-right: 0.2rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #eee;
+  border-radius: 0.2rem;
+  white-space: nowrap;
+}
+
+.device .status-badge.online {
+  background-color: #f7f7f7;
+  border-color: #cae0c5;
+  color: #417537;
+}
+
+.device .status-badge.offline {
+  background-color: #f7edeb;
+  border-color: #d4b0ae;
+  color: #a12f27;
+}
+
+.device .status-badge.unknown {
+  background-color: #faf8e1;
+  border-color: #ded55d;
+  color: #5e5705;
+}
+
+.device .status-badge.excluded {
+  border-color: #ddd;
+  color: #888;
+}
+
+.device .actions {
+  flex-basis: 100%;
+  margin-top: 0.7rem;
+}
+
+#devices-list .empty-list {
+  font-style: italic;
+  color: #555;
+}
+
+@media all and (min-width: 520px) {
+  html {
+    font-size: 12px;
+  }
+
+  .device {
+    display: flex;
+    align-items: center;
+  }
+
+  .device .heading {
+    flex-basis: auto;
+    margin-bottom: 0;
+  }
+
+  .device .title {
+    margin-right: 0.5rem;
+  }
+
+  .device .title::after {
+    content: "-";
+    display: inline-block;
+    margin-left: 0.5em;
+  }
+
+  .device .status {
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+
+  .device .last-seen {
+    order: 0;
+  }
+
+  .device .status-badges {
+    flex-wrap: nowrap;
+    order: 1;
+    margin-left: 1rem;
+    margin-right: 0;
+  }
+
+  .device .actions {
+    flex-basis: auto;
+    margin-top: 0;
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid #f2f0f2;
+  }
+}

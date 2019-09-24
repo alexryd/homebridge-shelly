@@ -11,12 +11,14 @@ module.exports = homebridge => {
     Shelly1PMOutletAccessory,
     Shelly2OutletAccessory,
     Shelly4ProOutletAccessory,
+    ShellyEMOutletAccessory,
     ShellyHDOutletAccessory,
     ShellyPlugOutletAccessory,
   } = require('./outlets')(homebridge)
 
   const {
     ShellyHTAccessory,
+    ShellyFloodAccessory,
     ShellySenseAccessory,
   } = require('./sensors')(homebridge)
 
@@ -25,6 +27,7 @@ module.exports = homebridge => {
     Shelly1SwitchAccessory,
     Shelly2SwitchAccessory,
     Shelly4ProSwitchAccessory,
+    ShellyEMSwitchAccessory,
     ShellyHDSwitchAccessory,
     ShellyPlugSwitchAccessory,
   } = require('./switches')(homebridge)
@@ -44,6 +47,9 @@ module.exports = homebridge => {
     Shelly4ProOutletAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyEMOutletAccessory,
+    ShellyEMSwitchAccessory,
+    ShellyFloodAccessory,
     ShellyHDOutletAccessory,
     ShellyHDSwitchAccessory,
     ShellyHTAccessory,

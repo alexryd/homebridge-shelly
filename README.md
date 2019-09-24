@@ -13,6 +13,8 @@ Currently the following devices are supported:
 * [Shelly 2.5](https://shelly.cloud/shelly-25-wifi-smart-relay-roller-shutter-home-automation/) <sup>1</sup>
 * [Shelly 4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly Bulb](https://shelly.cloud/shelly-bulb/) <sup>2</sup>
+* [Shelly EM](https://shelly.cloud/shelly-energy-meter-with-contactor-control-wifi-smart-home-automation/)
+* [Shelly Flood](https://shelly.cloud/shelly-flood-and-temperature-sensor-wifi-smart-home-automation/)
 * Shelly HD
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
 * [Shelly Plug](https://shelly.cloud/shelly-plug/)
@@ -24,8 +26,7 @@ Currently the following devices are supported:
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
 must have been calibrated and be running firmware version 1.4.9 or later.
 
-<sup>2</sup> Because of a bug in the Shelly firmware there is currently no
-support for dimming the Shelly Bulb.
+<sup>2</sup> Requires firmware version 1.5.1 or later.
 
 ## Installation
 1. Install homebridge by following
@@ -47,10 +48,16 @@ enough:
 Your Shelly devices will then be automatically discovered, as long as they are
 on the same network and subnet as the device running homebridge.
 
+To see a list of all discovered devices, visit the administration page by going
+to `http://<IP-ADDRESS>:<PORT>/`, where IP-ADDRESS is the IP address of the
+device that you are running homebridge on, and PORT is the configured port
+number (8080 by default, see below).
+
 ### Network interface
 Sometimes setting the `"networkInterface"` option to the local IP address of
 your device will help when your devices aren't automatically discovered, or
-you see error messages like `addMembership EADDRNOTAVAIL`.
+you see error messages like `addMembership EADDRNOTAVAIL` or
+`addMembership EADDRINUSE`.
 
 ### Authentication
 Set the `"username"` and `"password"` options if you have restricted the web
@@ -64,7 +71,12 @@ requests to the Shelly devices. Specify in milliseconds. Default is 10 seconds.
 ### Stale timeout
 Use the `"staleTimeout"` option to configure how long a device can be offline
 before it is regarded as stale and unregistered from HomeKit. Specify in
-milliseconds. Default is 8 hours.
+milliseconds. Set to `0` or `false` to disable. Disabled by default.
+
+### Administration interface
+By default, this plugin will launch an HTTP server on port 8080 to serve an
+administration interface. You can disable this by setting `"admin"."enabled"`
+to `false`. You can also change the port number using `"admin"."port"`.
 
 ### Device specific configurations
 Configurations for specific Shelly devices can be set using the `"devices"`
@@ -83,17 +95,23 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
 
-#### Example configuration
+### Example configuration
 ```json
 "platforms": [
   {
     "platform": "Shelly",
     "name": "Shelly",
+    "username": "admin",
+    "password": "pa$$word",
     "devices": [
       { "id": "74B5A3", "exclude": true },
-      { "id": "A612F0", "username": "admin", "password": "pa$$word" },
+      { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
       { "id": "6A78BB", "colorMode": "rgb" }
-    ]
+    ],
+    "admin": {
+      "enabled": true,
+      "port": 8181
+    }
   }
 ]
 ```
