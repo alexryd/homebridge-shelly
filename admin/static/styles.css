@@ -40,6 +40,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.7em;
+  white-space: nowrap;
 }
 
 .device .title {
@@ -68,6 +69,7 @@ h1 {
   font-style: italic;
   color: #555;
   text-align: right;
+  white-space: nowrap;
 }
 
 .device .status-badges {
@@ -153,6 +155,7 @@ h1 {
   }
 
   .device .status-badges {
+    flex-wrap: nowrap;
     order: 1;
     margin-left: 1rem;
     margin-right: 0;
