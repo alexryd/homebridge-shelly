@@ -9,6 +9,12 @@
                 "const": "Shelly",
                 "readOnly": true
             },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "const": "Shelly",
+                "readOnly": true
+            },
             "username": {
                 "title": "Username",
                 "type": "string"
@@ -18,6 +24,25 @@
                 "type": "string",
                 "options": {
                     "hidden": true
+                }
+            },
+            "devices": {
+                "title": "Manual Devices",
+                "type": "object"
+            },
+            "admin": {
+                "type": "object",
+                "properties": {
+                    "enabled": {
+                        "title": "Enable Admin Console",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "port": {
+                        "title": "Admin Console Port",
+                        "type": "number",
+                        "default": 8181
+                    }
                 }
             }
         }
