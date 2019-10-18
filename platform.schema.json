@@ -46,7 +46,7 @@
                     "console": {
                         "title": "Admin Console",
                         "type": "button",
-                        "url": "http://{{domain}}:8181"
+                        "url": "http://{{domain}}:{{port}}"
                     }
                 }
             }
