@@ -41,7 +41,12 @@
                     "port": {
                         "title": "Admin Console Port",
                         "type": "number",
-                        "default": 8181
+                        "default": 81826
+                    },
+                    "console": {
+                        "title": "Admin Console",
+                        "type": "button",
+                        "url": "http://{{domain}}:81826"
                     }
                 }
             }
