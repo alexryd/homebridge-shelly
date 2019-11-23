@@ -534,6 +534,32 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyDimmerWhiteLightbulbAccessory
+    extends ShellyWhiteLightbulbAccessory {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly Dimmer ${d.id}`
+    }
+
+    setSwitch(newValue) {
+      return this.device.setWhite(
+        this.device.brightness,
+        newValue
+      )
+    }
+
+    setBrightness(newValue) {
+      return this.device.setWhite(
+        newValue,
+        this.device.switch
+      )
+    }
+  }
+
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
     constructor(device, index, config, log, platformAccessory = null) {
@@ -604,6 +630,7 @@ module.exports = homebridge => {
     ShellyColorLightbulbAccessory,
     ShellyWhiteLightbulbAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyDimmerWhiteLightbulbAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   }

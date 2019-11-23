@@ -11,6 +11,7 @@ module.exports = homebridge => {
     Shelly4ProOutletAccessory,
     Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyDimmerWhiteLightbulbAccessory,
     ShellyEMOutletAccessory,
     ShellyEMSwitchAccessory,
     ShellyFloodAccessory,
@@ -29,6 +30,8 @@ module.exports = homebridge => {
       switch (deviceType) {
         case 'SHBLB-1':
           return 'colorLightbulb'
+        case 'SHDM-1':
+          return 'whiteLightbulb'
         case 'SHEM':
           return 'switch'
         case 'SHHT-1':
@@ -67,6 +70,8 @@ module.exports = homebridge => {
       switch (deviceType) {
         case 'SHBLB-1':
           return ShellyBulbColorLightbulbAccessory
+        case 'SHDM-1':
+          return ShellyDimmerWhiteLightbulbAccessory
         case 'SHEM':
           if (accessoryType === 'outlet') {
             return ShellyEMOutletAccessory

@@ -18,6 +18,7 @@ const {
   ShellyColorLightbulbAccessory,
   ShellyWhiteLightbulbAccessory,
   ShellyBulbColorLightbulbAccessory,
+  ShellyDimmerWhiteLightbulbAccessory,
   ShellyRGBW2ColorLightbulbAccessory,
   ShellyRGBW2WhiteLightbulbAccessory,
 } = require('../../accessories/lightbulbs')(homebridge)
@@ -469,6 +470,48 @@ describe('ShellyBulbColorLightbulbAccessory', function() {
     it('should generate a proper name when no device name is set', function() {
       accessory.name.should.be.ok()
       accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+})
+
+describe('ShellyDimmerWhiteLightbulbAccessory', function() {
+  let device = null
+  let accessory = null
+
+  beforeEach(function() {
+    device = shellies.createDevice('SHDM-1', 'ABC123', '192.168.1.2')
+    accessory = new ShellyDimmerWhiteLightbulbAccessory(device, 0, {}, log)
+  })
+
+  afterEach(function() {
+    sinon.restore()
+  })
+
+  describe('#name', function() {
+    it('should return the device name when one is set', function() {
+      device.name = 'foo'
+      accessory.name.indexOf(device.name).should.not.equal(-1)
+    })
+
+    it('should generate a proper name when no device name is set', function() {
+      accessory.name.should.be.ok()
+      accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+
+  describe('#setSwitch()', function() {
+    it('should invoke setWhite()', function() {
+      const setWhite = sinon.stub(device, 'setWhite').resolves()
+      accessory.setSwitch(true)
+      setWhite.calledOnce.should.be.true()
+    })
+  })
+
+  describe('#setBrightness()', function() {
+    it('should invoke setWhite()', function() {
+      const setWhite = sinon.stub(device, 'setWhite').resolves()
+      accessory.setBrightness(31)
+      setWhite.calledOnce.should.be.true()
     })
   })
 })
