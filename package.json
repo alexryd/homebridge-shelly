@@ -1,6 +1,6 @@
 {
   "name": "@hoobs/shelly",
-  "version": "0.10.5",
+  "version": "0.10.7",
   "description": "Shelly plugin for HOOBS",
   "main": "index.js",
   "scripts": {
