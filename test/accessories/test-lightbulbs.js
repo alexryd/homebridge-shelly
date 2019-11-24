@@ -18,6 +18,7 @@ const {
   ShellyColorLightbulbAccessory,
   ShellyWhiteLightbulbAccessory,
   ShellyBulbColorLightbulbAccessory,
+  ShellyDimmerWhiteLightbulbAccessory,
   ShellyRGBW2ColorLightbulbAccessory,
   ShellyRGBW2WhiteLightbulbAccessory,
 } = require('../../accessories/lightbulbs')(homebridge)
@@ -360,58 +361,33 @@ describe('ShellyWhiteLightbulbAccessory', function() {
 
   describe('#setupEventHandlers()', function() {
     it('should set the switch state when On is set', function(done) {
-      const setSwitch = sinon.stub(accessory, 'setSwitch').resolves()
+      const _updateDeviceBrightness = sinon.stub(
+        accessory,
+        '_updateDeviceBrightness'
+      ).resolves()
 
       accessory.platformAccessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
         .emit('set', true, e => {
-          setSwitch.calledOnce.should.be.true()
-          setSwitch.calledWith(true).should.be.true()
+          _updateDeviceBrightness.calledOnce.should.be.true()
           should.not.exist(e)
-          done()
-        })
-    })
-
-    it('should handle errors when setting the switch state', function(done) {
-      const error = new Error()
-      const setSwitch = sinon.stub(accessory, 'setSwitch').rejects(error)
-
-      accessory.platformAccessory
-        .getService(Service.Lightbulb)
-        .getCharacteristic(Characteristic.On)
-        .emit('set', true, e => {
-          setSwitch.calledOnce.should.be.true()
-          e.should.equal(error)
           done()
         })
     })
 
     it('should set the brightness when Brightness is set', function(done) {
-      const setBrightness = sinon.stub(accessory, 'setBrightness').resolves()
+      const _updateDeviceBrightness = sinon.stub(
+        accessory,
+        '_updateDeviceBrightness'
+      ).resolves()
 
       accessory.platformAccessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.Brightness)
         .emit('set', 92, e => {
-          setBrightness.calledOnce.should.be.true()
-          setBrightness.calledWith(92).should.be.true()
+          _updateDeviceBrightness.calledOnce.should.be.true()
           should.not.exist(e)
-          done()
-        })
-    })
-
-    it('should handle errors when setting the brightness', function(done) {
-      const error = new Error()
-      const setBrightness = sinon.stub(accessory, 'setBrightness')
-        .rejects(error)
-
-      accessory.platformAccessory
-        .getService(Service.Lightbulb)
-        .getCharacteristic(Characteristic.Brightness)
-        .emit('set', 42, e => {
-          setBrightness.calledOnce.should.be.true()
-          e.should.equal(error)
           done()
         })
     })
@@ -442,6 +418,35 @@ describe('ShellyWhiteLightbulbAccessory', function() {
     })
   })
 
+  describe('#_updateDeviceBrightness()', function() {
+    it('should set the device brightness', function(done) {
+      const setWhite = sinon.stub(device, 'setWhite').resolves()
+
+      accessory._updateDeviceBrightness()
+      accessory._updateDeviceBrightness()
+      accessory._updateDeviceBrightness()
+
+      setImmediate(() => {
+        setWhite.calledOnce.should.be.true()
+        done()
+      })
+    })
+
+    it(
+      'should handle errors when setting the device brightness',
+      function(done) {
+        const setWhite = sinon.stub(device, 'setWhite').rejects(new Error())
+
+        accessory._updateDeviceBrightness()
+
+        setImmediate(() => {
+          setWhite.calledOnce.should.be.true()
+          done()
+        })
+      }
+    )
+  })
+
   describe('#detach()', function() {
     it('should remove all event listeners from the device', function() {
       device.eventNames().length.should.not.equal(0)
@@ -464,6 +469,32 @@ describe('ShellyBulbColorLightbulbAccessory', function() {
     it('should return the device name when one is set', function() {
       device.name = 'foo'
       accessory.name.should.equal(device.name)
+    })
+
+    it('should generate a proper name when no device name is set', function() {
+      accessory.name.should.be.ok()
+      accessory.name.indexOf(device.id).should.not.equal(-1)
+    })
+  })
+})
+
+describe('ShellyDimmerWhiteLightbulbAccessory', function() {
+  let device = null
+  let accessory = null
+
+  beforeEach(function() {
+    device = shellies.createDevice('SHDM-1', 'ABC123', '192.168.1.2')
+    accessory = new ShellyDimmerWhiteLightbulbAccessory(device, 0, {}, log)
+  })
+
+  afterEach(function() {
+    sinon.restore()
+  })
+
+  describe('#name', function() {
+    it('should return the device name when one is set', function() {
+      device.name = 'foo'
+      accessory.name.indexOf(device.name).should.not.equal(-1)
     })
 
     it('should generate a proper name when no device name is set', function() {
@@ -539,18 +570,10 @@ describe('ShellyRGBW2WhiteLightbulbAccessory', function() {
     })
   })
 
-  describe('#setSwitch()', function() {
+  describe('#setWhite()', function() {
     it('should invoke setWhite()', function() {
       const setWhite = sinon.stub(device, 'setWhite').resolves()
-      accessory.setSwitch(true)
-      setWhite.calledOnce.should.be.true()
-    })
-  })
-
-  describe('#setBrightness()', function() {
-    it('should invoke setWhite()', function() {
-      const setWhite = sinon.stub(device, 'setWhite').resolves()
-      accessory.setBrightness(31)
+      accessory.setWhite(43, true)
       setWhite.calledOnce.should.be.true()
     })
   })

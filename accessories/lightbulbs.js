@@ -389,22 +389,18 @@ module.exports = homebridge => {
             return
           }
 
-          try {
-            this.log.debug(
-              'Setting state of',
-              this._switchProperty,
-              'on device',
-              d.type,
-              d.id,
-              'to',
-              newValue
-            )
-            await this.setSwitch(newValue)
-            callback()
-          } catch (e) {
-            handleFailedRequest(this.log, d, e, 'Failed to set switch state')
-            callback(e)
-          }
+          this.log.debug(
+            'Setting state of',
+            this._switchProperty,
+            'on device',
+            d.type,
+            d.id,
+            'to',
+            newValue
+          )
+
+          this._updateDeviceBrightness()
+          callback()
         })
 
       lightbulbService
@@ -415,22 +411,18 @@ module.exports = homebridge => {
             return
           }
 
-          try {
-            this.log.debug(
-              'Setting',
-              this._brightnessProperty,
-              'on device',
-              d.type,
-              d.id,
-              'to',
-              newValue
-            )
-            await this.setBrightness(newValue)
-            callback()
-          } catch (e) {
-            handleFailedRequest(this.log, d, e, 'Failed to set brightness')
-            callback(e)
-          }
+          this.log.debug(
+            'Setting',
+            this._brightnessProperty,
+            'on device',
+            d.type,
+            d.id,
+            'to',
+            newValue
+          )
+
+          this._updateDeviceBrightness()
+          callback()
         })
 
       d
@@ -475,6 +467,34 @@ module.exports = homebridge => {
         .setValue(newValue)
     }
 
+    _updateDeviceBrightness() {
+      if (this._updatingDeviceBrightness === true) {
+        return
+      }
+      this._updatingDeviceBrightness = true
+
+      setImmediate(async () => {
+        try {
+          const lightbulbService = this.platformAccessory
+            .getService(Service.Lightbulb)
+
+          await this.setWhite(
+            lightbulbService.getCharacteristic(Characteristic.Brightness).value,
+            lightbulbService.getCharacteristic(Characteristic.On).value
+          )
+        } catch (e) {
+          handleFailedRequest(
+            this.log,
+            this.device,
+            e,
+            'Failed to set brightness'
+          )
+        }
+
+        this._updatingDeviceBrightness = false
+      })
+    }
+
     detach() {
       super.detach()
 
@@ -513,12 +533,8 @@ module.exports = homebridge => {
       })
     }
 
-    setSwitch(newValue) {
-      // subclasses should override this
-    }
-
-    setBrightness(newValue) {
-      // subclasses should override this
+    setWhite(brightness, on) {
+      return this.device.setWhite(brightness, on)
     }
   }
 
@@ -531,6 +547,18 @@ module.exports = homebridge => {
     get name() {
       const d = this.device
       return d.name || `Shelly Bulb ${d.id}`
+    }
+  }
+
+  class ShellyDimmerWhiteLightbulbAccessory
+    extends ShellyWhiteLightbulbAccessory {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(device, index, config, log, platformAccessory)
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly Dimmer ${d.id}`
     }
   }
 
@@ -581,20 +609,8 @@ module.exports = homebridge => {
       return pa
     }
 
-    setSwitch(newValue) {
-      return this.device.setWhite(
-        this.index,
-        this.device[this._brightnessProperty],
-        newValue
-      )
-    }
-
-    setBrightness(newValue) {
-      return this.device.setWhite(
-        this.index,
-        newValue,
-        this.device[this._switchProperty]
-      )
+    setWhite(brightness, on) {
+      return this.device.setWhite(this.index, brightness, on)
     }
   }
 
@@ -604,6 +620,7 @@ module.exports = homebridge => {
     ShellyColorLightbulbAccessory,
     ShellyWhiteLightbulbAccessory,
     ShellyBulbColorLightbulbAccessory,
+    ShellyDimmerWhiteLightbulbAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   }
