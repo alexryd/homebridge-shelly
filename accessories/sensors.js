@@ -433,10 +433,85 @@ module.exports = homebridge => {
     }
   }
 
+  class Shelly1MotionAccessory extends ShellySensorAccessory {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(
+        device,
+        index,
+        config,
+        log,
+        ['motion'],
+        platformAccessory
+      )
+    }
+
+    get name() {
+      const d = this.device
+      return d.name || `Shelly 1 ${d.id}`
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+
+      pa.category = Accessory.Categories.SWITCH
+
+      const switchService = new Service.MotionSensor()
+        .setCharacteristic(
+          Characteristic.MotionDetected,
+          this.device['relay' + this.index]
+        )
+
+      pa.addService(switchService)
+
+      return pa
+    }
+  }
+
+  class Shelly2MotionAccessory extends ShellySensorAccessory {
+    constructor(device, index, config, log, platformAccessory = null) {
+      super(
+        device,
+        index,
+        config,
+        log,
+        ['motion'],
+        platformAccessory
+      )
+    }
+
+    get name() {
+      const d = this.device
+      if (d.name) {
+        return `${d.name} #${this.index}`
+      } else {
+        const n = d.type === 'SHSW-25' ? '2.5' : '2'
+        return `Shelly ${n} ${d.id} #${this.index}`
+      }
+    }
+
+    createPlatformAccessory() {
+      const pa = super.createPlatformAccessory()
+
+      pa.category = Accessory.Categories.SWITCH
+
+      const switchService = new Service.MotionSensor()
+        .setCharacteristic(
+          Characteristic.MotionDetected,
+          this.device['relay' + this.index]
+        )
+
+      pa.addService(switchService)
+
+      return pa
+    }
+  }
+
   return {
     ShellySensorAccessory,
     ShellyHTAccessory,
     ShellyFloodAccessory,
     ShellySenseAccessory,
+    Shelly1MotionAccessory,
+    Shelly2MotionAccessory,
   }
 }
