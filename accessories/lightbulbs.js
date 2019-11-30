@@ -517,9 +517,9 @@ module.exports = homebridge => {
         const currentSwitchState = d[this._switchProperty]
 
         try {
-          await this.setSwitch(!currentSwitchState)
+          await this.setWhite(d[this._brightnessProperty], !currentSwitchState)
           await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.setSwitch(currentSwitchState)
+          await this.setWhite(d[this._brightnessProperty], currentSwitchState)
           callback()
         } catch (e) {
           handleFailedRequest(
