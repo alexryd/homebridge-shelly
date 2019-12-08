@@ -1,4 +1,3 @@
-const { handleFailedRequest } = require('../error-handlers')
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
@@ -43,24 +42,12 @@ module.exports = homebridge => {
     }
 
     identify(paired, callback) {
-      super.identify(paired, async () => {
-        const d = this.device
-        const currentSwitchState = d.switch
-
-        try {
-          await this.setLight({ switch: !currentSwitchState })
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.setLight({ switch: currentSwitchState })
-          callback()
-        } catch (e) {
-          handleFailedRequest(
-            this.log,
-            d,
-            e,
-            'Failed to identify device'
-          )
-          callback(e)
-        }
+      super.identify(paired, () => {
+        this._identifyBySwitching(
+          this.device.switch,
+          state => this.setLight({ switch: state }),
+          callback
+        )
       })
     }
   }
@@ -90,30 +77,15 @@ module.exports = homebridge => {
     }
 
     identify(paired, callback) {
-      super.identify(paired, async () => {
-        const d = this.device
-        const currentSwitchState = d.switch
-
-        try {
-          await this.setLight({
-            brightness: d.brightness,
-            switch: !currentSwitchState,
-          })
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.setLight({
-            brightness: d.brightness,
-            switch: currentSwitchState,
-          })
-          callback()
-        } catch (e) {
-          handleFailedRequest(
-            this.log,
-            d,
-            e,
-            'Failed to identify device'
-          )
-          callback(e)
-        }
+      super.identify(paired, () => {
+        this._identifyBySwitching(
+          this.device.switch,
+          state => this.setLight({
+            brightness: this.device.brightness,
+            switch: state,
+          }),
+          callback
+        )
       })
     }
   }
@@ -184,30 +156,15 @@ module.exports = homebridge => {
     }
 
     identify(paired, callback) {
-      super.identify(paired, async () => {
-        const d = this.device
-        const currentSwitchState = d['switch' + this.index]
-
-        try {
-          await this.setLight({
-            ['brightness' + this.index]: d['brightness' + this.index],
-            ['switch' + this.index]: !currentSwitchState,
-          })
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.setLight({
-            ['brightness' + this.index]: d['brightness' + this.index],
-            ['switch' + this.index]: currentSwitchState,
-          })
-          callback()
-        } catch (e) {
-          handleFailedRequest(
-            this.log,
-            d,
-            e,
-            'Failed to identify device'
-          )
-          callback(e)
-        }
+      super.identify(paired, () => {
+        this._identifyBySwitching(
+          this.device['switch' + this.index],
+          state => this.setLight({
+            ['brightness' + this.index]: this.device['brightness' + this.index],
+            ['switch' + this.index]: state,
+          }),
+          callback
+        )
       })
     }
   }

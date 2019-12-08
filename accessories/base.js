@@ -155,6 +155,34 @@ module.exports = homebridge => {
     }
 
     /**
+     * Helper method for identifying an accessory by switching its state on
+     * and off.
+     * @param {boolean} currentState - The current state.
+     * @param {function} handler - A handler function that sets the state to
+     * the given value.
+     * @param {function} callback - A callback that will be invoked once this
+     * method is done.
+     */
+    async _identifyBySwitching(currentState, handler, callback,
+      timeout = 1000) {
+      try {
+        // invert the current state for the given number of milliseconds
+        await handler.call(this, !currentState)
+        await new Promise(resolve => setTimeout(resolve, timeout))
+        await handler.call(this, currentState)
+        callback()
+      } catch (e) {
+        handleFailedRequest(
+          this.log,
+          this.device,
+          e,
+          'Failed to identify device'
+        )
+        callback(e)
+      }
+    }
+
+    /**
      * Detaches this accessory and its abilities, removing all references to the
      * device that it was first associated with.
      */
@@ -187,24 +215,12 @@ module.exports = homebridge => {
     }
 
     identify(paired, callback) {
-      super.identify(paired, async () => {
-        const currentState = this.device['relay' + this.index]
-
-        try {
-          // invert the current state for 1 second
-          await this.setRelay(!currentState)
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.setRelay(currentState)
-          callback()
-        } catch (e) {
-          handleFailedRequest(
-            this.log,
-            this.device,
-            e,
-            'Failed to identify device'
-          )
-          callback(e)
-        }
+      super.identify(paired, () => {
+        this._identifyBySwitching(
+          this.device['relay' + this.index],
+          state => this.setRelay(state),
+          callback
+        )
       })
     }
   }
