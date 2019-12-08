@@ -52,12 +52,6 @@ module.exports = homebridge => {
         device.type === 'SHSW-21' ? 0 : index
       )
     }
-
-    _createPlatformAccessory() {
-      const pa = super._createPlatformAccessory()
-      pa.context.mode = 'relay'
-      return pa
-    }
   }
 
   class Shelly4ProSwitchAccessory extends ShellyRelaySwitchAccessory {

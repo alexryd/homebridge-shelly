@@ -100,6 +100,11 @@ module.exports = homebridge => {
         index: this.index,
       }
 
+      // store the device mode if it has one
+      if (d.mode) {
+        pa.context.mode = d.mode
+      }
+
       return pa
     }
 

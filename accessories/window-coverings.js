@@ -20,12 +20,6 @@ module.exports = homebridge => {
       return Accessory.Categories.WINDOW_COVERING
     }
 
-    _createPlatformAccessory() {
-      const pa = super._createPlatformAccessory()
-      pa.context.mode = 'roller'
-      return pa
-    }
-
     /**
      * Sets the current position to the new value.
      * @returns {Promise} A Promise that resolves when the position has been

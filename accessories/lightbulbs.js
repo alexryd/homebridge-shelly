@@ -97,13 +97,7 @@ module.exports = homebridge => {
     extends ShellyWhiteLightbulbAccessory {}
 
   class ShellyRGBW2ColorLightbulbAccessory
-    extends ShellyColorLightbulbAccessory {
-    _createPlatformAccessory() {
-      const pa = super._createPlatformAccessory()
-      pa.context.mode = 'color'
-      return pa
-    }
-  }
+    extends ShellyColorLightbulbAccessory {}
 
   class ShellyRGBW2WhiteLightbulbAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
@@ -118,12 +112,6 @@ module.exports = homebridge => {
 
     get category() {
       return Accessory.Categories.LIGHTBULB
-    }
-
-    _createPlatformAccessory() {
-      const pa = super._createPlatformAccessory()
-      pa.context.mode = 'white'
-      return pa
     }
 
     /**
