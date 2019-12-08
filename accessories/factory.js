@@ -1,31 +1,47 @@
 
 module.exports = homebridge => {
   const {
-    Shelly1OutletAccessory,
-    Shelly1PMOutletAccessory,
-    Shelly1PMSwitchAccessory,
-    Shelly1SwitchAccessory,
-    Shelly2OutletAccessory,
-    Shelly2SwitchAccessory,
-    Shelly2WindowCoveringAccessory,
-    Shelly4ProOutletAccessory,
-    Shelly4ProSwitchAccessory,
     ShellyBulbColorLightbulbAccessory,
     ShellyDimmerWhiteLightbulbAccessory,
-    ShellyEMOutletAccessory,
-    ShellyEMSwitchAccessory,
-    ShellyFloodAccessory,
-    ShellyHDOutletAccessory,
-    ShellyHDSwitchAccessory,
-    ShellyHTAccessory,
-    ShellyPlugOutletAccessory,
-    ShellyPlugSwitchAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
+  } = require('./lightbulbs')(homebridge)
+
+  const {
+    Shelly1OutletAccessory,
+    Shelly1PMOutletAccessory,
+    Shelly2OutletAccessory,
+    Shelly4ProOutletAccessory,
+    ShellyEMOutletAccessory,
+    ShellyHDOutletAccessory,
+    ShellyPlugOutletAccessory,
+  } = require('./outlets')(homebridge)
+
+  const {
+    ShellyHTAccessory,
+    ShellyFloodAccessory,
     ShellySenseAccessory,
-  } = require('./index')(homebridge)
+  } = require('./sensors')(homebridge)
+
+  const {
+    Shelly1PMSwitchAccessory,
+    Shelly1SwitchAccessory,
+    Shelly2SwitchAccessory,
+    Shelly4ProSwitchAccessory,
+    ShellyEMSwitchAccessory,
+    ShellyHDSwitchAccessory,
+    ShellyPlugSwitchAccessory,
+  } = require('./switches')(homebridge)
+
+  const {
+    Shelly2WindowCoveringAccessory,
+  } = require('./window-coverings')(homebridge)
 
   return {
+    /**
+     * Returns the default accessory type identifier for the given device type
+     * and (optionally) device mode.
+     */
     getDefaultAccessoryType(deviceType, deviceMode = null) {
       switch (deviceType) {
         case 'SHBLB-1':
@@ -66,6 +82,10 @@ module.exports = homebridge => {
       return null
     },
 
+    /**
+     * Returns a reference to the accessory class for the given device type,
+     * accessory type and (optionally) device mode.
+     */
     getAccessoryClass(deviceType, accessoryType, deviceMode = null) {
       switch (deviceType) {
         case 'SHBLB-1':
@@ -129,6 +149,10 @@ module.exports = homebridge => {
       return null
     },
 
+    /**
+     * Extracts and returns the configuration options for the accessory with
+     * the given index.
+     */
     getAccessoryConfig(config, index) {
       let accessoryConfig = {}
       if (Array.isArray(config.accessories) && config.accessories[index]) {
@@ -142,6 +166,9 @@ module.exports = homebridge => {
       return cfg
     },
 
+    /**
+     * Creates an accessory for the given device and index.
+     */
     createAccessory(device, index, config, log,
       platformAccessory = null) {
       const accessoryConfig = this.getAccessoryConfig(config, index)
@@ -157,15 +184,19 @@ module.exports = homebridge => {
         return null
       }
 
-      return new AccessoryClass(
+      const accessory = new AccessoryClass(
         device,
         index,
         accessoryConfig,
-        log,
-        platformAccessory
+        log
       )
+      accessory.setup(platformAccessory)
+      return accessory
     },
 
+    /**
+     * Creates all accessories for the given device.
+     */
     createAccessories(device, config, log) {
       const type = device.type
       const mode = device.mode
