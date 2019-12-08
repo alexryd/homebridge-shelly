@@ -16,11 +16,6 @@ module.exports = homebridge => {
       ))
     }
 
-    get defaultName() {
-      const n = this.device.type === 'SHSW-25' ? '2.5' : '2'
-      return `Shelly ${n} ${this.device.id}`
-    }
-
     get category() {
       return Accessory.Categories.WINDOW_COVERING
     }

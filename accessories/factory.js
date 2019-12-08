@@ -37,6 +37,25 @@ module.exports = homebridge => {
     Shelly2WindowCoveringAccessory,
   } = require('./window-coverings')(homebridge)
 
+  const FRIENDLY_DEVICE_NAMES = {
+    'SHBLB-1': 'Shelly Bulb',
+    'SHDM-1': 'Shelly Dimmer',
+    SHEM: 'Shelly EM',
+    'SHHT-1': 'Shelly H&T',
+    'SHPLG-1': 'Shelly Plug',
+    'SHPLG-S': 'Shelly Plug S',
+    'SHPLG2-1': 'Shelly Plug',
+    SHRGBW2: 'Shelly RGBW2',
+    'SHSEN-1': 'Shelly Sense',
+    'SHSW-1': 'Shelly 1',
+    'SHSW-21': 'Shelly 2',
+    'SHSW-22': 'Shelly HD',
+    'SHSW-25': 'Shelly 2.5',
+    'SHSW-44': 'Shelly 4Pro',
+    'SHSW-PM': 'Shelly 1PM',
+    'SHWT-1': 'Shelly Flood',
+  }
+
   return {
     /**
      * Returns the default accessory type identifier for the given device type
@@ -80,6 +99,40 @@ module.exports = homebridge => {
       }
 
       return null
+    },
+
+    /**
+     * Returns a default name for the given device type, id, mode and index.
+     */
+    getDefaultAccessoryName(deviceType, deviceId, deviceMode, index) {
+      const n = [
+        FRIENDLY_DEVICE_NAMES[deviceType] || deviceType,
+        deviceId,
+      ]
+      // only add the index to the name for devices that have more than one
+      // accessory
+      if (this.getNumberOfAccessories(deviceType, deviceMode) > 1) {
+        n.push('#' + index)
+      }
+      return n.join(' ')
+    },
+
+    /**
+     * Returns the number of accessories for the given device type and mode.
+     */
+    getNumberOfAccessories(deviceType, deviceMode = null) {
+      if (deviceType === 'SHRGBW2' && deviceMode === 'white') {
+        return 4
+      } else if (deviceType === 'SHSW-21' && deviceMode !== 'roller') {
+        return 2
+      } else if (deviceType === 'SHSW-22') {
+        return 2
+      } else if (deviceType === 'SHSW-25' && deviceMode !== 'roller') {
+        return 2
+      } else if (deviceType === 'SHSW-44') {
+        return 4
+      }
+      return 1
     },
 
     /**
@@ -190,6 +243,13 @@ module.exports = homebridge => {
         accessoryConfig,
         log
       )
+      // override the default name with a more friendly name
+      accessory.defaultName = this.getDefaultAccessoryName(
+        device.type,
+        device.id,
+        device.mode,
+        index
+      )
       accessory.setup(platformAccessory)
       return accessory
     },
@@ -198,9 +258,7 @@ module.exports = homebridge => {
      * Creates all accessories for the given device.
      */
     createAccessories(device, config, log) {
-      const type = device.type
-      const mode = device.mode
-
+      // helper function that creates the given number of accessories
       const multiple = num => {
         return Array.from(
           { length: num },
@@ -208,24 +266,15 @@ module.exports = homebridge => {
         )
       }
 
-      if (type === 'SHRGBW2' && mode === 'white') {
-        return multiple(4)
-      } else if (type === 'SHSW-21' && mode !== 'roller') {
-        return multiple(2)
-      } else if (type === 'SHSW-22') {
-        return multiple(2)
-      } else if (type === 'SHSW-25' && mode !== 'roller') {
-        return multiple(2)
-      } else if (type === 'SHSW-44') {
-        return multiple(4)
+      const accessories = multiple(
+        this.getNumberOfAccessories(device.type, device.mode)
+      )
+      // skip unknown devices
+      if (!accessories[0]) {
+        return null
       }
 
-      const accessory = this.createAccessory(device, 0, config, log)
-      if (accessory) {
-        return [accessory]
-      }
-
-      return null
+      return accessories
     }
   }
 }

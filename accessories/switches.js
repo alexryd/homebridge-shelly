@@ -33,19 +33,11 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, false)
     }
-
-    get defaultName() {
-      return `Shelly 1 ${this.device.id}`
-    }
   }
 
   class Shelly1PMSwitchAccessory extends ShellyRelaySwitchAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, index)
-    }
-
-    get defaultName() {
-      return `Shelly 1PM ${this.device.id}`
     }
   }
 
@@ -66,20 +58,11 @@ module.exports = homebridge => {
       pa.context.mode = 'relay'
       return pa
     }
-
-    get defaultName() {
-      const n = this.device.type === 'SHSW-25' ? '2.5' : '2'
-      return `Shelly ${n} ${this.device.id} #${this.index}`
-    }
   }
 
   class Shelly4ProSwitchAccessory extends ShellyRelaySwitchAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, index)
-    }
-
-    get defaultName() {
-      return `Shelly 4Pro ${this.device.id} #${this.index}`
     }
   }
 
@@ -87,30 +70,17 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, index)
     }
-
-    get defaultName() {
-      return `Shelly EM ${this.device.id}`
-    }
   }
 
   class ShellyHDSwitchAccessory extends ShellyRelaySwitchAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, index)
     }
-
-    get defaultName() {
-      return `Shelly HD ${this.device.id} #${this.index}`
-    }
   }
 
   class ShellyPlugSwitchAccessory extends ShellyRelaySwitchAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, index)
-    }
-
-    get name() {
-      const n = this.device.type === 'SHPLG-S' ? 'Plug S' : 'Plug'
-      return `Shelly ${n} ${this.device.id}`
     }
   }
 

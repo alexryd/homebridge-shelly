@@ -29,27 +29,18 @@ module.exports = homebridge => {
       this.log = log
       this.platformAccessory = null
       this.abilities = abilities || []
+      this.defaultName = `${device.type} ${device.id} ${index}`
     }
 
     /**
-     * The name of this accessory, as specified by either the configuration,
-     * the device's name or `defaultName`.
+     * The name of this accessory, as specified by either the configuration or
+     * the `defaultName` property.
      */
     get name() {
       if (this.config.name) {
         return this.config.name
-      } else if (this.device.name) {
-        return `${this.device.name} #${this.index}`
       }
       return this.defaultName
-    }
-
-    /**
-     * The default name of this accessory.
-     */
-    get defaultName() {
-      const d = this.device
-      return `${d.type} ${d.id} ${this.index}`
     }
 
     /**
@@ -88,7 +79,7 @@ module.exports = homebridge => {
       const d = this.device
       const pa = new PlatformAccessory(
         this.name,
-        uuid.generate(this.name)
+        uuid.generate(this.defaultName)
       )
 
       pa.category = this.category

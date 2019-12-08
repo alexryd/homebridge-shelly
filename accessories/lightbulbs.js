@@ -91,25 +91,13 @@ module.exports = homebridge => {
   }
 
   class ShellyBulbColorLightbulbAccessory
-    extends ShellyColorLightbulbAccessory {
-    get defaultName() {
-      return `Shelly Bulb ${this.device.id}`
-    }
-  }
+    extends ShellyColorLightbulbAccessory {}
 
   class ShellyDimmerWhiteLightbulbAccessory
-    extends ShellyWhiteLightbulbAccessory {
-    get defaultName() {
-      return `Shelly Dimmer ${this.device.id}`
-    }
-  }
+    extends ShellyWhiteLightbulbAccessory {}
 
   class ShellyRGBW2ColorLightbulbAccessory
     extends ShellyColorLightbulbAccessory {
-    get defaultName() {
-      return `Shelly RGBW2 ${this.device.id}`
-    }
-
     _createPlatformAccessory() {
       const pa = super._createPlatformAccessory()
       pa.context.mode = 'color'
@@ -126,10 +114,6 @@ module.exports = homebridge => {
         'brightness' + index,
         this.setLight.bind(this)
       ))
-    }
-
-    get defaultName() {
-      return `Shelly RGBW2 ${this.device.id} #${this.index}`
     }
 
     get category() {

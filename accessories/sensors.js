@@ -29,10 +29,6 @@ module.exports = homebridge => {
         new BatteryAbility('battery'),
       ])
     }
-
-    get defaultName() {
-      return `Shelly H&T ${this.device.id}`
-    }
   }
 
   class ShellyFloodAccessory extends ShellySensorAccessory {
@@ -42,10 +38,6 @@ module.exports = homebridge => {
         new TemperatureSensorAbility('temperature'),
         new BatteryAbility('battery'),
       ])
-    }
-
-    get defaultName() {
-      return `Shelly Flood ${this.device.id}`
     }
   }
 
@@ -58,10 +50,6 @@ module.exports = homebridge => {
         new LightSensorAbility('illuminance'),
         new BatteryAbility('battery', true, 'charging'),
       ])
-    }
-
-    get defaultName() {
-      return `Shelly Sense ${this.device.id}`
     }
   }
 
