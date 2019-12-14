@@ -7,6 +7,9 @@ module.exports = homebridge => {
   const LeakSensorAbility = require('../abilities/leak-sensor')(homebridge)
   const LightSensorAbility = require('../abilities/light-sensor')(homebridge)
   const MotionSensorAbility = require('../abilities/motion-sensor')(homebridge)
+  const PowerConsumptionAbility =
+    require('../abilities/power-consumption')(homebridge)
+  const Service = homebridge.hap.Service
   const TemperatureSensorAbility =
     require('../abilities/temperature-sensor')(homebridge)
   const { ShellyAccessory } = require('./base')(homebridge)
@@ -21,6 +24,16 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyFloodAccessory extends ShellySensorAccessory {
+    constructor(device, index, config, log) {
+      super(device, index, config, log, [
+        new LeakSensorAbility('flood'),
+        new TemperatureSensorAbility('temperature'),
+        new BatteryAbility('battery'),
+      ])
+    }
+  }
+
   class ShellyHTAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
@@ -31,13 +44,18 @@ module.exports = homebridge => {
     }
   }
 
-  class ShellyFloodAccessory extends ShellySensorAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new LeakSensorAbility('flood'),
-        new TemperatureSensorAbility('temperature'),
-        new BatteryAbility('battery'),
-      ])
+  class ShellyRelayMotionSensorAccessory extends ShellyAccessory {
+    constructor(device, index, config, log, powerMeterIndex = false) {
+      super('motionSensor', device, index, config, log)
+
+      this.abilities.push(new MotionSensorAbility('relay' + index))
+
+      if (powerMeterIndex !== false) {
+        this.abilities.push(new PowerConsumptionAbility(
+          Service.MotionSensor,
+          'powerMeter' + powerMeterIndex
+        ))
+      }
     }
   }
 
@@ -54,8 +72,9 @@ module.exports = homebridge => {
   }
 
   return {
-    ShellyHTAccessory,
     ShellyFloodAccessory,
+    ShellyHTAccessory,
+    ShellyRelayMotionSensorAccessory,
     ShellySenseAccessory,
   }
 }
