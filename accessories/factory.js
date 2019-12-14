@@ -37,171 +37,372 @@ module.exports = homebridge => {
     Shelly2WindowCoveringAccessory,
   } = require('./window-coverings')(homebridge)
 
-  const FRIENDLY_DEVICE_NAMES = {
-    'SHBLB-1': 'Shelly Bulb',
-    'SHDM-1': 'Shelly Dimmer',
-    SHEM: 'Shelly EM',
-    'SHHT-1': 'Shelly H&T',
-    'SHPLG-1': 'Shelly Plug',
-    'SHPLG-S': 'Shelly Plug S',
-    'SHPLG2-1': 'Shelly Plug',
-    SHRGBW2: 'Shelly RGBW2',
-    'SHSEN-1': 'Shelly Sense',
-    'SHSW-1': 'Shelly 1',
-    'SHSW-21': 'Shelly 2',
-    'SHSW-22': 'Shelly HD',
-    'SHSW-25': 'Shelly 2.5',
-    'SHSW-44': 'Shelly 4Pro',
-    'SHSW-PM': 'Shelly 1PM',
-    'SHWT-1': 'Shelly Flood',
-  }
+  const FACTORIES = new Map()
 
-  return {
+  /**
+   * Base class for all accessory factories.
+   */
+  class AccessoryFactory {
     /**
-     * Returns the default accessory type identifier for the given device type
-     * and (optionally) device mode.
+     * @param {object} device - The device that accessories will be created for.
      */
-    getDefaultAccessoryType(deviceType, deviceMode = null) {
-      switch (deviceType) {
-        case 'SHBLB-1':
-          return 'colorLightbulb'
-        case 'SHDM-1':
-          return 'whiteLightbulb'
-        case 'SHEM':
-          return 'switch'
-        case 'SHHT-1':
-          return 'sensor'
-        case 'SHPLG-1':
-        case 'SHPLG-S':
-        case 'SHPLG2-1':
-          return 'switch'
-        case 'SHRGBW2':
-          if (deviceMode === 'white') {
-            return 'whiteLightbulb'
-          }
-          return 'colorLightbulb'
-        case 'SHSEN-1':
-          return 'sensor'
-        case 'SHSW-1':
-          return 'switch'
-        case 'SHSW-21':
-        case 'SHSW-25':
-          if (deviceMode === 'roller') {
-            return 'windowCovering'
-          }
-          return 'switch'
-        case 'SHSW-22':
-        case 'SHSW-44':
-        case 'SHSW-PM':
-          return 'switch'
-        case 'SHWT-1':
-          return 'sensor'
-      }
-
-      return null
-    },
+    constructor(device) {
+      this.device = device
+    }
 
     /**
-     * Returns a default name for the given device type, id, mode and index.
+     * The friendly name of this type of device.
      */
-    getDefaultAccessoryName(deviceType, deviceId, deviceMode, index) {
+    get friendlyName() {
+      return this.device.type
+    }
+
+    /**
+     * The default accessory type identifier for the device.
+     */
+    get defaultAccessoryType() {
+      // 'switch' is the most common type of accessory
+      return 'switch'
+    }
+
+    /**
+     * The number of accessories that this type of device has.
+     */
+    get numberOfAccessories() {
+      return 1
+    }
+
+    /**
+     * Returns a default name for the device and the given accessory index.
+     */
+    getDefaultAccessoryName(index) {
       const n = [
-        FRIENDLY_DEVICE_NAMES[deviceType] || deviceType,
-        deviceId,
+        this.friendlyName,
+        this.device.id,
       ]
       // only add the index to the name for devices that have more than one
       // accessory
-      if (this.getNumberOfAccessories(deviceType, deviceMode) > 1) {
+      if (this.numberOfAccessories > 1) {
         n.push('#' + index)
       }
       return n.join(' ')
-    },
+    }
 
     /**
-     * Returns the number of accessories for the given device type and mode.
+     * Creates an accessory for the device, with the given type and index.
      */
-    getNumberOfAccessories(deviceType, deviceMode = null) {
-      if (deviceType === 'SHRGBW2' && deviceMode === 'white') {
-        return 4
-      } else if (deviceType === 'SHSW-21' && deviceMode !== 'roller') {
-        return 2
-      } else if (deviceType === 'SHSW-22') {
-        return 2
-      } else if (deviceType === 'SHSW-25' && deviceMode !== 'roller') {
-        return 2
-      } else if (deviceType === 'SHSW-44') {
+    createAccessory(accessoryType, index, config, log) {
+      const accessory = this._createAccessory(accessoryType, index, config, log)
+      if (accessory) {
+        // override the default name with a more friendly name
+        accessory.defaultName = this.getDefaultAccessoryName(index)
+      }
+      return accessory
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      return null
+    }
+  }
+
+  /**
+   * Shelly Bulb factory.
+   */
+  class ShellyBulbFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Bulb'
+    }
+
+    get defaultAccessoryType() {
+      return 'colorLightbulb'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyBulbColorLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHBLB-1', ShellyBulbFactory)
+
+  /**
+   * Shelly Dimmer factory.
+   */
+  class ShellyDimmerFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Dimmer'
+    }
+
+    get defaultAccessoryType() {
+      return 'whiteLightbulb'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyDimmerWhiteLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHDM-1', ShellyDimmerFactory)
+
+  /**
+   * Shelly EM factory.
+   */
+  class ShellyEMFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly EM'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new ShellyEMOutletAccessory(this.device, ...opts)
+      }
+      return new ShellyEMSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHEM', ShellyEMFactory)
+
+  /**
+   * Shelly H&T factory.
+   */
+  class ShellyHTFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly H&T'
+    }
+
+    get defaultAccessoryType() {
+      return 'sensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyHTAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHHT-1', ShellyHTFactory)
+
+  /**
+   * Shelly Plug factory.
+   */
+  class ShellyPlugFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Plug'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new ShellyPlugOutletAccessory(this.device, ...opts)
+      }
+      return new ShellyPlugSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHPLG-1', ShellyPlugFactory)
+  FACTORIES.set('SHPLG2-1', ShellyPlugFactory)
+
+  /**
+   * Shelly Plug S factory.
+   */
+  class ShellyPlugSFactory extends ShellyPlugFactory {
+    get friendlyName() {
+      return 'Shelly Plug S'
+    }
+  }
+  FACTORIES.set('SHPLG-S', ShellyPlugSFactory)
+
+  /**
+   * Shelly RGBW2 factory.
+   */
+  class ShellyRGBW2Factory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly RGBW2'
+    }
+
+    get defaultAccessoryType() {
+      if (this.device.mode === 'white') {
+        return 'whiteLightbulb'
+      }
+      return 'colorLightbulb'
+    }
+
+    get numberOfAccessories() {
+      if (this.device.mode === 'white') {
         return 4
       }
       return 1
-    },
+    }
 
-    /**
-     * Returns a reference to the accessory class for the given device type,
-     * accessory type and (optionally) device mode.
-     */
-    getAccessoryClass(deviceType, accessoryType, deviceMode = null) {
-      switch (deviceType) {
-        case 'SHBLB-1':
-          return ShellyBulbColorLightbulbAccessory
-        case 'SHDM-1':
-          return ShellyDimmerWhiteLightbulbAccessory
-        case 'SHEM':
-          if (accessoryType === 'outlet') {
-            return ShellyEMOutletAccessory
-          }
-          return ShellyEMSwitchAccessory
-        case 'SHHT-1':
-          return ShellyHTAccessory
-        case 'SHPLG-1':
-        case 'SHPLG-S':
-        case 'SHPLG2-1':
-          if (accessoryType === 'outlet') {
-            return ShellyPlugOutletAccessory
-          }
-          return ShellyPlugSwitchAccessory
-        case 'SHRGBW2':
-          if (deviceMode === 'white') {
-            return ShellyRGBW2WhiteLightbulbAccessory
-          }
-          return ShellyRGBW2ColorLightbulbAccessory
-        case 'SHSEN-1':
-          return ShellySenseAccessory
-        case 'SHSW-1':
-          if (accessoryType === 'outlet') {
-            return Shelly1OutletAccessory
-          }
-          return Shelly1SwitchAccessory
-        case 'SHSW-21':
-        case 'SHSW-25':
-          if (deviceMode === 'roller') {
-            return Shelly2WindowCoveringAccessory
-          }
-          if (accessoryType === 'outlet') {
-            return Shelly2OutletAccessory
-          }
-          return Shelly2SwitchAccessory
-        case 'SHSW-22':
-          if (accessoryType === 'outlet') {
-            return ShellyHDOutletAccessory
-          }
-          return ShellyHDSwitchAccessory
-        case 'SHSW-44':
-          if (accessoryType === 'outlet') {
-            return Shelly4ProOutletAccessory
-          }
-          return Shelly4ProSwitchAccessory
-        case 'SHSW-PM':
-          if (accessoryType === 'outlet') {
-            return Shelly1PMOutletAccessory
-          }
-          return Shelly1PMSwitchAccessory
-        case 'SHWT-1':
-          return ShellyFloodAccessory
+    _createAccessory(accessoryType, ...opts) {
+      if (this.device.mode === 'white') {
+        return new ShellyRGBW2WhiteLightbulbAccessory(this.device, ...opts)
       }
+      return new ShellyRGBW2ColorLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHRGBW2', ShellyRGBW2Factory)
 
+  /**
+   * Shelly Sense factory.
+   */
+  class ShellySenseFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Sense'
+    }
+
+    get defaultAccessoryType() {
+      return 'sensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellySenseAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSEN-1', ShellySenseFactory)
+
+  /**
+   * Shelly 1 factory.
+   */
+  class Shelly1Factory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly 1'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new Shelly1OutletAccessory(this.device, ...opts)
+      }
+      return new Shelly1SwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSW-1', Shelly1Factory)
+
+  /**
+   * Shelly 2 factory.
+   */
+  class Shelly2Factory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly 2'
+    }
+
+    get defaultAccessoryType() {
+      if (this.device.mode === 'roller') {
+        return 'windowCovering'
+      }
+      return 'switch'
+    }
+
+    get numberOfAccessories() {
+      if (this.device.mode === 'roller') {
+        return 1
+      }
+      return 2
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (this.device.mode === 'roller') {
+        return new Shelly2WindowCoveringAccessory(this.device, ...opts)
+      }
+      if (accessoryType === 'outlet') {
+        return new Shelly2OutletAccessory(this.device, ...opts)
+      }
+      return new Shelly2SwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSW-21', Shelly2Factory)
+
+  /**
+   * Shelly HD factory.
+   */
+  class ShellyHDFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly HD'
+    }
+
+    get numberOfAccessories() {
+      return 2
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new ShellyHDOutletAccessory(this.device, ...opts)
+      }
+      return new ShellyHDSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSW-22', ShellyHDFactory)
+
+  /**
+   * Shelly 2.5 factory.
+   */
+  class Shelly25Factory extends Shelly2Factory {
+    get friendlyName() {
+      return 'Shelly 2.5'
+    }
+  }
+  FACTORIES.set('SHSW-25', Shelly25Factory)
+
+  /**
+   * Shelly 4Pro factory.
+   */
+  class Shelly4ProFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly 4Pro'
+    }
+
+    get numberOfAccessories() {
+      return 4
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new Shelly4ProOutletAccessory(this.device, ...opts)
+      }
+      return new Shelly4ProSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSW-44', Shelly4ProFactory)
+
+  /**
+   * Shelly 1PM factory.
+   */
+  class Shelly1PMFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly 1PM'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'outlet') {
+        return new Shelly1PMOutletAccessory(this.device, ...opts)
+      }
+      return new Shelly1PMSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHSW-PM', Shelly1PMFactory)
+
+  /**
+   * Shelly Flood factory.
+   */
+  class ShellyFloodFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Flood'
+    }
+
+    get defaultAccessoryType() {
+      return 'sensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyFloodAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHWT-1', ShellyFloodFactory)
+
+  /**
+   * Returns the factory for the given device.
+   */
+  const getFactory = device => {
+    const FactoryClass = FACTORIES.get(device.type)
+    if (!FactoryClass) {
       return null
-    },
+    }
+    return new FactoryClass(device)
+  }
 
+  return {
     /**
      * Extracts and returns the configuration options for the accessory with
      * the given index.
@@ -220,35 +421,41 @@ module.exports = homebridge => {
     },
 
     /**
+     * Returns the default accessory type identifier for the given device type
+     * and (optionally) mode.
+     */
+    getDefaultAccessoryType(deviceType, deviceMode = null) {
+      // create a dummy device
+      const device = {
+        id: '_',
+        type: deviceType,
+        mode: deviceMode,
+      }
+      const factory = getFactory(device)
+      if (!factory) {
+        return null
+      }
+      return factory.defaultAccessoryType
+    },
+
+    /**
      * Creates an accessory for the given device and index.
      */
     createAccessory(device, index, config, log,
       platformAccessory = null) {
-      const accessoryConfig = this.getAccessoryConfig(config, index)
-      const accessoryType = accessoryConfig.type ||
-        this.getDefaultAccessoryType(device.type, device.mode)
-      const AccessoryClass = this.getAccessoryClass(
-        device.type,
-        accessoryType,
-        device.mode
-      )
-
-      if (!AccessoryClass) {
+      const factory = getFactory(device)
+      if (!factory) {
         return null
       }
 
-      const accessory = new AccessoryClass(
-        device,
+      const accessoryConfig = this.getAccessoryConfig(config, index)
+      const accessoryType = accessoryConfig.type || factory.defaultAccessoryType
+
+      const accessory = factory.createAccessory(
+        accessoryType,
         index,
         accessoryConfig,
         log
-      )
-      // override the default name with a more friendly name
-      accessory.defaultName = this.getDefaultAccessoryName(
-        device.type,
-        device.id,
-        device.mode,
-        index
       )
       accessory.setup(platformAccessory)
       return accessory
@@ -258,6 +465,11 @@ module.exports = homebridge => {
      * Creates all accessories for the given device.
      */
     createAccessories(device, config, log) {
+      const factory = getFactory(device)
+      if (!factory) {
+        return null
+      }
+
       // helper function that creates the given number of accessories
       const multiple = num => {
         return Array.from(
@@ -266,15 +478,7 @@ module.exports = homebridge => {
         )
       }
 
-      const accessories = multiple(
-        this.getNumberOfAccessories(device.type, device.mode)
-      )
-      // skip unknown devices
-      if (!accessories[0]) {
-        return null
-      }
-
-      return accessories
+      return multiple(factory.numberOfAccessories)
     }
   }
 }
