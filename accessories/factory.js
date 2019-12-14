@@ -14,6 +14,7 @@ module.exports = homebridge => {
   const {
     ShellyFloodAccessory,
     ShellyHTAccessory,
+    ShellyRelayContactSensorAccessory,
     ShellyRelayMotionSensorAccessory,
     ShellySenseAccessory,
   } = require('./sensors')(homebridge)
@@ -127,7 +128,9 @@ module.exports = homebridge => {
      * that have one or more relays.
      */
     _createAccessoryForRelay(accessoryType, ...opts) {
-      if (accessoryType === 'motionSensor') {
+      if (accessoryType === 'contactSensor') {
+        return new ShellyRelayContactSensorAccessory(this.device, ...opts)
+      } else if (accessoryType === 'motionSensor') {
         return new ShellyRelayMotionSensorAccessory(this.device, ...opts)
       } else if (accessoryType === 'outlet') {
         return new ShellyRelayOutletAccessory(this.device, ...opts)
