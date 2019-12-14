@@ -29,63 +29,7 @@ module.exports = homebridge => {
     }
   }
 
-  class Shelly1SwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, false)
-    }
-  }
-
-  class Shelly1PMSwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, index)
-    }
-  }
-
-  class Shelly2SwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(
-        device,
-        index,
-        config,
-        log,
-        // Shelly 2 has a single power meter
-        device.type === 'SHSW-21' ? 0 : index
-      )
-    }
-  }
-
-  class Shelly4ProSwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, index)
-    }
-  }
-
-  class ShellyEMSwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, index)
-    }
-  }
-
-  class ShellyHDSwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, index)
-    }
-  }
-
-  class ShellyPlugSwitchAccessory extends ShellyRelaySwitchAccessory {
-    constructor(device, index, config, log) {
-      super(device, index, config, log, index)
-    }
-  }
-
   return {
     ShellyRelaySwitchAccessory,
-    Shelly1PMSwitchAccessory,
-    Shelly1SwitchAccessory,
-    Shelly2SwitchAccessory,
-    Shelly4ProSwitchAccessory,
-    ShellyEMSwitchAccessory,
-    ShellyHDSwitchAccessory,
-    ShellyPlugSwitchAccessory,
   }
 }
