@@ -59,6 +59,10 @@ module.exports = homebridge => {
         ))
       }
     }
+
+    get category() {
+      return Accessory.Categories.SENSOR
+    }
   }
 
   class ShellyRelayMotionSensorAccessory extends ShellyAccessory {
@@ -73,6 +77,10 @@ module.exports = homebridge => {
           'powerMeter' + powerMeterIndex
         ))
       }
+    }
+
+    get category() {
+      return Accessory.Categories.SENSOR
     }
   }
 
