@@ -93,6 +93,11 @@ interface of a device, under *Settings -> Device info -> Device ID*.
   global `"username"` and `"password"` options.
 * `"name"` - sets a custom name for the device.
 
+#### Shelly switch configurations
+*Applies to Shelly 1, 1PM, 2 and 2.5 in relay mode, 4Pro, EM, Plug and Plug S.*
+* `"type"` - sets the type of accessory the device is identified as. Available
+  types are `"switch"`, `"outlet"`, `"contactSensor"` and `"motionSensor"`.
+
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
@@ -109,7 +114,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
       { "id": "74B5A3", "exclude": true },
       { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
       { "id": "6A78BB", "colorMode": "rgb" },
-      { "id": "AD2214", "name": "My Device" }
+      { "id": "AD2214", "name": "My Device" },
+      { "id": "1D56AF", "type": "outlet" }
     ],
     "admin": {
       "enabled": true,
