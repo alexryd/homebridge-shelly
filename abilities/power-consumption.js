@@ -1,6 +1,6 @@
 
 module.exports = homebridge => {
-  const Ability = require('./base')(homebridge)
+  const { Ability } = require('./base')(homebridge)
   const {
     ConsumptionCharacteristic
   } = require('../characteristics')(homebridge)

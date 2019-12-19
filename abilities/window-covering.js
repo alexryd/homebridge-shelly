@@ -1,7 +1,7 @@
 const { handleFailedRequest } = require('../error-handlers')
 
 module.exports = homebridge => {
-  const Ability = require('./base')(homebridge)
+  const { Ability } = require('./base')(homebridge)
   const Characteristic = homebridge.hap.Characteristic
   const Service = homebridge.hap.Service
 
