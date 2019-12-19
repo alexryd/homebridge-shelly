@@ -9,6 +9,8 @@ module.exports = homebridge => {
   const LeakSensorAbility = require('../abilities/leak-sensor')(homebridge)
   const LightSensorAbility = require('../abilities/light-sensor')(homebridge)
   const MotionSensorAbility = require('../abilities/motion-sensor')(homebridge)
+  const OccupancySensorAbility =
+    require('../abilities/occupancy-sensor')(homebridge)
   const PowerConsumptionAbility =
     require('../abilities/power-consumption')(homebridge)
   const Service = homebridge.hap.Service
@@ -84,6 +86,25 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyRelayOccupancySensorAccessory extends ShellyAccessory {
+    constructor(device, index, config, log, powerMeterIndex = false) {
+      super('occupancySensor', device, index, config, log)
+
+      this.abilities.push(new OccupancySensorAbility('relay' + index))
+
+      if (powerMeterIndex !== false) {
+        this.abilities.push(new PowerConsumptionAbility(
+          Service.OccupancySensor,
+          'powerMeter' + powerMeterIndex
+        ))
+      }
+    }
+
+    get category() {
+      return Accessory.Categories.SENSOR
+    }
+  }
+
   class ShellySenseAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
@@ -101,6 +122,7 @@ module.exports = homebridge => {
     ShellyHTAccessory,
     ShellyRelayContactSensorAccessory,
     ShellyRelayMotionSensorAccessory,
+    ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
   }
 }

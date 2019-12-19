@@ -96,7 +96,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 #### Shelly switch configurations
 *Applies to Shelly 1, 1PM, 2 and 2.5 in relay mode, 4Pro, EM, Plug and Plug S.*
 * `"type"` - sets the type of accessory the device is identified as. Available
-  types are `"switch"`, `"outlet"`, `"contactSensor"` and `"motionSensor"`.
+  types are `"switch"`, `"outlet"`, `"contactSensor"`, `"occupancySensor"` and
+  `"motionSensor"`.
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
