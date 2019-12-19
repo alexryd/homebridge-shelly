@@ -9,49 +9,58 @@ module.exports = homebridge => {
     /**
      * @param {string} switchProperty - The device property used to indicate
      * the switch state.
-     * @param {string} inUseProperty - The device property used to indicate
-     * whether the outlet is in use.
      * @param {function} setSwitch - A function that updates the device's switch
      * state. Must return a Promise.
+     * @param {string} inUseProperty - The device property used to indicate
+     * whether the outlet is in use.
      */
-    constructor(switchProperty, inUseProperty, setSwitch) {
+    constructor(switchProperty, setSwitch, inUseProperty = null) {
       super()
 
       this._switchProperty = switchProperty
-      this._inUseProperty = inUseProperty
       this._setSwitch = setSwitch
+      this._inUseProperty = inUseProperty
     }
 
     get on() {
-      return this.device[this._switchProperty]
+      return !!this.device[this._switchProperty]
     }
 
     get inUse() {
-      return !!this.device[this._inUseProperty]
+      return this._inUseProperty ? !!this.device[this._inUseProperty] : false
     }
 
     _setupPlatformAccessory() {
       super._setupPlatformAccessory()
 
-      const outletService = new Service.Outlet()
-        .setCharacteristic(Characteristic.On, this.on)
-        .setCharacteristic(Characteristic.OutletInUse, this.inUse)
-
-      this.platformAccessory.addService(outletService)
+      this.platformAccessory.addService(
+        new Service.Outlet()
+          .setCharacteristic(Characteristic.On, this.on)
+          .setCharacteristic(Characteristic.OutletInUse, this.inUse)
+      )
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      const outletService = this.platformAccessory.getService(Service.Outlet)
-
-      outletService
+      this.platformAccessory
+        .getService(Service.Outlet)
         .getCharacteristic(Characteristic.On)
         .on('set', this._onSetHandler.bind(this))
 
-      this.device
-        .on('change:' + this._switchProperty, this._switchChangeHandler, this)
-        .on('change:' + this._inUseProperty, this._inUseChangeHandler, this)
+      this.device.on(
+        'change:' + this._switchProperty,
+        this._switchChangeHandler,
+        this
+      )
+
+      if (this._inUseProperty) {
+        this.device.on(
+          'change:' + this._inUseProperty,
+          this._inUseChangeHandler,
+          this
+        )
+      }
     }
 
     /**

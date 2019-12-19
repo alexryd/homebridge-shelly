@@ -17,8 +17,8 @@ module.exports = homebridge => {
 
       this.abilities.push(new OutletAbility(
         'relay' + index,
-        consumptionProperty,
-        this.setRelay.bind(this)
+        this.setRelay.bind(this),
+        consumptionProperty
       ))
 
       if (consumptionProperty) {
