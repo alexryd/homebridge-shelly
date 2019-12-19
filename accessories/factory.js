@@ -1,6 +1,10 @@
 
 module.exports = homebridge => {
   const {
+    Shelly2DoorAccessory,
+  } = require('./doors')(homebridge)
+
+  const {
     ShellyBulbColorLightbulbAccessory,
     ShellyDimmerWhiteLightbulbAccessory,
     ShellyRGBW2ColorLightbulbAccessory,
@@ -322,7 +326,9 @@ module.exports = homebridge => {
 
     _createAccessory(accessoryType, index, config, log) {
       if (this.device.mode === 'roller') {
-        if (accessoryType === 'window') {
+        if (accessoryType === 'door') {
+          return new Shelly2DoorAccessory(this.device, index, config, log)
+        } else if (accessoryType === 'window') {
           return new Shelly2WindowAccessory(this.device, index, config, log)
         }
         return new Shelly2WindowCoveringAccessory(

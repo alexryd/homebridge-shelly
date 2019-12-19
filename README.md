@@ -100,8 +100,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
   and `"switch"` (default).
 
 #### Shelly 2.5 configurations
-* `"type"` - in roller mode, the device can be identified as either `"window"`
-  or `"windowCovering"` (default).
+* `"type"` - in roller mode, the device can be identified as either `"door"`,
+  `"window"` or `"windowCovering"` (default).
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
