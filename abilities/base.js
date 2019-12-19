@@ -1,6 +1,8 @@
 const { handleFailedRequest } = require('../error-handlers')
 
 module.exports = homebridge => {
+  const Characteristic = homebridge.hap.Characteristic
+
   class Ability {
     constructor() {
       this.device = null
@@ -45,6 +47,251 @@ module.exports = homebridge => {
       // subclasses should use this method to remove all event handlers and all
       // references to the device
       this.device = null
+    }
+  }
+
+  /**
+   * Common base class for all abilities that use a position and a state.
+   */
+  class PositionableAbility extends Ability {
+    /**
+     * @param {object} Service - The HAP service class to use.
+     * @param {string} positionProperty - The device property used to indicate
+     * the current position.
+     * @param {string} stateProperty - The device property used to indicate the
+     * current state.
+     * @param {function} setPosition - A function that updates the device's
+     * target position. Must return a Promise.
+     */
+    constructor(Service, positionProperty, stateProperty, setPosition) {
+      super()
+
+      this._Service = Service
+      this._positionProperty = positionProperty
+      this._stateProperty = stateProperty
+      this._setPosition = setPosition
+      this._targetPosition = null
+      this._updatingTargetPosition = false
+    }
+
+    /**
+     * The HAP service that this ability has added.
+     */
+    get service() {
+      return this.platformAccessory.getService(this._Service)
+    }
+
+    /**
+     * The device's current position.
+     */
+    get position() {
+      return this.device[this._positionProperty] || 0
+    }
+
+    /**
+     * The device's current state.
+     */
+    get state() {
+      return this.device[this._stateProperty] || 'stop'
+    }
+
+    /**
+     * The current position state.
+     */
+    get positionState() {
+      const PS = Characteristic.PositionState
+      if (this.state === 'open') {
+        return PS.INCREASING
+      } else if (this.state === 'close') {
+        return PS.DECREASING
+      }
+      return PS.STOPPED
+    }
+
+    /**
+     * The target position.
+     */
+    get targetPosition() {
+      return this._targetPosition !== null
+        ? this._targetPosition
+        // default to the current position
+        : this.position
+    }
+
+    _setupPlatformAccessory() {
+      super._setupPlatformAccessory()
+
+      this.platformAccessory.addService(
+        new this._Service()
+          .setCharacteristic(Characteristic.PositionState, this.positionState)
+          .setCharacteristic(Characteristic.CurrentPosition, this.position)
+          .setCharacteristic(Characteristic.TargetPosition, this.targetPosition)
+      )
+    }
+
+    _setupEventHandlers() {
+      super._setupEventHandlers()
+
+      this.service
+        .getCharacteristic(Characteristic.TargetPosition)
+        .on('set', this._targetPositionSetHandler.bind(this))
+
+      this.device
+        .on(
+          'change:' + this._stateProperty,
+          this._stateChangeHandler,
+          this
+        )
+        .on(
+          'change:' + this._positionProperty,
+          this._positionChangeHandler,
+          this
+        )
+    }
+
+    /**
+     * Handles changes from HomeKit to the TargetPosition characteristic.
+     */
+    async _targetPositionSetHandler(newValue, callback) {
+      const d = this.device
+
+      if (this.targetPosition === newValue) {
+        callback()
+        return
+      }
+
+      this.log.debug(
+        'Setting',
+        this._positionProperty,
+        'of device',
+        d.type,
+        d.id,
+        'to',
+        newValue
+      )
+
+      try {
+        await this._setPosition(newValue)
+        this._targetPosition = newValue
+        callback()
+      } catch (e) {
+        handleFailedRequest(
+          this.log,
+          d,
+          e,
+          'Failed to set ' + this._positionProperty
+        )
+        callback(e)
+      }
+    }
+
+    /**
+     * Handles changes from the device to the state property.
+     */
+    _stateChangeHandler(newValue) {
+      this.log.debug(
+        this._stateProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.service
+        .getCharacteristic(Characteristic.PositionState)
+        .setValue(this.positionState)
+
+      this._updateTargetPositionDebounced()
+    }
+
+    /**
+     * Handles changes from the device to the position property.
+     */
+    _positionChangeHandler(newValue) {
+      this.log.debug(
+        this._positionProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.service
+        .getCharacteristic(Characteristic.CurrentPosition)
+        .setValue(this.position)
+
+      this._updateTargetPositionDebounced()
+    }
+
+    /**
+     * Invokes the _updateTargetPosition() method, debouncing the requests.
+     */
+    _updateTargetPositionDebounced() {
+      if (this._updatingTargetPosition) {
+        return
+      }
+      this._updatingTargetPosition = true
+
+      setImmediate(() => {
+        this._updateTargetPosition()
+        this._updatingTargetPosition = false
+      })
+    }
+
+    /**
+     * Since Shelly devices don't have a target position property, this method
+     * simulates one.
+     */
+    _updateTargetPosition() {
+      const state = this.state
+      const position = this.position
+      let targetPosition = null
+
+      if (state === 'stop') {
+        targetPosition = position
+      } else if (state === 'open' && this.targetPosition <= position) {
+        // we don't know what the target position is here, but we set it
+        // to 100 so that the interface shows that the roller is opening
+        targetPosition = 100
+      } else if (state === 'close' && this.targetPosition >= position) {
+        // we don't know what the target position is here, but we set it
+        // to 0 so that the interface shows that the roller is closing
+        targetPosition = 0
+      }
+
+      if (targetPosition !== null && targetPosition !== this.targetPosition) {
+        this.log.debug(
+          'Setting target position of device',
+          this.device.type,
+          this.device.id,
+          'to',
+          targetPosition
+        )
+
+        this._targetPosition = targetPosition
+
+        this.service
+          .getCharacteristic(Characteristic.TargetPosition)
+          .setValue(targetPosition)
+      }
+    }
+
+    detach() {
+      this.device
+        .removeListener(
+          'change:' + this._stateProperty,
+          this._stateChangeHandler,
+          this
+        )
+        .removeListener(
+          'change:' + this._positionProperty,
+          this._positionChangeHandler,
+          this
+        )
+
+      super.detach()
     }
   }
 
@@ -202,6 +449,7 @@ module.exports = homebridge => {
 
   return {
     Ability,
+    PositionableAbility,
     SinglePropertyAbility,
   }
 }
