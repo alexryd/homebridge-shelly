@@ -28,6 +28,10 @@ module.exports = homebridge => {
     Shelly2WindowCoveringAccessory,
   } = require('./window-coverings')(homebridge)
 
+  const {
+    Shelly2WindowAccessory,
+  } = require('./windows')(homebridge)
+
   const FACTORIES = new Map()
 
   /**
@@ -318,6 +322,9 @@ module.exports = homebridge => {
 
     _createAccessory(accessoryType, index, config, log) {
       if (this.device.mode === 'roller') {
+        if (accessoryType === 'window') {
+          return new Shelly2WindowAccessory(this.device, index, config, log)
+        }
         return new Shelly2WindowCoveringAccessory(
           this.device,
           index,
