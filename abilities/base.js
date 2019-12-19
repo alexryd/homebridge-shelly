@@ -301,7 +301,7 @@ module.exports = homebridge => {
    */
   class SinglePropertyAbility extends Ability {
     /**
-     * @param {object} Service - The HAP service class  to use.
+     * @param {object} Service - The HAP service class to use.
      * @param {object} Characteristic - The HAP characteristic class to use.
      * @param {string} property - Name of the device property to use.
      * @param {function} updater - A function that updates the device property.
