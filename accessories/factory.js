@@ -29,6 +29,10 @@ module.exports = homebridge => {
   } = require('./switches')(homebridge)
 
   const {
+    ShellyRelayValveAccessory,
+  } = require('./valves')(homebridge)
+
+  const {
     Shelly2WindowCoveringAccessory,
   } = require('./window-coverings')(homebridge)
 
@@ -145,6 +149,8 @@ module.exports = homebridge => {
         return new ShellyRelayOccupancySensorAccessory(this.device, ...opts)
       } else if (accessoryType === 'outlet') {
         return new ShellyRelayOutletAccessory(this.device, ...opts)
+      } else if (accessoryType === 'valve') {
+        return new ShellyRelayValveAccessory(this.device, ...opts)
       }
       return new ShellyRelaySwitchAccessory(this.device, ...opts)
     }

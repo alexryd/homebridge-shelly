@@ -96,8 +96,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 #### Shelly switch configurations
 *Applies to Shelly 1, 1PM, 2 and 2.5 in relay mode, 4Pro, EM, Plug and Plug S.*
 * `"type"` - sets the type of accessory the device is identified as. Available
-  types are `"contactSensor"`, `"motionSensor"`, `"occupancySensor"`, `"outlet"`
-  and `"switch"` (default).
+  types are `"contactSensor"`, `"motionSensor"`, `"occupancySensor"`,
+  `"outlet"`, `"switch"` (default) and `"valve"`.
 
 #### Shelly 2.5 configurations
 * `"type"` - in roller mode, the device can be identified as either `"door"`,
