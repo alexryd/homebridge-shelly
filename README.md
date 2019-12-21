@@ -101,7 +101,7 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 
 #### Shelly 2.5 configurations
 * `"type"` - in roller mode, the device can be identified as either `"door"`,
-  `"window"` or `"windowCovering"` (default).
+  `"garageDoorOpener"`, `"window"` or `"windowCovering"` (default).
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
