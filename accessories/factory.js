@@ -120,7 +120,7 @@ module.exports = homebridge => {
 
     _createAccessory(accessoryType, index, config, log) {
       const powerMeterIndex = this.numberOfPowerMeters > 0
-        ? Math.max(index, this.numberOfPowerMeters - 1)
+        ? Math.min(index, this.numberOfPowerMeters - 1)
         : false
 
       return this._createAccessoryForRelay(
