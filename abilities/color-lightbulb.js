@@ -82,14 +82,6 @@ module.exports = homebridge => {
         .on('change:' + this._redProperty, this._rgbChangeHandler, this)
         .on('change:' + this._greenProperty, this._rgbChangeHandler, this)
         .on('change:' + this._blueProperty, this._rgbChangeHandler, this)
-
-      if (this.colorMode === 'rgbw') {
-        this.device.on(
-          'change:' + this._whiteProperty,
-          this._rgbChangeHandler,
-          this
-        )
-      }
     }
 
     /**
@@ -124,7 +116,7 @@ module.exports = homebridge => {
         const on = lightbulbService.getCharacteristic(Characteristic.On).value
         const brightness = lightbulbService
           .getCharacteristic(Characteristic.Brightness).value
-        const color = this._getRedGreenBlue()
+        const color = this._getRedGreenBlue(brightness)
 
         this.log.debug(
           'Setting light of device',
@@ -132,8 +124,7 @@ module.exports = homebridge => {
           this.device.id,
           'to',
           on ? 'on,' : 'off,',
-          brightness,
-          '%,',
+          brightness + '%,',
           '(' + Object.values(color).join(',') + ')'
         )
 
@@ -155,27 +146,22 @@ module.exports = homebridge => {
     /**
      * Converts hue and saturation to RGB/RGBW.
      */
-    _getRedGreenBlue() {
-      const rgb = colorConvert.hsv.rgb(
-        this.hue,
-        // in rgbw mode we set the saturation to 100 here when converting to RGB
-        // and then set the white component to the actual saturation
-        this.colorMode === 'rgbw' ? 100 : this.saturation,
-        100
-      )
+    _getRedGreenBlue(brightness) {
+      const rgb = colorConvert.hsv.rgb(this.hue, this.saturation, 100)
       const ret = {
         [this._redProperty]: rgb[0],
         [this._greenProperty]: rgb[1],
         [this._blueProperty]: rgb[2],
       }
       if (this.colorMode === 'rgbw') {
-        ret[this._whiteProperty] = 255 - Math.round(this.saturation / 100 * 255)
+        ret[this._whiteProperty] =
+          Math.round(Math.min(rgb[0], rgb[1], rgb[2]) * (brightness / 100))
       }
       return ret
     }
 
     /**
-     * Handles changes from the device to any of the red, green, blue or white
+     * Handles changes from the device to any of the red, green or blue
      * properties.
      */
     _rgbChangeHandler() {
@@ -197,9 +183,7 @@ module.exports = homebridge => {
           this.device.type,
           this.device.id,
           'changed to',
-          '(' + (this.colorMode === 'rgbw'
-            ? [this.red, this.green, this.blue, this.white]
-            : [this.red, this.green, this.blue]).join(',') + ')'
+          '(' + [this.red, this.green, this.blue].join(',') + ')'
         )
 
         this._updateHueSaturation()
@@ -209,16 +193,12 @@ module.exports = homebridge => {
 
     /**
      * Updates the hue and saturation based on the current levels of red, green,
-     * blue and (optionally) white.
+     * and blue.
      */
     _updateHueSaturation() {
       const hsv = colorConvert.rgb.hsv(this.red, this.green, this.blue)
       this.hue = hsv[0]
-      this.saturation = this.colorMode === 'rgbw'
-        // in rgbw mode we use the white component as the saturation, otherwise
-        // we calculate it from the red, green and blue components
-        ? 100 - Math.round(this.white / 255 * 100)
-        : hsv[1]
+      this.saturation = hsv[1]
 
       this.platformAccessory.getService(Service.Lightbulb)
         .setCharacteristic(Characteristic.Hue, this.hue)
