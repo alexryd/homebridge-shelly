@@ -90,15 +90,6 @@ module.exports = homebridge => {
     }
   }
 
-  class ShellyBulbColorLightbulbAccessory
-    extends ShellyColorLightbulbAccessory {}
-
-  class ShellyDimmerWhiteLightbulbAccessory
-    extends ShellyWhiteLightbulbAccessory {}
-
-  class ShellyRGBW2ColorLightbulbAccessory
-    extends ShellyColorLightbulbAccessory {}
-
   class ShellyRGBW2WhiteLightbulbAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
       super('whiteLightbulb', device, index, config, log)
@@ -142,9 +133,8 @@ module.exports = homebridge => {
   }
 
   return {
-    ShellyBulbColorLightbulbAccessory,
-    ShellyDimmerWhiteLightbulbAccessory,
-    ShellyRGBW2ColorLightbulbAccessory,
+    ShellyColorLightbulbAccessory,
+    ShellyWhiteLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   }
 }

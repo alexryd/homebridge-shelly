@@ -9,9 +9,8 @@ module.exports = homebridge => {
   } = require('./garage-door-openers')(homebridge)
 
   const {
-    ShellyBulbColorLightbulbAccessory,
-    ShellyDimmerWhiteLightbulbAccessory,
-    ShellyRGBW2ColorLightbulbAccessory,
+    ShellyColorLightbulbAccessory,
+    ShellyWhiteLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   } = require('./lightbulbs')(homebridge)
 
@@ -173,7 +172,7 @@ module.exports = homebridge => {
     }
 
     _createAccessory(accessoryType, ...opts) {
-      return new ShellyBulbColorLightbulbAccessory(this.device, ...opts)
+      return new ShellyColorLightbulbAccessory(this.device, ...opts)
     }
   }
   FACTORIES.set('SHBLB-1', ShellyBulbFactory)
@@ -191,7 +190,7 @@ module.exports = homebridge => {
     }
 
     _createAccessory(accessoryType, ...opts) {
-      return new ShellyDimmerWhiteLightbulbAccessory(this.device, ...opts)
+      return new ShellyWhiteLightbulbAccessory(this.device, ...opts)
     }
   }
   FACTORIES.set('SHDM-1', ShellyDimmerFactory)
@@ -271,7 +270,7 @@ module.exports = homebridge => {
       if (this.device.mode === 'white') {
         return new ShellyRGBW2WhiteLightbulbAccessory(this.device, ...opts)
       }
-      return new ShellyRGBW2ColorLightbulbAccessory(this.device, ...opts)
+      return new ShellyColorLightbulbAccessory(this.device, ...opts)
     }
   }
   FACTORIES.set('SHRGBW2', ShellyRGBW2Factory)
