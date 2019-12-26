@@ -128,7 +128,8 @@ module.exports = homebridge => {
 
         await this._setLight({
           [this._switchProperty]: on,
-          [this._brightnessProperty]: brightness,
+          // Shelly devices don't accept a brightness value of 0
+          [this._brightnessProperty]: Math.max(brightness, 1),
         })
       } catch (e) {
         handleFailedRequest(
