@@ -19,6 +19,7 @@ module.exports = homebridge => {
   } = require('./outlets')(homebridge)
 
   const {
+    ShellyDoorWindowAccessory,
     ShellyFloodAccessory,
     ShellyHTAccessory,
     ShellyRelayContactSensorAccessory,
@@ -194,6 +195,24 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHDM-1', ShellyDimmerFactory)
+
+  /**
+   * Shelly Door/Window factory.
+   */
+  class ShellyDoorWindowFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Door/Window'
+    }
+
+    get defaultAccessoryType() {
+      return 'sensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyDoorWindowAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHDW-1', ShellyDoorWindowFactory)
 
   /**
    * Shelly EM factory.
