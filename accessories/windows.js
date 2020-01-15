@@ -1,15 +1,14 @@
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
-  const WindowCoveringAbility =
-    require('../abilities/window-covering')(homebridge)
+  const WindowAbility = require('../abilities/window')(homebridge)
   const { ShellyAccessory } = require('./base')(homebridge)
 
-  class Shelly2WindowCoveringAccessory extends ShellyAccessory {
+  class Shelly2WindowAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
-      super('windowCovering', device, index, config, log)
+      super('window', device, index, config, log)
 
-      this.abilities.push(new WindowCoveringAbility(
+      this.abilities.push(new WindowAbility(
         'rollerPosition',
         'rollerState',
         this.setPosition.bind(this)
@@ -17,7 +16,7 @@ module.exports = homebridge => {
     }
 
     get category() {
-      return Accessory.Categories.WINDOW_COVERING
+      return Accessory.Categories.WINDOW
     }
 
     /**
@@ -31,6 +30,6 @@ module.exports = homebridge => {
   }
 
   return {
-    Shelly2WindowCoveringAccessory,
+    Shelly2WindowAccessory,
   }
 }

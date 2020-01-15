@@ -101,8 +101,15 @@ module.exports = homebridge => {
           device.host
         )
 
-        if (!this.addDevice(device)) {
-          this.log.info('Unknown device, so skipping it')
+        try {
+          if (!this.addDevice(device)) {
+            this.log.info('Unknown device, so skipping it')
+          }
+        } catch (e) {
+          this.log.error('Failed to add device')
+          if (e.stack) {
+            this.log.error(e.stack)
+          }
         }
       } else {
         this.log.info(

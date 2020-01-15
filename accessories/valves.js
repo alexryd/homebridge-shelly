@@ -1,21 +1,21 @@
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
-  const OutletAbility = require('../abilities/outlet')(homebridge)
   const PowerConsumptionAbility =
     require('../abilities/power-consumption')(homebridge)
   const Service = homebridge.hap.Service
   const { ShellyRelayAccessory } = require('./base')(homebridge)
+  const ValveAbility = require('../abilities/valve')(homebridge)
 
-  class ShellyRelayOutletAccessory extends ShellyRelayAccessory {
+  class ShellyRelayValveAccessory extends ShellyRelayAccessory {
     constructor(device, index, config, log, powerMeterIndex = false) {
-      super('outlet', device, index, config, log)
+      super('valve', device, index, config, log)
 
       const consumptionProperty = powerMeterIndex !== false
         ? 'powerMeter' + powerMeterIndex
         : null
 
-      this.abilities.push(new OutletAbility(
+      this.abilities.push(new ValveAbility(
         'relay' + index,
         this.setRelay.bind(this),
         consumptionProperty
@@ -23,18 +23,18 @@ module.exports = homebridge => {
 
       if (consumptionProperty) {
         this.abilities.push(new PowerConsumptionAbility(
-          Service.Outlet,
+          Service.Valve,
           consumptionProperty
         ))
       }
     }
 
     get category() {
-      return Accessory.Categories.OUTLET
+      return Accessory.Categories.FAUCET
     }
   }
 
   return {
-    ShellyRelayOutletAccessory,
+    ShellyRelayValveAccessory,
   }
 }

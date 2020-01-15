@@ -14,6 +14,7 @@ Currently the following devices are supported:
 * [Shelly 4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly Bulb](https://shelly.cloud/shelly-bulb/) <sup>2</sup>
 * [Shelly Dimmer](https://shelly.cloud/wifi-smart-home-automation-shelly-dimmer/)
+* [Shelly Door/Window](https://shelly.cloud/wifi-smart-home-automation-door-window-sensor/)
 * [Shelly EM](https://shelly.cloud/shelly-energy-meter-with-contactor-control-wifi-smart-home-automation/)
 * [Shelly Flood](https://shelly.cloud/shelly-flood-and-temperature-sensor-wifi-smart-home-automation/)
 * Shelly HD
@@ -91,6 +92,17 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 * `"username"` and `"password"` - set these if you have restricted the web
   interface of the device with a username and password. This will override the
   global `"username"` and `"password"` options.
+* `"name"` - sets a custom name for the device.
+
+#### Shelly switch configurations
+*Applies to Shelly 1, 1PM, 2 and 2.5 in relay mode, 4Pro, EM, Plug and Plug S.*
+* `"type"` - sets the type of accessory the device is identified as. Available
+  types are `"contactSensor"`, `"motionSensor"`, `"occupancySensor"`,
+  `"outlet"`, `"switch"` (default) and `"valve"`.
+
+#### Shelly 2.5 configurations
+* `"type"` - in roller mode, the device can be identified as either `"door"`,
+  `"garageDoorOpener"`, `"window"` or `"windowCovering"` (default).
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
@@ -107,7 +119,9 @@ interface of a device, under *Settings -> Device info -> Device ID*.
     "devices": [
       { "id": "74B5A3", "exclude": true },
       { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
-      { "id": "6A78BB", "colorMode": "rgb" }
+      { "id": "6A78BB", "colorMode": "rgb" },
+      { "id": "AD2214", "name": "My Device" },
+      { "id": "1D56AF", "type": "outlet" }
     ],
     "admin": {
       "enabled": true,
