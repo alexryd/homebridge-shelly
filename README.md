@@ -2,6 +2,8 @@
 [![NPM Version](https://img.shields.io/npm/v/homebridge-shelly.svg)](https://www.npmjs.com/package/homebridge-shelly)
 [![Build Status](https://travis-ci.org/alexryd/homebridge-shelly.svg?branch=master)](https://travis-ci.org/alexryd/homebridge-shelly)
 
+[![HOOBS Certified]
+
 [Shelly](https://shelly.cloud) plugin for [Homebridge](https://homebridge.io),
 enabling HomeKit support for Shelly devices.
 
