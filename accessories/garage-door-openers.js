@@ -1,10 +1,28 @@
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
+  const BasicGarageDoorOpenerAbility =
+    require('../abilities/basic-garage-door-opener')(homebridge)
   const GarageDoorOpenerAbility =
     require('../abilities/garage-door-opener')(homebridge)
-  const { ShellyAccessory } = require('./base')(homebridge)
+  const { ShellyRelayAccessory } = require('./base')(homebridge)
 
+  class Shelly1GarageDoorOpenerAccessory extends ShellyRelayAccessory {
+    constructor(device, index, config, log) {
+      super('garageDoorOpener', device, index, config, log)
+
+      this.abilities.push(new BasicGarageDoorOpenerAbility(
+        'rollerPosition',
+        'rollerState',
+        this.setRelay.bind(this)
+      ))
+    }
+
+    get category() {
+      return Accessory.Categories.GARAGE_DOOR_OPENER
+    }
+  }
+  
   class Shelly2GarageDoorOpenerAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
       super('garageDoorOpener', device, index, config, log)
@@ -31,6 +49,7 @@ module.exports = homebridge => {
   }
 
   return {
-    Shelly2GarageDoorOpenerAccessory,
+    Shelly1GarageDoorOpenerAccessory,
+    Shelly2GarageDoorOpenerAccessory
   }
 }
