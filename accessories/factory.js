@@ -10,6 +10,7 @@ module.exports = homebridge => {
 
   const {
     ShellyColorLightbulbAccessory,
+    ShellyColorTemperatureLightbulbAccessory,
     ShellyWhiteLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   } = require('./lightbulbs')(homebridge)
@@ -177,6 +178,24 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHBLB-1', ShellyBulbFactory)
+
+  /**
+   * Shelly Duo factory.
+   */
+  class ShellyDuo extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Duo'
+    }
+
+    get defaultAccessoryType() {
+      return 'whiteLightbulb'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyColorTemperatureLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHBDUO-1', ShellyDuo)
 
   /**
    * Shelly Dimmer factory.
