@@ -188,7 +188,7 @@ module.exports = homebridge => {
     }
 
     get defaultAccessoryType() {
-      return 'whiteLightbulb'
+      return 'colorTemperatureLightbulb'
     }
 
     _createAccessory(accessoryType, ...opts) {
