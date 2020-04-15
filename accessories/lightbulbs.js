@@ -52,6 +52,50 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyColorTemperatureLightbulbAccessory extends ShellyAccessory {
+    constructor(device, index, config, log) {
+      super('colorTemperatureLightbulb', device, index, config, log)
+
+      this.abilities.push(new LightbulbAbility(
+        'switch',
+        'brightness',
+        this.setLight.bind(this),
+        'colorTemperature'
+      ))
+    }
+
+    get category() {
+      return Accessory.Categories.LIGHTBULB
+    }
+
+    /**
+     * Sets the light according to the supplied options.
+     * @returns {Promise} A Promise that resolves when the state of the relay
+     * has been updated.
+     */
+    setLight(opts) {
+      return this.device.setWhite(
+        opts.colorTemperature,
+        opts.brightness,
+        opts.switch
+      )
+    }
+
+    identify(paired, callback) {
+      super.identify(paired, () => {
+        this._identifyBySwitching(
+          this.device.switch,
+          state => this.setLight({
+            colorTemperature: this.device.colorTemperature,
+            brightness: this.device.brightness,
+            switch: state,
+          }),
+          callback
+        )
+      })
+    }
+  }
+
   class ShellyWhiteLightbulbAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
       super('whiteLightbulb', device, index, config, log)
@@ -134,6 +178,7 @@ module.exports = homebridge => {
 
   return {
     ShellyColorLightbulbAccessory,
+    ShellyColorTemperatureLightbulbAccessory,
     ShellyWhiteLightbulbAccessory,
     ShellyRGBW2WhiteLightbulbAccessory,
   }
