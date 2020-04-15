@@ -24,6 +24,7 @@ Currently the following devices are supported:
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
 * [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
+* [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
 
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device

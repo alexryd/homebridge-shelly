@@ -451,6 +451,24 @@ module.exports = homebridge => {
   FACTORIES.set('SHSW-PM', Shelly1PMFactory)
 
   /**
+   * Shelly Vintage factory.
+   */
+  class ShellyVintageFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Vintage'
+    }
+
+    get defaultAccessoryType() {
+      return 'whiteLightbulb'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyWhiteLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHVIN-1', ShellyVintageFactory)
+
+  /**
    * Shelly Flood factory.
    */
   class ShellyFloodFactory extends AccessoryFactory {
