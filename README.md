@@ -15,6 +15,7 @@ Currently the following devices are supported:
 * [Shelly Bulb](https://shelly.cloud/shelly-bulb/) <sup>2</sup>
 * [Shelly Dimmer](https://shelly.cloud/wifi-smart-home-automation-shelly-dimmer/)
 * [Shelly Door/Window](https://shelly.cloud/wifi-smart-home-automation-door-window-sensor/)
+* [Shelly Duo](https://shelly.cloud/wifi-smart-home-automation-shelly-duo/)
 * [Shelly EM](https://shelly.cloud/shelly-energy-meter-with-contactor-control-wifi-smart-home-automation/)
 * [Shelly Flood](https://shelly.cloud/shelly-flood-and-temperature-sensor-wifi-smart-home-automation/)
 * Shelly HD
@@ -23,6 +24,7 @@ Currently the following devices are supported:
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
 * [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
+* [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
 
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
