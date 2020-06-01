@@ -7,7 +7,8 @@ module.exports = homebridge => {
 
   class GarageDoorSwitchAbility extends Ability {
     /**
-     * @param {string} switchProperty - The device property to trigger the garage door to open or close.
+     * @param {string} switchProperty - The device property to trigger the
+     * garage door to open or close.
      * @param {string} stateProperty - The device property used to indicate the
      * garage door is closed.
      * @param {function} setSwitch - A function that updates the device's switch
@@ -22,11 +23,11 @@ module.exports = homebridge => {
     }
 
     get state() {
-      return this.device[this._stateProperty] || 0;
+      return this.device[this._stateProperty] || 0
     }
 
     get isSwitchedOn() {
-      return this.device[this._switchProperty] || false;
+      return this.device[this._switchProperty] || false
     }
 
     get currentState() {
@@ -76,12 +77,12 @@ module.exports = homebridge => {
       this.platformAccessory
         .getService(Service.GarageDoorOpener)
         .getCharacteristic(Characteristic.CurrentDoorState)
-        .on('get', this.getState.bind(this));
+        .on('get', this.getState.bind(this))
 
       this.platformAccessory
         .getService(Service.GarageDoorOpener)
         .getCharacteristic(Characteristic.TargetDoorState)
-        .on('get', this.getState.bind(this));
+        .on('get', this.getState.bind(this))
 
       // This is the handler to catch device events
       // This one is always correct!
@@ -192,10 +193,7 @@ module.exports = homebridge => {
     }
 
     getState(callback) {
-      const CDS = Characteristic.CurrentDoorState
-      const TDS = Characteristic.TargetDoorState
-
-      callback(null, this.currentState);
+      callback(null, this.currentState)
     }
 
     detach() {

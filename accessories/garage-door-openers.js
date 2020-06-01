@@ -5,7 +5,10 @@ module.exports = homebridge => {
     require('../abilities/garage-door-switch')(homebridge)
   const GarageDoorOpenerAbility =
     require('../abilities/garage-door-opener')(homebridge)
-  const { ShellyAccessory, ShellyRelayAccessory } = require('./base')(homebridge)
+  const {
+    ShellyAccessory,
+    ShellyRelayAccessory
+  } = require('./base')(homebridge)
 
   class Shelly1GarageDoorSwitchAccessory extends ShellyRelayAccessory {
     constructor(device, index, config, log) {
