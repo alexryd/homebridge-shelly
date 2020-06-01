@@ -5,6 +5,7 @@ module.exports = homebridge => {
   } = require('./doors')(homebridge)
 
   const {
+    Shelly1GarageDoorSwitchAccessory,
     Shelly2GarageDoorOpenerAccessory,
   } = require('./garage-door-openers')(homebridge)
 
@@ -165,6 +166,7 @@ module.exports = homebridge => {
       } else if (accessoryType === 'valve') {
         return new ShellyRelayValveAccessory(this.device, ...opts)
       }
+
       return new ShellyRelaySwitchAccessory(this.device, ...opts)
     }
   }
@@ -426,6 +428,14 @@ module.exports = homebridge => {
   class Shelly1Factory extends RelayAccessoryFactory {
     get numberOfPowerMeters() {
       return 0
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      if (accessoryType === 'garageDoorOpener') {
+        return new Shelly1GarageDoorSwitchAccessory(this.device, ...opts)
+      }
+
+      return super._createAccessory(accessoryType, ...opts)
     }
   }
   FACTORIES.set('SHSW-1', Shelly1Factory)
