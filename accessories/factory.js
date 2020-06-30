@@ -241,8 +241,26 @@ module.exports = homebridge => {
     get friendlyName() {
       return 'Shelly EM'
     }
+
+    get numberOfPowerMeters() {
+      return 2
+    }
   }
   FACTORIES.set('SHEM', ShellyEMFactory)
+
+  /**
+   * Shelly 3EM factory.
+   */
+  class Shelly3EMFactory extends RelayAccessoryFactory {
+    get friendlyName() {
+      return 'Shelly 3EM'
+    }
+
+    get numberOfPowerMeters() {
+      return 3
+    }
+  }
+  FACTORIES.set('SHEM-3', Shelly3EMFactory)
 
   /**
    * Shelly H&T factory.

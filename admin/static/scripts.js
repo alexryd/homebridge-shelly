@@ -6,6 +6,7 @@ var NAMES = {
   'SHDM-2': 'Shelly Dimmer 2',
   'SHDW-1': 'Shelly Door/Window',
   SHEM: 'Shelly EM',
+  'SHEM-3': 'Shelly 3EM',
   'SHHT-1': 'Shelly H&T',
   'SHPLG-1': 'Shelly Plug',
   'SHPLG-S': 'Shelly Plug S',
