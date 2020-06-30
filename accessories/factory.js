@@ -214,6 +214,7 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHDM-1', ShellyDimmerFactory)
+  FACTORIES.set('SHDM-2', ShellyDimmerFactory)
 
   /**
    * Shelly Door/Window factory.
