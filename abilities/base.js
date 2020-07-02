@@ -301,18 +301,28 @@ module.exports = homebridge => {
    */
   class SinglePropertyAbility extends Ability {
     /**
-     * @param {object} Service - The HAP service class to use.
-     * @param {object} Characteristic - The HAP characteristic class to use.
-     * @param {string} property - Name of the device property to use.
+     * @param {Object} Service - The HAP service class to use.
+     * @param {Object} Characteristic - The HAP characteristic class to use.
+     * @param {(string|Object)} property - Name of the device property to use,
+     * or an object with the name and a getter function.
      * @param {function} updater - A function that updates the device property.
      * Must return a Promise.
      */
     constructor(Service, Characteristic, property, updater = null) {
       super()
 
+      let propertyName = property
+      let propertyGetter = null
+
+      if (typeof property !== 'string') {
+        propertyName = property.name
+        propertyGetter = property.getter
+      }
+
       this._Service = Service
       this._Characteristic = Characteristic
-      this._property = property
+      this._propertyName = propertyName
+      this._propertyGetter = propertyGetter
       this._updater = updater
     }
 
@@ -334,7 +344,9 @@ module.exports = homebridge => {
      * The value of this ability's associated device property.
      */
     get value() {
-      return this.device[this._property]
+      return this._propertyGetter
+        ? this._propertyGetter.call(this.device, this._propertyName)
+        : this.device[this._propertyName]
     }
 
     /**
@@ -377,7 +389,7 @@ module.exports = homebridge => {
       }
 
       this.device.on(
-        'change:' + this._property,
+        'change:' + this._propertyName,
         this._propertyChangeHandler,
         this
       )
@@ -398,7 +410,7 @@ module.exports = homebridge => {
       try {
         this.log.debug(
           'Setting',
-          this._property,
+          this._propertyName,
           'of device',
           d.type,
           d.id,
@@ -412,7 +424,7 @@ module.exports = homebridge => {
           this.log,
           d,
           e,
-          'Failed to set ' + this._property
+          'Failed to set ' + this._propertyName
         )
         callback(e)
       }
@@ -423,7 +435,7 @@ module.exports = homebridge => {
      */
     _propertyChangeHandler(newValue) {
       this.log.debug(
-        this._property,
+        this._propertyName,
         'of device',
         this.device.type,
         this.device.id,
@@ -431,14 +443,18 @@ module.exports = homebridge => {
         newValue
       )
 
+      const nv = this._propertyGetter
+        ? this._propertyGetter.call(this.device, this._propertyName)
+        : newValue
+
       this.characteristic.setValue(
-        this._valueToHomeKit(newValue)
+        this._valueToHomeKit(nv)
       )
     }
 
     detach() {
       this.device.removeListener(
-        'change:' + this._property,
+        'change:' + this._propertyName,
         this._propertyChangeHandler,
         this
       )
