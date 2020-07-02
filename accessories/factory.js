@@ -22,6 +22,7 @@ module.exports = homebridge => {
   const {
     ShellyDoorWindowAccessory,
     ShellyFloodAccessory,
+    ShellyGasSmokeSensorAccessory,
     ShellyHTAccessory,
     ShellyRelayContactSensorAccessory,
     ShellyRelayMotionSensorAccessory,
@@ -281,6 +282,24 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHEM-3', Shelly3EMFactory)
+
+  /**
+   * Shelly Gas factory.
+   */
+  class ShellyGasFactory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Gas'
+    }
+
+    get defaultAccessoryType() {
+      return 'smokeSensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyGasSmokeSensorAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHGS-1', ShellyGasFactory)
 
   /**
    * Shelly H&T factory.
