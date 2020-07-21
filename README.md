@@ -17,7 +17,8 @@ Currently the following devices are supported:
 * [Shelly Button 1](https://shelly.cloud/products/shelly-button-1-smart-home-automation-device/)
 * Shelly Dimmer
 * [Shelly Dimmer 2](https://shelly.cloud/products/shelly-dimmer-2-smart-home-light-contoller/)
-* [Shelly Door/Window](https://shelly.cloud/wifi-smart-home-automation-door-window-sensor/)
+* Shelly Door/Window
+* [Shelly Door/Window 2](https://shelly.cloud/products/shelly-door-window-2-smart-home-automation-sensor/)
 * [Shelly Duo](https://shelly.cloud/wifi-smart-home-automation-shelly-duo/)
 * [Shelly EM](https://shelly.cloud/shelly-energy-meter-with-contactor-control-wifi-smart-home-automation/)
 * [Shelly Flood](https://shelly.cloud/shelly-flood-and-temperature-sensor-wifi-smart-home-automation/)

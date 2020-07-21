@@ -39,6 +39,17 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyDoorWindow2Accessory extends ShellySensorAccessory {
+    constructor(device, index, config, log) {
+      super(device, index, config, log, [
+        new ContactSensorAbility('dwIsOpened'),
+        new LightSensorAbility('luminosity'),
+        new TemperatureSensorAbility('extTemp'),
+        new BatteryAbility('battery')
+      ])
+    }
+  }
+
   class ShellyFloodAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
@@ -143,6 +154,7 @@ module.exports = homebridge => {
 
   return {
     ShellyDoorWindowAccessory,
+    ShellyDoorWindow2Accessory,
     ShellyFloodAccessory,
     ShellyGasSmokeSensorAccessory,
     ShellyHTAccessory,

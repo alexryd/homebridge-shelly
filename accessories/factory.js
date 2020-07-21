@@ -21,6 +21,7 @@ module.exports = homebridge => {
 
   const {
     ShellyDoorWindowAccessory,
+    ShellyDoorWindow2Accessory,
     ShellyFloodAccessory,
     ShellyGasSmokeSensorAccessory,
     ShellyHTAccessory,
@@ -254,6 +255,24 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHDW-1', ShellyDoorWindowFactory)
+
+  /**
+   * Shelly Door/Window 2 factory.
+   */
+  class ShellyDoorWindow2Factory extends AccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Door/Window 2'
+    }
+
+    get defaultAccessoryType() {
+      return 'sensor'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyDoorWindow2Accessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHDW-2', ShellyDoorWindow2Factory)
 
   /**
    * Shelly EM factory.
