@@ -1,24 +1,24 @@
 module.exports = {
-  "env": {
-    "node": true
+  env: {
+    node: true
   },
 
-  "extends": [
-    "eslint:recommended",
-    "standard"
+  extends: [
+    'eslint:recommended',
+    'standard'
   ],
 
-  "rules": {
-    "comma-dangle": ["error", "only-multiline"],
+  rules: {
+    'comma-dangle': ['error', 'only-multiline'],
 
-    "max-len": ["error", {
-      "code": 80
+    'max-len': ['error', {
+      code: 80
     }],
 
-    "space-before-function-paren": ["error", {
-      "anonymous": "never",
-      "named": "never",
-      "asyncArrow": "always"
+    'space-before-function-paren': ['error', {
+      anonymous: 'never',
+      named: 'never',
+      asyncArrow: 'always'
     }]
   }
 }
