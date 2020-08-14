@@ -12,7 +12,7 @@ module.exports = homebridge => {
       super('outlet', device, index, config, log)
 
       const consumptionProperty = powerMeterIndex !== false
-        ? 'powerMeter' + powerMeterIndex
+        ? 'power' + powerMeterIndex
         : null
 
       this.abilities.push(new OutletAbility(

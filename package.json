@@ -32,7 +32,7 @@
     "colors": "^1.3.3",
     "command-line-commands": "^2.0.1",
     "express": "^4.17.1",
-    "shellies": "^0.20.1"
+    "shellies": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^7.5.0",

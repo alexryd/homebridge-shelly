@@ -522,6 +522,9 @@ module.exports = homebridge => {
     }
 
     get numberOfPowerMeters() {
+      if (this.device.mode === 'roller') {
+        return 1
+      }
       return 2
     }
   }

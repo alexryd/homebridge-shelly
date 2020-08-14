@@ -33,7 +33,7 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
         new ContactSensorAbility('state'),
-        new LightSensorAbility('lux'),
+        new LightSensorAbility('illuminance'),
         new BatteryAbility('battery'),
       ])
     }
@@ -42,9 +42,9 @@ module.exports = homebridge => {
   class ShellyDoorWindow2Accessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
-        new ContactSensorAbility('dwIsOpened'),
-        new LightSensorAbility('luminosity'),
-        new TemperatureSensorAbility('extTemp'),
+        new ContactSensorAbility('state'),
+        new LightSensorAbility('illuminance'),
+        new TemperatureSensorAbility('temperature'),
         new BatteryAbility('battery')
       ])
     }
@@ -54,7 +54,7 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
         new LeakSensorAbility('flood'),
-        new TemperatureSensorAbility('temperature'),
+        new TemperatureSensorAbility('externalTemperature'),
         new BatteryAbility('battery'),
       ])
     }
@@ -64,9 +64,9 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
         new SmokeSensorAbility({
-          name: 'alarmState',
+          name: 'gas',
           getter: function() {
-            return this.alarmState !== 'unknown' && this.alarmState !== 'none'
+            return this.gas !== 'unknown' && this.gas !== 'none'
           },
         })
       ])
@@ -92,7 +92,7 @@ module.exports = homebridge => {
       if (powerMeterIndex !== false) {
         this.abilities.push(new PowerConsumptionAbility(
           Service.ContactSensor,
-          'powerMeter' + powerMeterIndex
+          'power' + powerMeterIndex
         ))
       }
     }
@@ -111,7 +111,7 @@ module.exports = homebridge => {
       if (powerMeterIndex !== false) {
         this.abilities.push(new PowerConsumptionAbility(
           Service.MotionSensor,
-          'powerMeter' + powerMeterIndex
+          'power' + powerMeterIndex
         ))
       }
     }
@@ -130,7 +130,7 @@ module.exports = homebridge => {
       if (powerMeterIndex !== false) {
         this.abilities.push(new PowerConsumptionAbility(
           Service.OccupancySensor,
-          'powerMeter' + powerMeterIndex
+          'power' + powerMeterIndex
         ))
       }
     }

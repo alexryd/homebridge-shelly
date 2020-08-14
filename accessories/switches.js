@@ -19,7 +19,7 @@ module.exports = homebridge => {
       if (powerMeterIndex !== false) {
         this.abilities.push(new PowerConsumptionAbility(
           Service.Switch,
-          'powerMeter' + powerMeterIndex
+          'power' + powerMeterIndex
         ))
       }
     }

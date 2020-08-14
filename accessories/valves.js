@@ -12,7 +12,7 @@ module.exports = homebridge => {
       super('valve', device, index, config, log)
 
       const consumptionProperty = powerMeterIndex !== false
-        ? 'powerMeter' + powerMeterIndex
+        ? 'power' + powerMeterIndex
         : null
 
       this.abilities.push(new ValveAbility(
