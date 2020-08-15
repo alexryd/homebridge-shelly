@@ -54,7 +54,7 @@ module.exports = homebridge => {
     constructor(device, index, config, log) {
       super(device, index, config, log, [
         new LeakSensorAbility('flood'),
-        new TemperatureSensorAbility('externalTemperature'),
+        new TemperatureSensorAbility('temperature'),
         new BatteryAbility('battery'),
       ])
     }
