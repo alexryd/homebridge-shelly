@@ -14,6 +14,6 @@ A clear and concise description of what the bug is and when it occurs.
 Add any relevant parts from the homebridge log here, if applicable.
 
 **Environment:**
- - Device running homebridge: [e.g. Raspberry Pi]
- - Plugin version: [e.g. 0.14.0]
  - Shelly device(s): [e.g. Shelly 2.5]
+ - Plugin version: [e.g. 0.14.0]
+ - Device running homebridge: [e.g. Raspberry Pi]
