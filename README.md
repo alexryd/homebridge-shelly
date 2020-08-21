@@ -57,7 +57,7 @@ enough:
   }
 ]
 ```
-Your Shelly devices will then be automatically discovered, as long as they are
+Your Shelly devices will then be automatically discovered, as long as they use the stock firmware (no Tasmota etc.) and are
 on the same network and subnet as the device running homebridge.
 
 To see a list of all discovered devices, visit the administration page by going
