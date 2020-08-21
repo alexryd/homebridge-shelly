@@ -2,11 +2,12 @@
 [![NPM Version](https://img.shields.io/npm/v/homebridge-shelly.svg)](https://www.npmjs.com/package/homebridge-shelly)
 [![Build Status](https://travis-ci.org/alexryd/homebridge-shelly.svg?branch=master)](https://travis-ci.org/alexryd/homebridge-shelly)
 
-[Shelly](https://shelly.cloud) plugin for [Homebridge](https://homebridge.io),
+[Homebridge](https://homebridge.io) plugin for [Shelly](https://shelly.cloud),
 enabling HomeKit support for Shelly devices.
 
+Note that this is an unofficial plugin.
+
 ## Supported devices
-Currently the following devices are supported:
 * [Shelly 1](https://shelly.cloud/shelly1-open-source/)
 * [Shelly 1PM](https://shelly.cloud/shelly-1pm-wifi-smart-relay-home-automation/)
 * Shelly 2 <sup>1</sup>
@@ -30,6 +31,8 @@ Currently the following devices are supported:
 * [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
 * [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
+
+Is your device not on the list? See the section about unsupported devices below.
 
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
@@ -58,9 +61,8 @@ Your Shelly devices will then be automatically discovered, as long as they are
 on the same network and subnet as the device running homebridge.
 
 To see a list of all discovered devices, visit the administration page by going
-to `http://<IP-ADDRESS>:<PORT>/`, where IP-ADDRESS is the IP address of the
-device that you are running homebridge on, and PORT is the configured port
-number (8181 by default, see below).
+to `http://<IP-ADDRESS>:8181/`, where IP-ADDRESS is the address of the
+device that you are running homebridge on.
 
 ### Network interface
 Sometimes setting the `"networkInterface"` option to the local IP address of
