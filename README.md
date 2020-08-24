@@ -59,8 +59,8 @@ enough:
   }
 ]
 ```
-Your Shelly devices will then be automatically discovered, as long as they use the stock firmware (no Tasmota etc.) and are
-on the same network and subnet as the device running homebridge.
+Your Shelly devices should then be automatically discovered, as long as they use the stock firmware (no Tasmota etc.) and are
+on the same network and subnet as the device running homebridge. See [this wiki page](https://github.com/alexryd/homebridge-shelly/wiki/Shelly,-CoAP-and-multicast) if that doesn't work.
 
 To see a list of all discovered devices, visit the administration page by going
 to `http://<IP-ADDRESS>:8181/`, where IP-ADDRESS is the address of the
