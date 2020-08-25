@@ -14,6 +14,7 @@ module.exports = (platform, config, log) => {
       type: device.type,
       id: device.id,
       host: device.host,
+      name: device.name || device.modelName,
       online: device.online,
       lastSeen: lastSeen,
       unknown: shellies.isUnknownDevice(device),
