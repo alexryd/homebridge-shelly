@@ -2,11 +2,12 @@
 [![NPM Version](https://img.shields.io/npm/v/homebridge-shelly.svg)](https://www.npmjs.com/package/homebridge-shelly)
 [![Build Status](https://travis-ci.org/alexryd/homebridge-shelly.svg?branch=master)](https://travis-ci.org/alexryd/homebridge-shelly)
 
-[Shelly](https://shelly.cloud) plugin for [Homebridge](https://homebridge.io),
+[Homebridge](https://homebridge.io) plugin for [Shelly](https://shelly.cloud),
 enabling HomeKit support for Shelly devices.
 
+Note that this is an unofficial plugin.
+
 ## Supported devices
-Currently the following devices are supported:
 * [Shelly 1](https://shelly.cloud/shelly1-open-source/)
 * [Shelly 1PM](https://shelly.cloud/shelly-1pm-wifi-smart-relay-home-automation/)
 * Shelly 2 <sup>1</sup>
@@ -15,11 +16,11 @@ Currently the following devices are supported:
 * [Shelly 4Pro](https://shelly.cloud/shelly-4-pro/)
 * [Shelly Air](https://shelly.cloud/products/shelly-air-smart-home-air-purifier/)
 * [Shelly Bulb](https://shelly.cloud/shelly-bulb/) <sup>2</sup>
-* [Shelly Button 1](https://shelly.cloud/products/shelly-button-1-smart-home-automation-device/)
+* [Shelly Button 1](https://shelly.cloud/products/shelly-button-1-smart-home-automation-device/) <sup>3</sup>
 * Shelly Dimmer
 * [Shelly Dimmer 2](https://shelly.cloud/products/shelly-dimmer-2-smart-home-light-contoller/)
 * Shelly Door/Window
-* [Shelly Door/Window 2](https://shelly.cloud/products/shelly-door-window-2-smart-home-automation-sensor/)
+* [Shelly Door/Window 2](https://shelly.cloud/products/shelly-door-window-2-smart-home-automation-sensor/) <sup>3</sup>
 * [Shelly Duo](https://shelly.cloud/wifi-smart-home-automation-shelly-duo/)
 * [Shelly EM](https://shelly.cloud/shelly-energy-meter-with-contactor-control-wifi-smart-home-automation/)
 * [Shelly Flood](https://shelly.cloud/shelly-flood-and-temperature-sensor-wifi-smart-home-automation/)
@@ -32,11 +33,15 @@ Currently the following devices are supported:
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
 * [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
 
+Is your device not on the list? See the section about unsupported devices below.
+
 ### Notes
 <sup>1</sup> To use Shelly 2 or Shelly 2.5 in roller shutter mode the device
 must have been calibrated and be running firmware version 1.4.9 or later.
 
 <sup>2</sup> Requires firmware version 1.5.1 or later.
+
+<sup>3</sup> Requires firmware version 1.8.0 or later.
 
 ## Installation
 1. Install homebridge by following
@@ -55,13 +60,12 @@ enough:
   }
 ]
 ```
-Your Shelly devices will then be automatically discovered, as long as they are
-on the same network and subnet as the device running homebridge.
+Your Shelly devices should then be automatically discovered, as long as they use the stock firmware (no Tasmota etc.) and are
+on the same network and subnet as the device running homebridge. See [this wiki page](https://github.com/alexryd/homebridge-shelly/wiki/Shelly,-CoAP-and-multicast) if that doesn't work.
 
 To see a list of all discovered devices, visit the administration page by going
-to `http://<IP-ADDRESS>:<PORT>/`, where IP-ADDRESS is the IP address of the
-device that you are running homebridge on, and PORT is the configured port
-number (8181 by default, see below).
+to `http://<IP-ADDRESS>:8181/`, where IP-ADDRESS is the address of the
+device that you are running homebridge on.
 
 ### Network interface
 Sometimes setting the `"networkInterface"` option to the local IP address of
