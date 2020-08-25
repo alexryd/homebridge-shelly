@@ -169,6 +169,16 @@ module.exports = homebridge => {
   }
 
   /**
+   * Shelly Air factory.
+   */
+  class ShellyAirFactory extends RelayAccessoryFactory {
+    get friendlyName() {
+      return 'Shelly Air'
+    }
+  }
+  FACTORIES.set('SHAIR-1', ShellyAirFactory)
+
+  /**
    * Shelly Bulb factory.
    */
   class ShellyBulbFactory extends AccessoryFactory {
