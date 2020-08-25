@@ -12,6 +12,10 @@ module.exports = homebridge => {
         device.setAuthCredentials(config.username, config.password)
       }
 
+      if (config && config.name) {
+        device.name = config.name
+      }
+
       device
         .on('online', this.deviceOnlineHandler, this)
         .on('offline', this.deviceOfflineHandler, this)
