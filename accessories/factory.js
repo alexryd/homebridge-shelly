@@ -66,13 +66,6 @@ module.exports = homebridge => {
     }
 
     /**
-     * The friendly name of this type of device.
-     */
-    get friendlyName() {
-      return this.device.type
-    }
-
-    /**
      * The default accessory type identifier for the device.
      */
     get defaultAccessoryType() {
@@ -90,15 +83,22 @@ module.exports = homebridge => {
      * Returns a default name for the device and the given accessory index.
      */
     getDefaultAccessoryName(index) {
-      const n = [
-        this.friendlyName,
-        this.device.id,
-      ]
+      const d = this.device
+      const n = []
+
+      if (d.name) {
+        n.push(d.name)
+      } else {
+        n.push(d.modelName)
+        n.push(d.id)
+      }
+
       // only add the index to the name for devices that have more than one
       // accessory
       if (this.numberOfAccessories > 1) {
         n.push('#' + index)
       }
+
       return n.join(' ')
     }
 
@@ -171,21 +171,13 @@ module.exports = homebridge => {
   /**
    * Shelly Air factory.
    */
-  class ShellyAirFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Air'
-    }
-  }
+  class ShellyAirFactory extends RelayAccessoryFactory {}
   FACTORIES.set('SHAIR-1', ShellyAirFactory)
 
   /**
    * Shelly Bulb factory.
    */
   class ShellyBulbFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Bulb'
-    }
-
     get defaultAccessoryType() {
       return 'colorLightbulb'
     }
@@ -197,10 +189,6 @@ module.exports = homebridge => {
   FACTORIES.set('SHBLB-1', ShellyBulbFactory)
 
   class ShellyButton1Factory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Button 1'
-    }
-
     get defaultAccessoryType() {
       return 'statelessSwitch'
     }
@@ -215,10 +203,6 @@ module.exports = homebridge => {
    * Shelly Duo factory.
    */
   class ShellyDuo extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Duo'
-    }
-
     get defaultAccessoryType() {
       return 'colorTemperatureLightbulb'
     }
@@ -233,10 +217,6 @@ module.exports = homebridge => {
    * Shelly Dimmer factory.
    */
   class ShellyDimmerFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Dimmer'
-    }
-
     get defaultAccessoryType() {
       return 'whiteLightbulb'
     }
@@ -252,10 +232,6 @@ module.exports = homebridge => {
    * Shelly Door/Window factory.
    */
   class ShellyDoorWindowFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Door/Window'
-    }
-
     get defaultAccessoryType() {
       return 'sensor'
     }
@@ -270,10 +246,6 @@ module.exports = homebridge => {
    * Shelly Door/Window 2 factory.
    */
   class ShellyDoorWindow2Factory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Door/Window 2'
-    }
-
     get defaultAccessoryType() {
       return 'sensor'
     }
@@ -288,10 +260,6 @@ module.exports = homebridge => {
    * Shelly EM factory.
    */
   class ShellyEMFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly EM'
-    }
-
     get numberOfPowerMeters() {
       return 2
     }
@@ -302,10 +270,6 @@ module.exports = homebridge => {
    * Shelly 3EM factory.
    */
   class Shelly3EMFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly 3EM'
-    }
-
     get numberOfPowerMeters() {
       return 3
     }
@@ -316,10 +280,6 @@ module.exports = homebridge => {
    * Shelly Gas factory.
    */
   class ShellyGasFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Gas'
-    }
-
     get defaultAccessoryType() {
       return 'smokeSensor'
     }
@@ -334,10 +294,6 @@ module.exports = homebridge => {
    * Shelly H&T factory.
    */
   class ShellyHTFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly H&T'
-    }
-
     get defaultAccessoryType() {
       return 'sensor'
     }
@@ -375,32 +331,20 @@ module.exports = homebridge => {
   /**
    * Shelly Plug factory.
    */
-  class ShellyPlugFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Plug'
-    }
-  }
+  class ShellyPlugFactory extends RelayAccessoryFactory {}
   FACTORIES.set('SHPLG-1', ShellyPlugFactory)
   FACTORIES.set('SHPLG2-1', ShellyPlugFactory)
 
   /**
    * Shelly Plug S factory.
    */
-  class ShellyPlugSFactory extends ShellyPlugFactory {
-    get friendlyName() {
-      return 'Shelly Plug S'
-    }
-  }
+  class ShellyPlugSFactory extends ShellyPlugFactory {}
   FACTORIES.set('SHPLG-S', ShellyPlugSFactory)
 
   /**
    * Shelly RGBW2 factory.
    */
   class ShellyRGBW2Factory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly RGBW2'
-    }
-
     get defaultAccessoryType() {
       if (this.device.mode === 'white') {
         return 'whiteLightbulb'
@@ -428,10 +372,6 @@ module.exports = homebridge => {
    * Shelly Sense factory.
    */
   class ShellySenseFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Sense'
-    }
-
     get defaultAccessoryType() {
       return 'sensor'
     }
@@ -446,10 +386,6 @@ module.exports = homebridge => {
    * Shelly 1 factory.
    */
   class Shelly1Factory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly 1'
-    }
-
     get numberOfPowerMeters() {
       return 0
     }
@@ -460,10 +396,6 @@ module.exports = homebridge => {
    * Shelly 2 factory.
    */
   class Shelly2Factory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly 2'
-    }
-
     get defaultAccessoryType() {
       if (this.device.mode === 'roller') {
         return 'windowCovering'
@@ -513,10 +445,6 @@ module.exports = homebridge => {
    * Shelly HD factory.
    */
   class ShellyHDFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly HD'
-    }
-
     get numberOfAccessories() {
       return 2
     }
@@ -527,10 +455,6 @@ module.exports = homebridge => {
    * Shelly 2.5 factory.
    */
   class Shelly25Factory extends Shelly2Factory {
-    get friendlyName() {
-      return 'Shelly 2.5'
-    }
-
     get numberOfPowerMeters() {
       if (this.device.mode === 'roller') {
         return 1
@@ -544,10 +468,6 @@ module.exports = homebridge => {
    * Shelly 4Pro factory.
    */
   class Shelly4ProFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly 4Pro'
-    }
-
     get numberOfAccessories() {
       return 4
     }
@@ -557,21 +477,13 @@ module.exports = homebridge => {
   /**
    * Shelly 1PM factory.
    */
-  class Shelly1PMFactory extends RelayAccessoryFactory {
-    get friendlyName() {
-      return 'Shelly 1PM'
-    }
-  }
+  class Shelly1PMFactory extends RelayAccessoryFactory {}
   FACTORIES.set('SHSW-PM', Shelly1PMFactory)
 
   /**
    * Shelly Vintage factory.
    */
   class ShellyVintageFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Vintage'
-    }
-
     get defaultAccessoryType() {
       return 'whiteLightbulb'
     }
@@ -586,10 +498,6 @@ module.exports = homebridge => {
    * Shelly Flood factory.
    */
   class ShellyFloodFactory extends AccessoryFactory {
-    get friendlyName() {
-      return 'Shelly Flood'
-    }
-
     get defaultAccessoryType() {
       return 'sensor'
     }
