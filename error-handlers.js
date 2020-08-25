@@ -15,6 +15,7 @@ const handleFailedRequest = (log, device, e, ...msg) => {
       log.error(
         'Error:',
         e.response.error.message,
+        e.response.error.text,
         getDeviceIdentifier(device)
       )
     } else {
