@@ -1,0 +1,96 @@
+{
+  "pluginAlias": "Shelly",
+  "pluginType": "platform",
+  "headerDisplay": "Homebridge plugin for Shelly devices",
+  "footerDisplay": "",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Shelly",
+        "required": true,
+        "description": "Plugin name as displayed in the homebridge log"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string"
+      },
+      "password": {
+        "title": "Password",
+        "type": "string"
+      },
+      "admin": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean",
+            "default": true
+          },
+          "port": {
+            "title": "Port Number",
+            "type": "integer",
+            "maximum": 65353,
+            "default": 8181
+          }
+        }
+      },
+      "networkInterface": {
+        "title": "Network Interface",
+        "type": "string",
+        "placeholder": "192.168.x.x",
+        "description": "The local IP address of the network interface that should be used."
+      },
+      "requestTimeout": {
+        "title": "Request Timeout",
+        "type": "integer",
+        "default": 10000,
+        "description": "The number of milliseconds before an HTTP request will time out."
+      },
+      "staleTimeout": {
+        "title": "Stale Timeout",
+        "type": "integer",
+        "default": 0,
+        "description": "The number of milliseconds before an offline device will be removed."
+      }
+    }
+  },
+  "form": [
+    "name",
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "title": "Authentication",
+      "description": "Username and password. Note that this applies to all your devices.",
+      "items": [
+        "username",
+        "password"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "title": "Administration Interface",
+      "description": "",
+      "items": [
+        "admin.enabled",
+        {
+          "key": "admin.port",
+          "condition": { "functionBody": "return model.admin.enabled !== false" }
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "title": "Advanced Settings",
+      "items": [
+        "networkInterface",
+        "requestTimeout",
+        "staleTimeout"
+      ]
+    }
+  ]
+}
