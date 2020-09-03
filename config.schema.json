@@ -1,6 +1,7 @@
 {
   "pluginAlias": "Shelly",
   "pluginType": "platform",
+  "singular": true,
   "headerDisplay": "Homebridge plugin for Shelly devices",
   "footerDisplay": "",
   "schema": {
@@ -33,7 +34,7 @@
             "title": "Port Number",
             "type": "integer",
             "maximum": 65353,
-            "default": 8181
+            "placeholder": 8181
           }
         }
       },
@@ -46,7 +47,7 @@
       "requestTimeout": {
         "title": "Request Timeout",
         "type": "integer",
-        "default": 10000,
+        "placeholder": 10000,
         "description": "The number of milliseconds before an HTTP request will time out."
       },
       "staleTimeout": {
@@ -63,10 +64,12 @@
       "type": "fieldset",
       "expandable": true,
       "title": "Authentication",
-      "description": "Username and password. Note that this applies to all your devices.",
       "items": [
-        "username",
-        "password"
+        {
+          "type": "flex",
+          "flex-flow": "row wrap",
+          "items": [ "username", "password" ]
+        }
       ]
     },
     {
