@@ -20,7 +20,9 @@ module.exports = homebridge => {
     }
 
     get consumption() {
-      return this.device[this._consumptionProperty]
+      // using Math.abs() here because the consumption is sometimes reported
+      // as a negative value for some reason
+      return Math.abs(this.device[this._consumptionProperty])
     }
 
     _setupPlatformAccessory() {
@@ -58,7 +60,7 @@ module.exports = homebridge => {
       this.platformAccessory
         .getService(this._Service)
         .getCharacteristic(ConsumptionCharacteristic)
-        .setValue(newValue)
+        .setValue(this.consumption)
     }
 
     detach() {
