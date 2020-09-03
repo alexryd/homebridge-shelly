@@ -16,6 +16,16 @@ module.exports = homebridge => {
         levelProperty
       )
     }
+
+    _setupPlatformAccessory() {
+      super._setupPlatformAccessory()
+
+      // the default maximum light level is 100k lux, but Shelly devices can
+      // report more than that, so we need to increase it
+      this.characteristic.setProps({
+        maxValue: 500000,
+      })
+    }
   }
 
   return LightSensorAbility
