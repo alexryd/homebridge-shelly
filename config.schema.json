@@ -53,8 +53,71 @@
       "staleTimeout": {
         "title": "Stale Timeout",
         "type": "integer",
-        "default": 0,
-        "description": "The number of milliseconds before an offline device will be removed."
+        "placeholder": 0,
+        "description": "The number of milliseconds before an offline device will be removed. Set to 0 to disable."
+      },
+      "devices": {
+        "type": "array",
+        "items": {
+          "title": "Device",
+          "type": "object",
+          "properties": {
+            "id": {
+              "title": "Device ID",
+              "type": "string",
+              "placeholder": "ABC123",
+              "pattern": "^[A-Fa-f0-9]{6,12}$",
+              "required": true
+            },
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "type": {
+              "title": "Accessory type",
+              "type": "string",
+              "typeahead": {
+                "source": [
+                  "colorLightbulb",
+                  "colorTemperatureLightbulb",
+                  "contactSensor",
+                  "door",
+                  "garageDoorOpener",
+                  "motionSensor",
+                  "occupancySensor",
+                  "outlet",
+                  "sensor",
+                  "statelessSwitch",
+                  "switch",
+                  "valve",
+                  "whiteLightbulb",
+                  "window",
+                  "windowCovering"
+                ]
+              }
+            },
+            "colorMode": {
+              "title": "Color mode",
+              "type": "string",
+              "oneOf": [
+                { "title": "RGB only", "enum": ["rgb"] },
+                { "title": "RGBW", "enum": ["rgbw"] }
+              ]
+            },
+            "username": {
+              "title": "Username",
+              "type": "string"
+            },
+            "password": {
+              "title": "Password",
+              "type": "string"
+            },
+            "exclude": {
+              "title": "Exclude device",
+              "type": "boolean"
+            }
+          }
+        }
       }
     }
   },
@@ -81,7 +144,41 @@
         "admin.enabled",
         {
           "key": "admin.port",
-          "condition": { "functionBody": "return model.admin.enabled !== false" }
+          "condition": "admin.enabled"
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "title": "Device Specific Configurations",
+      "items": [
+        {
+          "key": "devices",
+          "type": "array",
+          "items": [
+            "devices[].id",
+            "devices[].name",
+            "devices[].type",
+            {
+              "key": "devices[].colorMode",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'colorLightbulb'" }
+            },
+            {
+              "key": "devices[]",
+              "type": "section",
+              "title": "Authentication",
+              "expandable": true,
+              "items": [
+                {
+                  "type": "flex",
+                  "flex-flow": "row wrap",
+                  "items": [ "username", "password" ]
+                }
+              ]
+            },
+            "devices[].exclude"
+          ]
         }
       ]
     },
