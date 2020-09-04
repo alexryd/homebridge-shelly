@@ -92,20 +92,6 @@ describe('ShellyPlatform', function() {
         start.called.should.be.true()
       }
     )
-
-    it('should pass the network interface to start()', function() {
-      const networkInterface = '127.0.0.1'
-
-      new ShellyPlatform(log, { // eslint-disable-line no-new
-        networkInterface,
-        admin: {
-          enabled: false,
-        },
-      })
-      homebridge.emit('didFinishLaunching')
-
-      start.calledWith(networkInterface).should.be.true()
-    })
   })
 
   describe('#configure()', function() {

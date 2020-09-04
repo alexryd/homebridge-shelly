@@ -1,3 +1,4 @@
+const os = require('os')
 const shellies = require('shellies')
 
 const AdminServer = require('./admin')
@@ -31,7 +32,7 @@ module.exports = homebridge => {
         )
 
         this.handleStalePlatformAccessories()
-        shellies.start(this.config.networkInterface)
+        shellies.start(this.getNetworkInterface())
 
         if (!this.config.admin || this.config.admin.enabled !== false) {
           // start the admin server
@@ -74,6 +75,40 @@ module.exports = homebridge => {
           this.deviceConfigs.set(id, c)
         }
       }
+    }
+
+    /**
+     * Returns the configured network interface do listen for CoAP messages on,
+     * if one has been configured.
+     */
+    getNetworkInterface() {
+      const iface = this.config.networkInterface
+      if (!iface) {
+        return null
+      }
+
+      const ifaces = os.networkInterfaces()
+
+      // if an interface name has been specified, return its address
+      if (ifaces[iface]) {
+        return ifaces[iface].address
+      }
+
+      // otherwise, go through each interface and see if there is one with the
+      // specified address
+      for (const i in ifaces) {
+        if (i.address === iface) {
+          // address found, so it's valid
+          return i.address
+        }
+      }
+
+      // the configured value doesn't match any interface name or address, so
+      // ignore it
+      this.log.warn(
+        `Ignoring unknown network interface name or address ${iface}`
+      )
+      return null
     }
 
     getDeviceConfig(deviceId) {

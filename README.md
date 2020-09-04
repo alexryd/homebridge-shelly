@@ -69,10 +69,10 @@ to `http://<IP-ADDRESS>:8181/`, where IP-ADDRESS is the address of the
 device that you are running homebridge on.
 
 ### Network interface
-Sometimes setting the `"networkInterface"` option to the local IP address of
-your device will help when your devices aren't automatically discovered, or
-you see error messages like `addMembership EADDRNOTAVAIL` or
-`addMembership EADDRINUSE`.
+Sometimes setting the `"networkInterface"` option to the name of the network
+interface or the local IP address of your device will help when your devices
+aren't automatically discovered, or you see error messages like
+`addMembership EADDRNOTAVAIL` or `addMembership EADDRINUSE`.
 
 ### Authentication
 Set the `"username"` and `"password"` options if you have restricted the web
