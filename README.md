@@ -45,9 +45,9 @@ must have been calibrated and be running firmware version 1.4.9 or later.
 <sup>3</sup> Requires firmware version 1.8.0 or later.
 
 ## Installation
-1. Install homebridge by following
-   [the instructions](https://www.npmjs.com/package/homebridge#installation).
-2. Install this plugin by running `npm install -g homebridge-shelly`.
+1. Install Homebridge by following
+   [the instructions](https://github.com/homebridge/homebridge/wiki).
+2. Install this plugin using [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x), or by running `npm install -g homebridge-shelly`.
 3. Add the configuration to your homebridge config.json.
 
 ## Configuration
