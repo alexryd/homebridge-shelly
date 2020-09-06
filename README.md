@@ -1,3 +1,5 @@
+<img src="homebridge-shelly.png" height="160px">
+
 # homebridge-shelly
 [![npm-version](https://badgen.net/npm/v/homebridge-shelly)](https://www.npmjs.com/package/homebridge-shelly)
 [![npm-total-downloads](https://badgen.net/npm/dt/homebridge-shelly)](https://www.npmjs.com/package/homebridge-shelly)
