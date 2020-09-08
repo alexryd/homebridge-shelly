@@ -69,7 +69,7 @@ module.exports = homebridge => {
       }
 
       this.platformAccessory
-        .getService(Service.StatelessProgrammableSwitch)
+        .getServiceById('Button ' + this.index, this.index)
         .getCharacteristic(PSE)
         .updateValue(switchEvent)
     }
