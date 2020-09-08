@@ -33,12 +33,14 @@ module.exports = homebridge => {
     }
 
     /**
-     * The name of this accessory, as specified by either the configuration or
-     * the `defaultName` property.
+     * The name of this accessory, as specified by either the configuration, the
+     * device or the `defaultName` property.
      */
     get name() {
       if (this.config.name) {
         return this.config.name
+      } else if (this.device.name) {
+        return this.device.name
       }
       return this.defaultName
     }
