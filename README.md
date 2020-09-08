@@ -1,4 +1,4 @@
-<img src="homebridge-shelly.png" height="160px">
+<a href="https://github.com/alexryd/homebridge-shelly"><img src="homebridge-shelly.png" height="120"></a>
 
 # homebridge-shelly
 [![npm-version](https://badgen.net/npm/v/homebridge-shelly)](https://www.npmjs.com/package/homebridge-shelly)
