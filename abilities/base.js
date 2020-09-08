@@ -71,7 +71,7 @@ module.exports = homebridge => {
       this._stateProperty = stateProperty
       this._setPosition = setPosition
       this._targetPosition = null
-      this._updatingTargetPosition = false
+      this._targetPositionTimeout = null
     }
 
     /**
@@ -229,15 +229,14 @@ module.exports = homebridge => {
      * Invokes the _updateTargetPosition() method, debouncing the requests.
      */
     _updateTargetPositionDebounced() {
-      if (this._updatingTargetPosition) {
+      if (this._targetPositionTimeout !== null) {
         return
       }
-      this._updatingTargetPosition = true
 
-      setImmediate(() => {
+      this._targetPositionTimeout = setTimeout(() => {
         this._updateTargetPosition()
-        this._updatingTargetPosition = false
-      })
+        this._targetPositionTimeout = null
+      }, 500)
     }
 
     /**
@@ -279,6 +278,11 @@ module.exports = homebridge => {
     }
 
     detach() {
+      if (this._targetPositionTimeout !== null) {
+        clearTimeout(this._targetPositionTimeout)
+        this._targetPositionTimeout = null
+      }
+
       this.device
         .removeListener(
           'change:' + this._stateProperty,

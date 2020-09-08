@@ -24,7 +24,7 @@ module.exports = homebridge => {
       this._brightnessProperty = brightnessProperty
       this._setLight = setLight
       this._colorTemperatureProperty = colorTemperatureProperty
-      this._updatingDeviceLight = false
+      this._deviceLightTimeout = null
     }
 
     get on() {
@@ -140,15 +140,14 @@ module.exports = homebridge => {
      * requests.
      */
     _updateDeviceLightDebounced() {
-      if (this._updatingDeviceLight === true) {
+      if (this._deviceLightTimeout !== null) {
         return
       }
-      this._updatingDeviceLight = true
 
-      setImmediate(() => {
+      this._deviceLightTimeout = setTimeout(() => {
         this._updateDeviceLight()
-        this._updatingDeviceLight = false
-      })
+        this._deviceLightTimeout = null
+      }, 100)
     }
 
     /**
@@ -259,6 +258,11 @@ module.exports = homebridge => {
     }
 
     detach() {
+      if (this._deviceLightTimeout !== null) {
+        clearTimeout(this._deviceLightTimeout)
+        this._deviceLightTimeout = null
+      }
+
       this.device
         .removeListener(
           'change:' + this._switchProperty,

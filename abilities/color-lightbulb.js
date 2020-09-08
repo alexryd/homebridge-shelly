@@ -42,7 +42,7 @@ module.exports = homebridge => {
       this.colorMode = colorMode
       this.hue = 0
       this.saturation = 0
-      this._updatingHueSaturation = false
+      this._hueSaturationTimeout = null
     }
 
     get red() {
@@ -173,12 +173,11 @@ module.exports = homebridge => {
      * Updates the hue and saturation, debouncing the requests.
      */
     _updateHueSaturationDebounced() {
-      if (this._updatingHueSaturation === true) {
+      if (this._hueSaturationTimeout !== null) {
         return
       }
-      this._updatingHueSaturation = true
 
-      setImmediate(() => {
+      this._hueSaturationTimeout = setTimeout(() => {
         this.log.debug(
           'Color of device',
           this.device.type,
@@ -188,8 +187,8 @@ module.exports = homebridge => {
         )
 
         this._updateHueSaturation()
-        this._updatingHueSaturation = false
-      })
+        this._hueSaturationTimeout = null
+      }, 100)
     }
 
     /**
@@ -207,6 +206,11 @@ module.exports = homebridge => {
     }
 
     detach() {
+      if (this._hueSaturationTimeout !== null) {
+        clearTimeout(this._hueSaturationTimeout)
+        this._hueSaturationTimeout = null
+      }
+
       this.device
         .removeListener(
           'change:' + this._redProperty,
