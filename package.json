@@ -1,6 +1,6 @@
 {
   "name": "homebridge-shelly",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "description": "Shelly plugin for Homebridge",
   "main": "index.js",
   "bin": "bin/homebridge-shelly",
