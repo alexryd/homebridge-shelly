@@ -70,6 +70,7 @@ module.exports = homebridge => {
       this._positionProperty = positionProperty
       this._stateProperty = stateProperty
       this._setPosition = setPosition
+      this._setPositionTimeout = null
       this._targetPosition = null
       this._targetPositionTimeout = null
     }
@@ -152,37 +153,41 @@ module.exports = homebridge => {
     /**
      * Handles changes from HomeKit to the TargetPosition characteristic.
      */
-    async _targetPositionSetHandler(newValue, callback) {
+    _targetPositionSetHandler(newValue, callback) {
       const d = this.device
 
-      if (this.targetPosition === newValue) {
-        callback()
+      callback()
+
+      if (this.targetPosition === newValue ||
+          this._setPositionTimeout !== null) {
         return
       }
 
-      this.log.debug(
-        'Setting',
-        this._positionProperty,
-        'of device',
-        d.type,
-        d.id,
-        'to',
-        newValue
-      )
-
-      try {
-        await this._setPosition(newValue)
-        this._targetPosition = newValue
-        callback()
-      } catch (e) {
-        handleFailedRequest(
-          this.log,
-          d,
-          e,
-          'Failed to set ' + this._positionProperty
+      this._setPositionTimeout = setTimeout(async () => {
+        this.log.debug(
+          'Setting',
+          this._positionProperty,
+          'of device',
+          d.type,
+          d.id,
+          'to',
+          newValue
         )
-        callback(e)
-      }
+
+        try {
+          await this._setPosition(newValue)
+          this._targetPosition = newValue
+        } catch (e) {
+          handleFailedRequest(
+            this.log,
+            d,
+            e,
+            'Failed to set ' + this._positionProperty
+          )
+        }
+
+        this._setPositionTimeout = null
+      }, 1000)
     }
 
     /**
@@ -278,6 +283,10 @@ module.exports = homebridge => {
     }
 
     detach() {
+      if (this._setPositionTimeout !== null) {
+        clearTimeout(this._setPositionTimeout)
+        this._setPositionTimeout = null
+      }
       if (this._targetPositionTimeout !== null) {
         clearTimeout(this._targetPositionTimeout)
         this._targetPositionTimeout = null
