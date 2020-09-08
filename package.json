@@ -6,7 +6,8 @@
   "bin": "bin/homebridge-shelly",
   "scripts": {
     "test": "mocha --exit 'test/**/test-*.js'",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "postversion": "git push && git push --tags"
   },
   "pre-commit": [
     "eslint",
