@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+const os = require('os')
 const shellies = require('shellies')
 const should = require('should')
 const sinon = require('sinon')
@@ -162,6 +163,64 @@ describe('ShellyPlatform', function() {
       platform.deviceConfigs.get('ABC123').should.be.ok()
       platform.deviceConfigs.get('ABC124').should.be.ok()
     })
+  })
+
+  describe('#getNetworkInterface()', function() {
+    it('should return null when no interface is configured', function() {
+      should(platform.config.networkInterface).be.undefined()
+      should(platform.getNetworkInterface()).be.null()
+    })
+
+    it(
+      'should return null when an unknown interface is configured',
+      function() {
+        const networkInterfaces = sinon.stub(os, 'networkInterfaces')
+          .returns({ en0: [{ address: '192.168.1.2' }] })
+
+        platform.config.networkInterface = 'en1'
+        should(platform.getNetworkInterface()).be.null()
+
+        networkInterfaces.calledOnce.should.be.true()
+      }
+    )
+
+    it(
+      'should return an address when an interface name is configured',
+      function() {
+        const networkInterfaces = sinon.stub(os, 'networkInterfaces')
+          .returns({
+            en0: [
+              { address: '192.168.1.2' },
+              { address: '192.168.1.3' },
+              { address: '192.168.1.4' },
+            ]
+          })
+
+        platform.config.networkInterface = 'en0'
+        platform.getNetworkInterface().should.equal('192.168.1.2')
+
+        networkInterfaces.calledOnce.should.be.true()
+      }
+    )
+
+    it(
+      'should return the same address when a valid address is configured',
+      function() {
+        const networkInterfaces = sinon.stub(os, 'networkInterfaces')
+          .returns({
+            en0: [
+              { address: '192.168.1.2' },
+              { address: '192.168.1.3' },
+              { address: '192.168.1.4' },
+            ]
+          })
+
+        platform.config.networkInterface = '192.168.1.3'
+        platform.getNetworkInterface().should.equal('192.168.1.3')
+
+        networkInterfaces.calledOnce.should.be.true()
+      }
+    )
   })
 
   describe('#getDeviceConfig()', function() {

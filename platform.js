@@ -90,16 +90,19 @@ module.exports = homebridge => {
       const ifaces = os.networkInterfaces()
 
       // if an interface name has been specified, return its address
-      if (ifaces[iface]) {
-        return ifaces[iface].address
+      if (ifaces[iface] && ifaces[iface].length > 0) {
+        // return the first address
+        return ifaces[iface][0].address
       }
 
       // otherwise, go through each interface and see if there is one with the
       // specified address
       for (const i in ifaces) {
-        if (i.address === iface) {
-          // address found, so it's valid
-          return i.address
+        for (const ii of ifaces[i]) {
+          if (ii.address === iface) {
+            // address found, so it's valid
+            return ii.address
+          }
         }
       }
 
