@@ -7,14 +7,18 @@ module.exports = homebridge => {
   class StatelessProgrammableSwitchAbility extends Ability {
     /**
      * @param {string} inputProperty - The device property used to indicate
-     * switch events.
+     * input events.
+     * @param {string} inputTypeProperty - The device property used to indicate
+     * which type of input has been triggered, e.g. 'S', 'SS' or 'L'.
      * @param {number} index - The index of this switch.
      */
-    constructor(inputProperty, index = 1) {
+    constructor(inputProperty, inputTypeProperty, index = 1) {
       super()
 
       this.inputProperty = inputProperty
+      this.inputTypeProperty = inputTypeProperty
       this.index = index
+      this._switchTimeout = null
     }
 
     _setupPlatformAccessory() {
@@ -35,17 +39,23 @@ module.exports = homebridge => {
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      this.device.on(
-        'change:' + this.inputProperty,
-        this.inputChangeHandler,
-        this
-      )
+      this.device
+        .on(
+          'change:' + this.inputProperty,
+          this._inputChangeHandler,
+          this
+        )
+        .on(
+          'change:' + this.inputTypeProperty,
+          this._inputTypeChangeHandler,
+          this
+        )
     }
 
     /**
      * Handles switch events from the device.
      */
-    inputChangeHandler(newValue) {
+    _inputChangeHandler(newValue) {
       this.log.debug(
         this.inputProperty,
         'of device',
@@ -55,14 +65,54 @@ module.exports = homebridge => {
         newValue
       )
 
+      if (newValue > 0) {
+        this._triggerSwitchDebounced()
+      }
+    }
+
+    /**
+     * Handles changes from the device to the input type property.
+     */
+    _inputTypeChangeHandler(newValue) {
+      this.log.debug(
+        this.inputTypeProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this._triggerSwitchDebounced()
+    }
+
+    /**
+     * Triggers a new switch event, debouncing the requests.
+     */
+    _triggerSwitchDebounced() {
+      if (this._switchTimeout !== null) {
+        return
+      }
+
+      this._switchTimeout = setTimeout(() => {
+        this._triggerSwitch()
+        this._switchTimeout = null
+      }, 0)
+    }
+
+    /**
+     * Triggers a new switch event.
+     */
+    _triggerSwitch() {
       const PSE = Characteristic.ProgrammableSwitchEvent
+      const inputType = this.device[this.inputTypeProperty]
       let switchEvent = null
 
-      if (newValue === 'S') {
+      if (inputType === 'S') {
         switchEvent = PSE.SINGLE_PRESS
-      } else if (newValue === 'SS') {
+      } else if (inputType === 'SS') {
         switchEvent = PSE.DOUBLE_PRESS
-      } else if (newValue === 'L') {
+      } else if (inputType === 'L') {
         switchEvent = PSE.LONG_PRESS
       } else {
         return
@@ -75,11 +125,17 @@ module.exports = homebridge => {
     }
 
     detach() {
-      this.device.removeListener(
-        'change:' + this.inputProperty,
-        this.inputChangeHandler,
-        this
-      )
+      this.device
+        .removeListener(
+          'change:' + this.inputProperty,
+          this._inputChangeHandler,
+          this
+        )
+        .removeListener(
+          'change:' + this.inputTypeProperty,
+          this._inputTypeChangeHandler,
+          this
+        )
 
       super.detach()
     }
