@@ -6,17 +6,17 @@ module.exports = homebridge => {
 
   class StatelessProgrammableSwitchAbility extends Ability {
     /**
-     * @param {string} inputProperty - The device property used to indicate
-     * input events.
      * @param {string} inputTypeProperty - The device property used to indicate
      * which type of input has been triggered, e.g. 'S', 'SS' or 'L'.
+     * @param {string} inputCounterProperty - The device property used to
+     * indicate the current input event count.
      * @param {number} index - The index of this switch.
      */
-    constructor(inputProperty, inputTypeProperty, index = 1) {
+    constructor(inputTypeProperty, inputCounterProperty, index = 1) {
       super()
 
-      this.inputProperty = inputProperty
       this.inputTypeProperty = inputTypeProperty
+      this.inputCounterProperty = inputCounterProperty
       this.index = index
       this._switchTimeout = null
     }
@@ -41,33 +41,15 @@ module.exports = homebridge => {
 
       this.device
         .on(
-          'change:' + this.inputProperty,
-          this._inputChangeHandler,
-          this
-        )
-        .on(
           'change:' + this.inputTypeProperty,
           this._inputTypeChangeHandler,
           this
         )
-    }
-
-    /**
-     * Handles switch events from the device.
-     */
-    _inputChangeHandler(newValue) {
-      this.log.debug(
-        this.inputProperty,
-        'of device',
-        this.device.type,
-        this.device.id,
-        'changed to',
-        newValue
-      )
-
-      if (newValue > 0) {
-        this._triggerSwitchDebounced()
-      }
+        .on(
+          'change:' + this.inputCounterProperty,
+          this._inputCounterChangeHandler,
+          this
+        )
     }
 
     /**
@@ -76,6 +58,22 @@ module.exports = homebridge => {
     _inputTypeChangeHandler(newValue) {
       this.log.debug(
         this.inputTypeProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this._triggerSwitchDebounced()
+    }
+
+    /**
+     * Handles changes from the device to the input counter property.
+     */
+    _inputCounterChangeHandler(newValue) {
+      this.log.debug(
+        this.inputCounterProperty,
         'of device',
         this.device.type,
         this.device.id,
@@ -127,13 +125,13 @@ module.exports = homebridge => {
     detach() {
       this.device
         .removeListener(
-          'change:' + this.inputProperty,
-          this._inputChangeHandler,
+          'change:' + this.inputTypeProperty,
+          this._inputTypeChangeHandler,
           this
         )
         .removeListener(
-          'change:' + this.inputTypeProperty,
-          this._inputTypeChangeHandler,
+          'change:' + this.inputCounterProperty,
+          this._inputCounterChangeHandler,
           this
         )
 

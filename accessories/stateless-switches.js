@@ -9,7 +9,10 @@ module.exports = homebridge => {
   class ShellyButton1StatelessSwitchAccessory extends ShellyAccessory {
     constructor(device, index, config, log) {
       super('statelessSwitch', device, index, config, log, [
-        new StatelessProgrammableSwitchAbility('input0', 'inputEvent0'),
+        new StatelessProgrammableSwitchAbility(
+          'inputEvent0',
+          'inputEventCounter0'
+        ),
         new BatteryAbility('battery'),
       ])
     }
@@ -21,14 +24,14 @@ module.exports = homebridge => {
 
       if (numberOfInputs === 1) {
         this.abilities.push(new StatelessProgrammableSwitchAbility(
-          'input0',
-          'inputEvent0'
+          'inputEvent0',
+          'inputEventCounter0'
         ))
       } else {
         for (let i = 0; i < numberOfInputs; i++) {
           this.abilities.push(new StatelessProgrammableSwitchAbility(
-            'input' + i,
             'inputEvent' + i,
+            'inputEventCounter' + i,
             i + 1
           ))
         }
