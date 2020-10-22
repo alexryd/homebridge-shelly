@@ -99,7 +99,7 @@ to `false`. You can also change the port number using `"admin"."port"`.
 ### Device specific configurations
 Configurations for specific Shelly devices can be set using the `"devices"`
 array. Each object in the array must contain an `"id"` property with the ID of
-the Shelly device that you want to target. IDs are always made up of 6
+the Shelly device that you want to target. IDs are always made up of 6 or 12
 hexadecimal characters and can be found in the Shelly Cloud app or the web
 interface of a device, under *Settings -> Device info -> Device ID*.
 
