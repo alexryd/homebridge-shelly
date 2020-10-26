@@ -139,6 +139,12 @@ module.exports = homebridge => {
           d.settings.hwinfo.hw_revision
         )
       }
+      
+      if (d.settings && d.settings.name) {
+        infoService.setCharacteristic(
+          Characteristic.Name, d.settings.name
+        )
+      }
     }
 
     /**
