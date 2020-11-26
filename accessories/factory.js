@@ -481,6 +481,12 @@ module.exports = homebridge => {
   FACTORIES.set('SHSW-44', Shelly4ProFactory)
 
   /**
+   * Shelly 1L factory.
+   */
+  class Shelly1LFactory extends RelayAccessoryFactory {}
+  FACTORIES.set('SHSW-L', Shelly1LFactory)
+
+  /**
    * Shelly 1PM factory.
    */
   class Shelly1PMFactory extends RelayAccessoryFactory {}
