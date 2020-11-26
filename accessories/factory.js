@@ -342,6 +342,12 @@ module.exports = homebridge => {
   FACTORIES.set('SHPLG-S', ShellyPlugSFactory)
 
   /**
+   * Shelly Plug US factory.
+   */
+  class ShellyPlugUSFactory extends ShellyPlugFactory {}
+  FACTORIES.set('SHPLG-U1', ShellyPlugUSFactory)
+
+  /**
    * Shelly RGBW2 factory.
    */
   class ShellyRGBW2Factory extends AccessoryFactory {

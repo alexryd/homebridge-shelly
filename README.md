@@ -33,6 +33,7 @@ Note that this is an unofficial plugin.
 * [Shelly i3](https://shelly.cloud/products/shelly-i3-smart-home-automation-device/)
 * [Shelly Plug](https://shelly.cloud/shelly-plug/)
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
+* [Shelly Plug US](https://shelly.cloud/products/shelly-plug-us-smart-home-automation-device/)
 * [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
 * [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
