@@ -493,6 +493,16 @@ module.exports = homebridge => {
   FACTORIES.set('SHSW-PM', Shelly1PMFactory)
 
   /**
+   * Shelly Uni factory.
+   */
+  class ShellyUniFactory extends RelayAccessoryFactory {
+    get numberOfAccessories() {
+      return 2
+    }
+  }
+  FACTORIES.set('SHUNI-1', ShellyUniFactory)
+
+  /**
    * Shelly Vintage factory.
    */
   class ShellyVintageFactory extends AccessoryFactory {

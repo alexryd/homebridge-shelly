@@ -37,6 +37,7 @@ Note that this is an unofficial plugin.
 * [Shelly Plug US](https://shelly.cloud/products/shelly-plug-us-smart-home-automation-device/)
 * [Shelly RGBW2](https://shelly.cloud/wifi-smart-shelly-rgbw-2/)
 * [Shelly Sense](https://shelly.cloud/shelly-sense/)
+* [Shelly Uni](https://shelly.cloud/products/shelly-uni-smart-home-automation-device/)
 * [Shelly Vintage](https://shelly.cloud/wifi-smart-home-automation-shelly-vintage/)
 
 Is your device not on the list? See the section about unsupported devices below.
