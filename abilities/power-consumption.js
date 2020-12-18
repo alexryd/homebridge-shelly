@@ -3,7 +3,7 @@ module.exports = homebridge => {
   const { Ability } = require('./base')(homebridge)
   const {
     ConsumptionCharacteristic
-  } = require('../characteristics')(homebridge)
+  } = require('../util/characteristics')(homebridge)
 
   class PowerConsumptionAbility extends Ability {
     /**

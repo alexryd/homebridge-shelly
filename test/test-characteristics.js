@@ -4,7 +4,9 @@ const Homebridge = require('./mocks/homebridge')
 
 const homebridge = new Homebridge()
 
-const { ConsumptionCharacteristic } = require('../characteristics')(homebridge)
+const {
+  ConsumptionCharacteristic
+} = require('../util/characteristics')(homebridge)
 
 describe('ConsumptionCharacteristic', function() {
   describe('#constructor()', function() {
