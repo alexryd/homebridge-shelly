@@ -127,6 +127,8 @@ module.exports = homebridge => {
         newValue
       )
 
+      this._lastSpeed = this.speed
+
       this.platformAccessory
         .getService(Service.Fanv2)
         .getCharacteristic(Characteristic.RotationSpeed)
