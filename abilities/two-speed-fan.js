@@ -54,12 +54,12 @@ module.exports = homebridge => {
       this.device
         .on(
           'change:' + this._speedOneProperty,
-          this._propertyChangeHandler,
+          this._speedOnePropertyChangeHandler,
           this
         )
         .on(
           'change:' + this._speedTwoProperty,
-          this._propertyChangeHandler,
+          this._speedTwoPropertyChangeHandler,
           this
         )
     }
@@ -104,7 +104,6 @@ module.exports = homebridge => {
       )
 
       try {
-        this._lastSpeed = value
         await this._setSpeed(value)
         callback()
       } catch (e) {
@@ -118,16 +117,36 @@ module.exports = homebridge => {
       }
     }
 
-    _propertyChangeHandler(newValue) {
+    _speedOnePropertyChangeHandler(newValue) {
       this.log.debug(
-        'Relay of device',
+        this._speedOneProperty,
+        'of device',
         this.device.type,
         this.device.id,
         'changed to',
         newValue
       )
 
+      this._stateChangeHandler()
+    }
+
+    _speedTwoPropertyChangeHandler(newValue) {
+      this.log.debug(
+        this._speedTwoProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this._stateChangeHandler()
+    }
+
+    _stateChangeHandler() {
+      // Always keep track of the last speed to set
       this._lastSpeed = this.speed
+      console.log(this._lastSpeed)
 
       this.platformAccessory
         .getService(Service.Fanv2)
@@ -179,14 +198,14 @@ module.exports = homebridge => {
       this.device
         .removeListener(
           'change:' + this._speedOneProperty,
-          this._propertyChangeHandler,
+          this._speedOnePropertyChangeHandler,
           this
         )
 
       this.device
         .removeListener(
           'change:' + this._speedTwoProperty,
-          this._propertyChangeHandler,
+          this._speedTwoPropertyChangeHandler,
           this
         )
 
