@@ -45,8 +45,8 @@ module.exports = homebridge => {
         .getCharacteristic(Characteristic.RotationSpeed)
         .setProps({
           minValue: 0,
-          maxValue: 2,
-          minStep: 1
+          maxValue: 100,
+          minStep: 50
         })
         .on('get', this.getSpeed.bind(this))
         .on('set', this._targetSpeedSetHandler.bind(this))
@@ -70,9 +70,9 @@ module.exports = homebridge => {
 
     get speed() {
       if (this.device[this._speedTwoProperty]) {
-        return 2
+        return 100
       } else if (this.device[this._speedOneProperty]) {
-        return 1
+        return 50
       }
 
       return 0
@@ -104,6 +104,8 @@ module.exports = homebridge => {
       )
 
       try {
+        // Always keep track of the last speed set
+        this._lastSpeed = value
         await this._setSpeed(value)
         callback()
       } catch (e) {
@@ -144,24 +146,23 @@ module.exports = homebridge => {
     }
 
     _stateChangeHandler() {
-      // Always keep track of the last speed set
-      this._lastSpeed = this.speed
-
-      this.platformAccessory
-        .getService(Service.Fanv2)
-        .getCharacteristic(Characteristic.RotationSpeed)
-        .setValue(this.speed, null, 'shelly')
-
       this.platformAccessory
         .getService(Service.Fanv2)
         .getCharacteristic(Characteristic.Active)
         .setValue(this.active, null, 'shelly')
+
+      if (this.active > 0) {
+        this.platformAccessory
+          .getService(Service.Fanv2)
+          .getCharacteristic(Characteristic.RotationSpeed)
+          .setValue(this.speed, null, 'shelly')
+      }
     }
 
-    async _targetActiveSetHandler(value, callback, context) {
+    async _targetActiveSetHandler(newValue, callback, context) {
       const d = this.device
 
-      if (context === 'shelly' || this.active === value) {
+      if (context === 'shelly' || this.active === newValue) {
         callback()
         return
       }
@@ -172,11 +173,13 @@ module.exports = homebridge => {
         d.type,
         d.id,
         'to',
-        value
+        newValue
       )
 
       try {
-        if (value === 0) {
+        if (newValue === 0) {
+          // Always keep track of the last speed set
+          this._lastSpeed = this.speed
           await this._setSpeed(0)
         } else {
           await this._setSpeed(this._lastSpeed)

@@ -33,11 +33,11 @@ module.exports = homebridge => {
           await this.device.setRelay(this.index, false)
           await this.device.setRelay(this.index + 1, false)
           break
-        case 1:
+        case 50:
           await this.device.setRelay(this.index, true)
           await this.device.setRelay(this.index + 1, false)
           break
-        case 2:
+        case 100:
           await this.device.setRelay(this.index, false)
           await this.device.setRelay(this.index + 1, true)
           break
