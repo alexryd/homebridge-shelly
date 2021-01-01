@@ -144,9 +144,8 @@ module.exports = homebridge => {
     }
 
     _stateChangeHandler() {
-      // Always keep track of the last speed to set
+      // Always keep track of the last speed set
       this._lastSpeed = this.speed
-      console.log(this._lastSpeed)
 
       this.platformAccessory
         .getService(Service.Fanv2)
