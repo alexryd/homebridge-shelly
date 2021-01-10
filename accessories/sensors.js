@@ -11,9 +11,8 @@ module.exports = homebridge => {
   const MotionSensorAbility = require('../abilities/motion-sensor')(homebridge)
   const OccupancySensorAbility =
     require('../abilities/occupancy-sensor')(homebridge)
-  const PowerConsumptionAbility =
-    require('../abilities/power-consumption')(homebridge)
-  const Service = homebridge.hap.Service
+  const PowerMeterAbility =
+    require('../abilities/power-meter')(homebridge)
   const SmokeSensorAbility = require('../abilities/smoke-sensor')(homebridge)
   const TemperatureSensorAbility =
     require('../abilities/temperature-sensor')(homebridge)
@@ -90,10 +89,7 @@ module.exports = homebridge => {
       this.abilities.push(new ContactSensorAbility('relay' + index))
 
       if (powerMeterIndex !== false) {
-        this.abilities.push(new PowerConsumptionAbility(
-          Service.ContactSensor,
-          'power' + powerMeterIndex
-        ))
+        this.abilities.push(new PowerMeterAbility('power' + powerMeterIndex))
       }
     }
 
@@ -109,10 +105,7 @@ module.exports = homebridge => {
       this.abilities.push(new MotionSensorAbility('relay' + index))
 
       if (powerMeterIndex !== false) {
-        this.abilities.push(new PowerConsumptionAbility(
-          Service.MotionSensor,
-          'power' + powerMeterIndex
-        ))
+        this.abilities.push(new PowerMeterAbility('power' + powerMeterIndex))
       }
     }
 
@@ -128,10 +121,7 @@ module.exports = homebridge => {
       this.abilities.push(new OccupancySensorAbility('relay' + index))
 
       if (powerMeterIndex !== false) {
-        this.abilities.push(new PowerConsumptionAbility(
-          Service.OccupancySensor,
-          'power' + powerMeterIndex
-        ))
+        this.abilities.push(new PowerMeterAbility('power' + powerMeterIndex))
       }
     }
 

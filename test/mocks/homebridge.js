@@ -223,7 +223,12 @@ class Service {
   }
 
   getCharacteristic(name) {
-    return this.characteristics.get(name)
+    for (const [k, v] of this.characteristics) {
+      if (k.UUID === name.UUID) {
+        return v
+      }
+    }
+    return null
   }
 
   addCharacteristic(characteristic) {
@@ -236,8 +241,12 @@ class Service {
     return c
   }
 
+  addOptionalCharacteristic(characteristic) {
+    return this.addCharacteristic(characteristic)
+  }
+
   setCharacteristic(name, value) {
-    this.characteristics.get(name).setValue(value)
+    this.getCharacteristic(name).setValue(value)
     return this
   }
 }

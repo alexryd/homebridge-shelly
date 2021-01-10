@@ -7,6 +7,8 @@ module.exports = homebridge => {
   const Service = homebridge.hap.Service
   const uuid = homebridge.hap.uuid
 
+  const PowerMeterAbility = require('../abilities/power-meter')(homebridge)
+
   /**
    * Base class for all accessories.
    */
@@ -60,20 +62,14 @@ module.exports = homebridge => {
      * platform accessory.
      */
     setup(platformAccessory = null) {
-      let setupPlatformAccessory = false
-
-      if (!platformAccessory) {
-        this.platformAccessory = this._createPlatformAccessory()
-        setupPlatformAccessory = true
-      } else {
-        this.platformAccessory = platformAccessory
-      }
+      this.platformAccessory = platformAccessory ||
+        this._createPlatformAccessory()
 
       this._setupEventHandlers()
       this.updateAccessoryInformation()
 
       for (const a of this.abilities) {
-        a.setup(this, setupPlatformAccessory)
+        a.setup(this)
       }
     }
 
@@ -209,6 +205,25 @@ module.exports = homebridge => {
    * Base class for all accessories that use a Shelly device with a relay.
    */
   class ShellyRelayAccessory extends ShellyAccessory {
+    /**
+     * Adds a power meter service to this accessory.
+     * This method must be called before setup().
+     * @param {string} consumptionProperty - The device property used to
+     * indicate the current power consumption (Watt).
+     * @param {string} electricCurrentProperty - The device property used to
+     * indicate the amount of electric current (Ampere).
+     * @param {string} voltageProperty - The device property used to indicate
+     * the current voltage (Volt).
+     */
+    addPowerMeter(consumptionProperty, electricCurrentProperty = null,
+      voltageProperty = null) {
+      this.abilities.push(new PowerMeterAbility(
+        consumptionProperty,
+        electricCurrentProperty,
+        voltageProperty
+      ))
+    }
+
     /**
      * Sets the relay to the new value.
      * @returns {Promise} A Promise that resolves when the state of the relay

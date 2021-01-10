@@ -1,10 +1,7 @@
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory
-  const PowerConsumptionAbility =
-    require('../abilities/power-consumption')(homebridge)
   const SwitchAbility = require('../abilities/switch')(homebridge)
-  const Service = homebridge.hap.Service
   const { ShellyRelayAccessory } = require('./base')(homebridge)
 
   class ShellyRelaySwitchAccessory extends ShellyRelayAccessory {
@@ -17,10 +14,7 @@ module.exports = homebridge => {
       ))
 
       if (powerMeterIndex !== false) {
-        this.abilities.push(new PowerConsumptionAbility(
-          Service.Switch,
-          'power' + powerMeterIndex
-        ))
+        this.addPowerMeter('power' + powerMeterIndex)
       }
     }
 
