@@ -17,10 +17,15 @@ module.exports = homebridge => {
       )
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    _createService() {
+      const service = super._createService()
 
-      this.characteristic.setProps({ minValue: -100 })
+      // allow negative temperatures
+      service
+        .getCharacteristic(Characteristic.CurrentTemperature)
+        .setProps({ minValue: -100 })
+
+      return service
     }
   }
 

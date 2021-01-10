@@ -21,19 +21,22 @@ module.exports = homebridge => {
       this._switchTimeout = null
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    get service() {
+      return this.platformAccessory.getServiceById(
+        'Button ' + this.index,
+        this.index
+      )
+    }
 
-      this.platformAccessory.addService(
-        new Service.StatelessProgrammableSwitch(
-          'Button ' + this.index,
+    _createService() {
+      return new Service.StatelessProgrammableSwitch(
+        'Button ' + this.index,
+        this.index
+      )
+        .setCharacteristic(
+          Characteristic.ServiceLabelIndex,
           this.index
         )
-          .setCharacteristic(
-            Characteristic.ServiceLabelIndex,
-            this.index
-          )
-      )
     }
 
     _setupEventHandlers() {
@@ -116,8 +119,7 @@ module.exports = homebridge => {
         return
       }
 
-      this.platformAccessory
-        .getServiceById('Button ' + this.index, this.index)
+      this.service
         .getCharacteristic(PSE)
         .updateValue(switchEvent)
     }

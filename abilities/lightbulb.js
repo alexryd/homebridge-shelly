@@ -27,6 +27,10 @@ module.exports = homebridge => {
       this._deviceLightTimeout = null
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.Lightbulb)
+    }
+
     get on() {
       return this.device[this._switchProperty]
     }
@@ -49,33 +53,30 @@ module.exports = homebridge => {
       return Math.round(1000000 / value)
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      const lightbulbService = new Service.Lightbulb()
+    _createService() {
+      const service = new Service.Lightbulb()
         .setCharacteristic(Characteristic.On, this.on)
         .setCharacteristic(Characteristic.Brightness, this.brightness)
 
       if (this._colorTemperatureProperty) {
-        lightbulbService.addCharacteristic(Characteristic.ColorTemperature)
+        service.addCharacteristic(Characteristic.ColorTemperature)
           // set valid values to 2700 - 6500 K
           .setProps({ minValue: 154, maxValue: 370 })
           .setValue(this._colorTemperatureToHomekit(this.colorTemperature))
       }
 
-      this.platformAccessory.addService(lightbulbService)
+      return service
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      const lightbulbService = this.platformAccessory
-        .getService(Service.Lightbulb)
+      const service = this.service
 
-      lightbulbService.getCharacteristic(Characteristic.On)
+      service.getCharacteristic(Characteristic.On)
         .on('set', this._onSetHandler.bind(this))
 
-      lightbulbService.getCharacteristic(Characteristic.Brightness)
+      service.getCharacteristic(Characteristic.Brightness)
         .on('set', this._brightnessSetHandler.bind(this))
 
       this.device
@@ -91,7 +92,7 @@ module.exports = homebridge => {
         )
 
       if (this._colorTemperatureProperty) {
-        lightbulbService.getCharacteristic(Characteristic.ColorTemperature)
+        service.getCharacteristic(Characteristic.ColorTemperature)
           .on('set', this._colorTemperatureSetHandler.bind(this))
 
         this.device.on(
@@ -155,16 +156,14 @@ module.exports = homebridge => {
      */
     async _updateDeviceLight() {
       try {
-        const lightbulbService = this.platformAccessory
-          .getService(Service.Lightbulb)
+        const service = this.service
 
-        const on = lightbulbService.getCharacteristic(Characteristic.On).value
-        const brightness = lightbulbService
+        const on = service.getCharacteristic(Characteristic.On).value
+        const brightness = service
           .getCharacteristic(Characteristic.Brightness).value
         const colorTemperature = this._colorTemperatureProperty
           ? this._colorTemperatureFromHomekit(
-            lightbulbService
-              .getCharacteristic(Characteristic.ColorTemperature).value
+            service.getCharacteristic(Characteristic.ColorTemperature).value
           )
           : null
 
@@ -213,8 +212,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.Lightbulb)
+      this.service
         .getCharacteristic(Characteristic.On)
         .setValue(this.on)
     }
@@ -232,8 +230,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.Lightbulb)
+      this.service
         .getCharacteristic(Characteristic.Brightness)
         .setValue(this.brightness)
     }
@@ -251,8 +248,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.Lightbulb)
+      this.service
         .getCharacteristic(Characteristic.ColorTemperature)
         .setValue(this._colorTemperatureToHomekit(this.colorTemperature))
     }

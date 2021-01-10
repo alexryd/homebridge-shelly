@@ -22,6 +22,10 @@ module.exports = homebridge => {
       this._inUseProperty = inUseProperty
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.Outlet)
+    }
+
     get on() {
       return !!this.device[this._switchProperty]
     }
@@ -30,21 +34,16 @@ module.exports = homebridge => {
       return this._inUseProperty ? !!this.device[this._inUseProperty] : false
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      this.platformAccessory.addService(
-        new Service.Outlet()
-          .setCharacteristic(Characteristic.On, this.on)
-          .setCharacteristic(Characteristic.OutletInUse, this.inUse)
-      )
+    _createService() {
+      return new Service.Outlet()
+        .setCharacteristic(Characteristic.On, this.on)
+        .setCharacteristic(Characteristic.OutletInUse, this.inUse)
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      this.platformAccessory
-        .getService(Service.Outlet)
+      this.service
         .getCharacteristic(Characteristic.On)
         .on('set', this._onSetHandler.bind(this))
 
@@ -110,8 +109,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.Outlet)
+      this.service
         .getCharacteristic(Characteristic.On)
         .setValue(this.on)
     }
@@ -120,8 +118,7 @@ module.exports = homebridge => {
      * Handles changes from the device to the in use property.
      */
     _inUseChangeHandler(newValue) {
-      this.platformAccessory
-        .getService(Service.Outlet)
+      this.service
         .getCharacteristic(Characteristic.OutletInUse)
         .setValue(this.inUse)
     }

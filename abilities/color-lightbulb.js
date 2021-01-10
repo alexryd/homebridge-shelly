@@ -5,7 +5,6 @@ const { handleFailedRequest } = require('../error-handlers')
 module.exports = homebridge => {
   const Characteristic = homebridge.hap.Characteristic
   const LightbulbAbility = require('./lightbulb')(homebridge)
-  const Service = homebridge.hap.Service
 
   class ColorLightbulbAbility extends LightbulbAbility {
     /**
@@ -61,21 +60,27 @@ module.exports = homebridge => {
       return this.device[this._whiteProperty]
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    _createService() {
+      const service = super._createService()
+
       this._updateHueSaturation()
+
+      service
+        .setCharacteristic(Characteristic.Hue, this.hue)
+        .setCharacteristic(Characteristic.Saturation, this.saturation)
+
+      return service
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      const lightbulbService = this.platformAccessory
-        .getService(Service.Lightbulb)
+      const service = this.service
 
-      lightbulbService.getCharacteristic(Characteristic.Hue)
+      service.getCharacteristic(Characteristic.Hue)
         .on('set', this._hueSetHandler.bind(this))
 
-      lightbulbService.getCharacteristic(Characteristic.Saturation)
+      service.getCharacteristic(Characteristic.Saturation)
         .on('set', this._saturationSetHandler.bind(this))
 
       this.device
@@ -110,11 +115,10 @@ module.exports = homebridge => {
 
     async _updateDeviceLight() {
       try {
-        const lightbulbService = this.platformAccessory
-          .getService(Service.Lightbulb)
+        const service = this.service
 
-        const on = lightbulbService.getCharacteristic(Characteristic.On).value
-        const brightness = lightbulbService
+        const on = service.getCharacteristic(Characteristic.On).value
+        const brightness = service
           .getCharacteristic(Characteristic.Brightness).value
         const color = this._getRedGreenBlue(brightness)
 
@@ -187,6 +191,11 @@ module.exports = homebridge => {
         )
 
         this._updateHueSaturation()
+
+        this.service
+          .setCharacteristic(Characteristic.Hue, this.hue)
+          .setCharacteristic(Characteristic.Saturation, this.saturation)
+
         this._hueSaturationTimeout = null
       }, 100)
     }
@@ -199,10 +208,6 @@ module.exports = homebridge => {
       const hsv = colorConvert.rgb.hsv(this.red, this.green, this.blue)
       this.hue = hsv[0]
       this.saturation = hsv[1]
-
-      this.platformAccessory.getService(Service.Lightbulb)
-        .setCharacteristic(Characteristic.Hue, this.hue)
-        .setCharacteristic(Characteristic.Saturation, this.saturation)
     }
 
     detach() {

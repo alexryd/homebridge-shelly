@@ -19,18 +19,18 @@ module.exports = homebridge => {
       this.namespace = namespace
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    get service() {
+      return this.platformAccessory.getService(Service.ServiceLabel)
+    }
 
+    _createService() {
       const SLN = Characteristic.ServiceLabelNamespace
 
-      this.platformAccessory.addService(
-        new Service.ServiceLabel()
-          .setCharacteristic(
-            SLN,
-            this.namespace === 'dots' ? SLN.DOTS : SLN.ARABIC_NUMERALS
-          )
-      )
+      return new Service.ServiceLabel()
+        .setCharacteristic(
+          SLN,
+          this.namespace === 'dots' ? SLN.DOTS : SLN.ARABIC_NUMERALS
+        )
     }
   }
 

@@ -22,6 +22,10 @@ module.exports = homebridge => {
       this._inUseProperty = inUseProperty
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.Valve)
+    }
+
     get active() {
       return !!this.device[this._activeProperty]
     }
@@ -48,30 +52,26 @@ module.exports = homebridge => {
       return value ? IU.IN_USE : IU.NOT_IN_USE
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      this.platformAccessory.addService(
-        new Service.Valve()
-          .setCharacteristic(
-            Characteristic.Active,
-            this._activeToHomeKit(this.active)
-          )
-          .setCharacteristic(
-            Characteristic.InUse,
-            this._inUseToHomeKit(this.inUse)
-          )
-          .setCharacteristic(
-            Characteristic.ValveType,
-            Characteristic.ValveType.GENERIC_VALVE
-          )
-      )
+    _createService() {
+      return new Service.Valve()
+        .setCharacteristic(
+          Characteristic.Active,
+          this._activeToHomeKit(this.active)
+        )
+        .setCharacteristic(
+          Characteristic.InUse,
+          this._inUseToHomeKit(this.inUse)
+        )
+        .setCharacteristic(
+          Characteristic.ValveType,
+          Characteristic.ValveType.GENERIC_VALVE
+        )
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      this.platformAccessory.getService(Service.Valve)
+      this.service
         .getCharacteristic(Characteristic.Active)
         .on('set', this._activeSetHandler.bind(this))
 
@@ -138,8 +138,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.Valve)
+      this.service
         .getCharacteristic(Characteristic.Active)
         .setValue(this._activeToHomeKit(this.active))
     }
@@ -148,8 +147,7 @@ module.exports = homebridge => {
      * Handles changes from the device to the in use property.
      */
     _inUseChangeHandler(newValue) {
-      this.platformAccessory
-        .getService(Service.Valve)
+      this.service
         .getCharacteristic(Characteristic.InUse)
         .setValue(this._inUseToHomeKit(this.inUse))
     }

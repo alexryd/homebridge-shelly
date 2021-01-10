@@ -20,6 +20,10 @@ module.exports = homebridge => {
       this._chargingProperty = chargingProperty
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.BatteryService)
+    }
+
     get level() {
       return this.device[this._levelProperty]
     }
@@ -40,15 +44,11 @@ module.exports = homebridge => {
       return this.level < 10 ? SLB.BATTERY_LEVEL_LOW : SLB.BATTERY_LEVEL_NORMAL
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      const batteryService = new Service.BatteryService()
+    _createService() {
+      return new Service.BatteryService()
         .setCharacteristic(Characteristic.BatteryLevel, this.level)
         .setCharacteristic(Characteristic.ChargingState, this.chargingState)
         .setCharacteristic(Characteristic.StatusLowBattery, this.statusLow)
-
-      this.platformAccessory.addService(batteryService)
     }
 
     _setupEventHandlers() {
@@ -83,7 +83,7 @@ module.exports = homebridge => {
         '%'
       )
 
-      this.platformAccessory.getService(Service.BatteryService)
+      this.service
         .setCharacteristic(Characteristic.BatteryLevel, this.level)
         .setCharacteristic(Characteristic.StatusLowBattery, this.statusLow)
     }
@@ -101,8 +101,10 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory.getService(Service.BatteryService)
-        .setCharacteristic(Characteristic.ChargingState, this.chargingState)
+      this.service.setCharacteristic(
+        Characteristic.ChargingState,
+        this.chargingState
+      )
     }
 
     detach() {

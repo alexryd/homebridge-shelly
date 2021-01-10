@@ -3,6 +3,10 @@ const { handleFailedRequest } = require('../error-handlers')
 module.exports = homebridge => {
   const Characteristic = homebridge.hap.Characteristic
 
+  /**
+   * An Ability is more or less equivalent to a HomeKit Service. An Accessory
+   * has one or more Abilities.
+   */
   class Ability {
     constructor() {
       this.device = null
@@ -11,27 +15,33 @@ module.exports = homebridge => {
       this.platformAccessory = null
     }
 
+    get service() {
+      // subclasses should override this property to return the corresponding
+      // Service from the platform accessory
+      return null
+    }
+
     /**
      * Adds this ability to the given accessory.
      * @param {object} accessory - The accessory to add this ability to.
-     * @param {boolean} setupPlatformAccessory - Whether the platform accessory
-     * is new and needs to be set up.
      */
-    setup(accessory, setupPlatformAccessory = true) {
+    setup(accessory) {
       this.device = accessory.device
       this.accessory = accessory
       this.log = accessory.log
       this.platformAccessory = accessory.platformAccessory
 
-      if (setupPlatformAccessory) {
-        this._setupPlatformAccessory()
+      if (!this.service) {
+        this.platformAccessory.addService(this._createService())
       }
+
       this._setupEventHandlers()
     }
 
-    _setupPlatformAccessory() {
-      // subclasses should use this method to add services and characteristics
-      // to the platform accessory
+    _createService() {
+      // subclasses should override this method to create a Service and setup
+      // its characteristics
+      return null
     }
 
     _setupEventHandlers() {
@@ -119,15 +129,11 @@ module.exports = homebridge => {
         : this.position
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      this.platformAccessory.addService(
-        new this._Service()
-          .setCharacteristic(Characteristic.PositionState, this.positionState)
-          .setCharacteristic(Characteristic.CurrentPosition, this.position)
-          .setCharacteristic(Characteristic.TargetPosition, this.targetPosition)
-      )
+    _createService() {
+      return new this._Service()
+        .setCharacteristic(Characteristic.PositionState, this.positionState)
+        .setCharacteristic(Characteristic.CurrentPosition, this.position)
+        .setCharacteristic(Characteristic.TargetPosition, this.targetPosition)
     }
 
     _setupEventHandlers() {
@@ -376,17 +382,12 @@ module.exports = homebridge => {
       return value
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      // add our service and set our characteristic
-      this.platformAccessory.addService(
-        new this._Service()
-          .setCharacteristic(
-            this._Characteristic,
-            this._valueToHomeKit(this.value)
-          )
-      )
+    _createService() {
+      return new this._Service()
+        .setCharacteristic(
+          this._Characteristic,
+          this._valueToHomeKit(this.value)
+        )
     }
 
     _setupEventHandlers() {

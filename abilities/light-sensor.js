@@ -17,14 +17,18 @@ module.exports = homebridge => {
       )
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    _createService() {
+      const service = super._createService()
 
       // the default maximum light level is 100k lux, but Shelly devices can
       // report more than that, so we need to increase it
-      this.characteristic.setProps({
-        maxValue: 500000,
-      })
+      service
+        .getCharacteristic(Characteristic.CurrentAmbientLightLevel)
+        .setProps({
+          maxValue: 500000,
+        })
+
+      return service
     }
   }
 

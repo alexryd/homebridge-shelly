@@ -23,6 +23,10 @@ module.exports = homebridge => {
       this._targetState = null
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.GarageDoorOpener)
+    }
+
     get position() {
       return this.device[this._positionProperty] || 0
     }
@@ -57,22 +61,17 @@ module.exports = homebridge => {
       return cs === CDS.OPEN || cs === CDS.OPENING ? TDS.OPEN : TDS.CLOSED
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
-
-      this.platformAccessory.addService(
-        new Service.GarageDoorOpener()
-          .setCharacteristic(Characteristic.CurrentDoorState, this.currentState)
-          .setCharacteristic(Characteristic.TargetDoorState, this.targetState)
-          .setCharacteristic(Characteristic.ObstructionDetected, false)
-      )
+    _createService() {
+      return new Service.GarageDoorOpener()
+        .setCharacteristic(Characteristic.CurrentDoorState, this.currentState)
+        .setCharacteristic(Characteristic.TargetDoorState, this.targetState)
+        .setCharacteristic(Characteristic.ObstructionDetected, false)
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      this.platformAccessory
-        .getService(Service.GarageDoorOpener)
+      this.service
         .getCharacteristic(Characteristic.TargetDoorState)
         .on('set', this._targetDoorStateSetHandler.bind(this))
 
@@ -138,8 +137,7 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.platformAccessory
-        .getService(Service.GarageDoorOpener)
+      this.service
         .getCharacteristic(Characteristic.CurrentDoorState)
         .setValue(this.currentState)
     }
