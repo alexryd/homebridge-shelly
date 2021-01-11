@@ -6,7 +6,7 @@ const homebridge = new Homebridge()
 
 const {
   ConsumptionCharacteristic
-} = require('../util/characteristics')(homebridge)
+} = require('../util/custom-characteristics')(homebridge)
 
 describe('ConsumptionCharacteristic', function() {
   describe('#constructor()', function() {
