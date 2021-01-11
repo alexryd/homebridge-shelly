@@ -1,6 +1,6 @@
 const colorConvert = require('color-convert')
 
-const { handleFailedRequest } = require('../error-handlers')
+const { handleFailedRequest } = require('../util/error-handlers')
 
 module.exports = homebridge => {
   const Characteristic = homebridge.hap.Characteristic

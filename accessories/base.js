@@ -1,4 +1,4 @@
-const { handleFailedRequest } = require('../error-handlers')
+const { handleFailedRequest } = require('../util/error-handlers')
 
 module.exports = homebridge => {
   const Accessory = homebridge.hap.Accessory

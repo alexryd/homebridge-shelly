@@ -4,7 +4,7 @@ const sinon = require('sinon')
 
 const log = require('./mocks/log')
 
-const { handleFailedRequest } = require('../error-handlers')
+const { handleFailedRequest } = require('../util/error-handlers')
 
 describe('handleFailedRequest()', function() {
   it('should log error messages', function() {
