@@ -6,7 +6,7 @@ module.exports = homebridge => {
     ElectricCurrentCharacteristic,
     VoltageCharacteristic,
   } = require('../util/custom-characteristics')(homebridge)
-  const { PowerMeterService } = require('../util/services')(homebridge)
+  const { PowerMeterService } = require('../util/custom-services')(homebridge)
 
   class PowerMeterAbility extends Ability {
     /**
