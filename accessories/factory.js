@@ -214,6 +214,20 @@ module.exports = homebridge => {
   FACTORIES.set('SHBDUO-1', ShellyDuo)
 
   /**
+   * Shelly Color Bulb factory.
+   */
+  class ShellyColorBulbFactory extends AccessoryFactory {
+    get defaultAccessoryType() {
+      return 'colorLightbulb'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyColorLightbulbAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHCB-1', ShellyColorBulbFactory)
+
+  /**
    * Shelly Dimmer factory.
    */
   class ShellyDimmerFactory extends AccessoryFactory {
