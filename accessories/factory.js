@@ -188,6 +188,9 @@ module.exports = homebridge => {
   }
   FACTORIES.set('SHBLB-1', ShellyBulbFactory)
 
+  /**
+   * Shelly Button1 factory.
+   */
   class ShellyButton1Factory extends AccessoryFactory {
     get defaultAccessoryType() {
       return 'statelessSwitch'
@@ -198,6 +201,20 @@ module.exports = homebridge => {
     }
   }
   FACTORIES.set('SHBTN-1', ShellyButton1Factory)
+
+  /**
+   * Shelly Button1 version 2 factory.
+   */
+  class ShellyButton1V2Factory extends AccessoryFactory {
+    get defaultAccessoryType() {
+      return 'statelessSwitch'
+    }
+
+    _createAccessory(accessoryType, ...opts) {
+      return new ShellyButton1StatelessSwitchAccessory(this.device, ...opts)
+    }
+  }
+  FACTORIES.set('SHBTN-2', ShellyButton1V2Factory)
 
   /**
    * Shelly Duo factory.
