@@ -32,6 +32,7 @@ Note that this is an unofficial plugin.
 * Shelly HD
 * [Shelly H&T](https://shelly.cloud/shelly-humidity-and-temperature/)
 * [Shelly i3](https://shelly.cloud/products/shelly-i3-smart-home-automation-device/)
+* [Shelly Motion](https://shelly.cloud/shelly-motion-smart-home-automation-sensor/)
 * [Shelly Plug](https://shelly.cloud/shelly-plug/)
 * [Shelly Plug S](https://shelly.cloud/shelly-plug-s/)
 * [Shelly Plug US](https://shelly.cloud/products/shelly-plug-us-smart-home-automation-device/)
