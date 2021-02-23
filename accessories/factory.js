@@ -29,6 +29,7 @@ module.exports = homebridge => {
     ShellyRelayMotionSensorAccessory,
     ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
+    ShellyMotionAccessory,
   } = require('./sensors')(homebridge)
 
   const {
@@ -559,7 +560,21 @@ module.exports = homebridge => {
       return new ShellyFloodAccessory(this.device, ...opts)
     }
   }
-  FACTORIES.set('SHWT-1', ShellyFloodFactory)
+  FACTORIES.set('SHWT-1', ShellyFloodFactory) 
+
+  /**
+   * Shelly Motion factory.
+   */
+  class ShellyMotionFactory extends AccessoryFactory {
+      get defaultAccessoryType() {
+          return 'sensor'
+      }
+
+      _createAccessory(accessoryType, ...opts) {
+          return new ShellyMotionAccessory(this.device, ...opts)
+      }
+  }
+  FACTORIES.set('SHMOS-01', ShellyMotionFactory)
 
   /**
    * Returns the factory for the given device.
