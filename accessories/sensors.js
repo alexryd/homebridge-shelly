@@ -143,13 +143,13 @@ module.exports = homebridge => {
   }
 
   class ShellyMotionAccessory extends ShellySensorAccessory {
-  constructor(device, index, config, log) {
-    super(device, index, config, log, [
+    constructor(device, index, config, log) {
+      super(device, index, config, log, [
         new MotionSensorAbility('motion'),
         new LightSensorAbility('illuminance'),
         new BatteryAbility('battery'),
-    ]);
-   }
+      ])
+    }
   }
 
   return {
