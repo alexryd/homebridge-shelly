@@ -12,7 +12,7 @@ module.exports = homebridge => {
 
   class Shelly1GarageDoorSwitchAccessory extends ShellyRelayAccessory {
     constructor(device, index, config, log) {
-      super('garageDoorSwitch', device, index, config, log)
+      super('garageDoorOpener', device, index, config, log)
 
       this.abilities.push(new GarageDoorSwitchAbility(
         'relay' + index,
