@@ -51,26 +51,21 @@ module.exports = homebridge => {
       return cs === CDS.OPEN || cs === CDS.OPENING ? TDS.OPEN : TDS.CLOSED
     }
 
-    _setupPlatformAccessory() {
+    _createService() {
       const CDS = Characteristic.CurrentDoorState
       const TDS = Characteristic.TargetDoorState
-      super._setupPlatformAccessory()
 
-      // This is the initial setup of the garage door
-      this.platformAccessory.addService(
-        new Service.GarageDoorOpener()
-          .setCharacteristic(CDS, this.currentState)
-          .setCharacteristic(TDS, TDS.CLOSED)
-          .setCharacteristic(Characteristic.ObstructionDetected, false)
-      )
+      return new Service.GarageDoorOpener()
+        .setCharacteristic(CDS, this.currentState)
+        .setCharacteristic(TDS, TDS.CLOSED)
+        .setCharacteristic(Characteristic.ObstructionDetected, false)
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
       // This is the handler to catch HomeKit events
-      this.platformAccessory
-        .getService(Service.GarageDoorOpener)
+      this.service(Service.GarageDoorOpener)
         .getCharacteristic(Characteristic.TargetDoorState)
         .on('set', this._targetDoorStateSetHandler.bind(this))
 
@@ -152,31 +147,25 @@ module.exports = homebridge => {
       const TDS = Characteristic.TargetDoorState
 
       if (this.currentState === CDS.CLOSED) {
-        this.platformAccessory
-          .getService(Service.GarageDoorOpener)
+        this.service(Service.GarageDoorOpener)
           .getCharacteristic(TDS)
           .setValue(TDS.CLOSED, null, 'shelly')
-        this.platformAccessory
-          .getService(Service.GarageDoorOpener)
+        this.service(Service.GarageDoorOpener)
           .setCharacteristic(CDS, CDS.CLOSING)
 
         setTimeout(() => {
-          this.platformAccessory
-            .getService(Service.GarageDoorOpener)
+          this.service(Service.GarageDoorOpener)
             .setCharacteristic(CDS, CDS.CLOSED)
         }, 1000)
       } else {
-        this.platformAccessory
-          .getService(Service.GarageDoorOpener)
+        this.service(Service.GarageDoorOpener)
           .getCharacteristic(TDS)
           .setValue(TDS.OPEN, null, 'shelly')
-        this.platformAccessory
-          .getService(Service.GarageDoorOpener)
+        this.service(Service.GarageDoorOpener)
           .setCharacteristic(CDS, CDS.OPENING)
 
         setTimeout(() => {
-          this.platformAccessory
-            .getService(Service.GarageDoorOpener)
+          this.service(Service.GarageDoorOpener)
             .setCharacteristic(CDS, CDS.OPEN)
         }, 1000)
       }
