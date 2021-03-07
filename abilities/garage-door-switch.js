@@ -70,16 +70,6 @@ module.exports = homebridge => {
         .getCharacteristic(Characteristic.TargetDoorState)
         .on('set', this._targetDoorStateSetHandler.bind(this))
 
-      this.platformAccessory
-        .getService(Service.GarageDoorOpener)
-        .getCharacteristic(Characteristic.CurrentDoorState)
-        .on('get', this.getState.bind(this))
-
-      this.platformAccessory
-        .getService(Service.GarageDoorOpener)
-        .getCharacteristic(Characteristic.TargetDoorState)
-        .on('get', this.getState.bind(this))
-
       // This is the handler to catch device events
       // This one is always correct!
       this.device
