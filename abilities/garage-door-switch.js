@@ -22,6 +22,10 @@ module.exports = homebridge => {
       this._targetState = null
     }
 
+    get service() {
+      return this.platformAccessory.getService(Service.GarageDoorOpener)
+    }
+
     get state() {
       return this.device[this._stateProperty] || 0
     }
