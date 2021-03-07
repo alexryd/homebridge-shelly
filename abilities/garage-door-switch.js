@@ -26,10 +26,6 @@ module.exports = homebridge => {
       return this.device[this._stateProperty] || 0
     }
 
-    get isSwitchedOn() {
-      return this.device[this._switchProperty] || false
-    }
-
     get currentState() {
       const CDS = Characteristic.CurrentDoorState
 
