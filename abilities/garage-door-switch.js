@@ -65,7 +65,7 @@ module.exports = homebridge => {
       super._setupEventHandlers()
 
       // This is the handler to catch HomeKit events
-      this.service(Service.GarageDoorOpener)
+      this.service
         .getCharacteristic(Characteristic.TargetDoorState)
         .on('set', this._targetDoorStateSetHandler.bind(this))
 
@@ -147,25 +147,25 @@ module.exports = homebridge => {
       const TDS = Characteristic.TargetDoorState
 
       if (this.currentState === CDS.CLOSED) {
-        this.service(Service.GarageDoorOpener)
+        this.service
           .getCharacteristic(TDS)
           .setValue(TDS.CLOSED, null, 'shelly')
-        this.service(Service.GarageDoorOpener)
+        this.service
           .setCharacteristic(CDS, CDS.CLOSING)
 
         setTimeout(() => {
-          this.service(Service.GarageDoorOpener)
+          this.service
             .setCharacteristic(CDS, CDS.CLOSED)
         }, 1000)
       } else {
-        this.service(Service.GarageDoorOpener)
+        this.service
           .getCharacteristic(TDS)
           .setValue(TDS.OPEN, null, 'shelly')
-        this.service(Service.GarageDoorOpener)
+        this.service
           .setCharacteristic(CDS, CDS.OPENING)
 
         setTimeout(() => {
-          this.service(Service.GarageDoorOpener)
+          this.service
             .setCharacteristic(CDS, CDS.OPEN)
         }, 1000)
       }
