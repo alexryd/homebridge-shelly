@@ -113,7 +113,6 @@ module.exports = homebridge => {
       try {
         await this._setSwitch(true)
         callback()
-        this.updateGarageDoorState()
       } catch (e) {
         handleFailedRequest(
           this.log,
