@@ -1,4 +1,4 @@
-const { handleFailedRequest } = require('../error-handlers')
+const { handleFailedRequest } = require('../util/error-handlers')
 
 module.exports = homebridge => {
   const { Ability } = require('./base')(homebridge)
@@ -21,27 +21,25 @@ module.exports = homebridge => {
       this._lastSpeed = 0
     }
 
-    _setupPlatformAccessory() {
-      super._setupPlatformAccessory()
+    get service() {
+      return this.platformAccessory.getService(Service.Fanv2)
+    }
 
-      this.platformAccessory.addService(
-        new Service.Fanv2()
-          .setCharacteristic(Characteristic.Active, this.active)
-          .setCharacteristic(Characteristic.RotationSpeed, this.speed)
-      )
+    _createService() {
+      return new Service.Fanv2()
+        .setCharacteristic(Characteristic.Active, this.active)
+        .setCharacteristic(Characteristic.RotationSpeed, this.speed)
     }
 
     _setupEventHandlers() {
       super._setupEventHandlers()
 
-      this.platformAccessory
-        .getService(Service.Fanv2)
+      this.service
         .getCharacteristic(Characteristic.Active)
         .on('get', this.getActive.bind(this))
         .on('set', this._targetActiveSetHandler.bind(this))
 
-      this.platformAccessory
-        .getService(Service.Fanv2)
+      this.service
         .getCharacteristic(Characteristic.RotationSpeed)
         .setProps({
           minValue: 0,
@@ -146,14 +144,12 @@ module.exports = homebridge => {
     }
 
     _stateChangeHandler() {
-      this.platformAccessory
-        .getService(Service.Fanv2)
+      this.service
         .getCharacteristic(Characteristic.Active)
         .setValue(this.active, null, 'shelly')
 
       if (this.active > 0) {
-        this.platformAccessory
-          .getService(Service.Fanv2)
+        this.service
           .getCharacteristic(Characteristic.RotationSpeed)
           .setValue(this.speed, null, 'shelly')
       }
