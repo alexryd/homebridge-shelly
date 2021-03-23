@@ -30,32 +30,59 @@ module.exports = homebridge => {
 
   class ShellyDoorWindowAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new ContactSensorAbility('state'),
-        new LightSensorAbility('illuminance'),
-        new BatteryAbility('battery'),
-      ])
+      super(device, index, config, log)
+
+      if (config.state !== false) {
+        this.abilities.push(new ContactSensorAbility('state'))
+      }
+
+      if (config.illuminance !== false) {
+        this.abilities.push(new LightSensorAbility('illuminance'))
+      }
+
+      if (config.battery !== false) {
+        this.abilities.push(new BatteryAbility('battery'))
+      }
     }
   }
 
   class ShellyDoorWindow2Accessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new ContactSensorAbility('state'),
-        new LightSensorAbility('illuminance'),
-        new TemperatureSensorAbility('temperature'),
-        new BatteryAbility('battery')
-      ])
+      super(device, index, config, log)
+
+      if (config.state !== false) {
+        this.abilities.push(new ContactSensorAbility('state'))
+      }
+
+      if (config.illuminance !== false) {
+        this.abilities.push(new LightSensorAbility('illuminance'))
+      }
+
+      if (config.temperature !== false) {
+        this.abilities.push(new TemperatureSensorAbility('temperature'))
+      }
+
+      if (config.battery !== false) {
+        this.abilities.push(new BatteryAbility('battery'))
+      }
     }
   }
 
   class ShellyFloodAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new LeakSensorAbility('flood'),
-        new TemperatureSensorAbility('temperature'),
-        new BatteryAbility('battery'),
-      ])
+      super(device, index, config, log)
+
+      if (config.flood !== false) {
+        this.abilities.push(new LeakSensorAbility('flood'))
+      }
+
+      if (config.temperature !== false) {
+        this.abilities.push(new TemperatureSensorAbility('temperature'))
+      }
+
+      if (config.battery !== false) {
+        this.abilities.push(new BatteryAbility('battery'))
+      }
     }
   }
 
@@ -74,11 +101,19 @@ module.exports = homebridge => {
 
   class ShellyHTAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new TemperatureSensorAbility('temperature'),
-        new HumiditySensorAbility('humidity'),
-        new BatteryAbility('battery'),
-      ])
+      super(device, index, config, log)
+
+      if (config.temperature !== false) {
+        this.abilities.push(new TemperatureSensorAbility('temperature'))
+      }
+
+      if (config.humidity !== false) {
+        this.abilities.push(new HumiditySensorAbility('humidity'))
+      }
+
+      if (config.battery !== false) {
+        this.abilities.push(new BatteryAbility('battery'))
+      }
     }
   }
 
@@ -144,11 +179,19 @@ module.exports = homebridge => {
 
   class ShellyMotionAccessory extends ShellySensorAccessory {
     constructor(device, index, config, log) {
-      super(device, index, config, log, [
-        new MotionSensorAbility('motion'),
-        new LightSensorAbility('illuminance'),
-        new BatteryAbility('battery'),
-      ])
+      super(device, index, config, log)
+
+      if (config.motion !== false) {
+        this.abilities.push(new MotionSensorAbility('motion'))
+      }
+
+      if (config.illuminance !== false) {
+        this.abilities.push(new LightSensorAbility('illuminance'))
+      }
+
+      if (config.battery !== false) {
+        this.abilities.push(new BatteryAbility('battery'))
+      }
     }
   }
 

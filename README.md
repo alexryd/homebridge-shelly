@@ -132,6 +132,20 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
 
+#### Shelly senssor configuration
+*Applies to DoorWindow / DoorWindow2 / Flood / HT*
+Indiciduale sensores of the devises can be disabled:
+* `"state": false` (DoorWindow / DoorWindow2 only)
+* `"illuminance": false` (DoorWindow / DoorWindow2 only)
+* `"temperature": false` (DoorWindow2 / Flood / HT only)
+* `"battery": false`
+* `"flood": false` (Flood only)
+* `"humidity": false` (HT only)
+* `"motion": false` (Motion only)
+
+*If you change one of this values, you maybe need to remove the senssor from the cache by removing it from `http://<homebridge host>:8181`. 
+  It will automaticly be readded after the sensor triggers a value change.*
+
 ### Example configuration
 ```json
 "platforms": [
@@ -145,7 +159,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
       { "id": "A612F0", "username": "admin", "password": "pa$$word2" },
       { "id": "6A78BB", "colorMode": "rgb" },
       { "id": "AD2214", "name": "My Device" },
-      { "id": "1D56AF", "type": "outlet" }
+      { "id": "1D56AF", "type": "outlet" },
+      { "id": "81e421", "temperature": false}
     ],
     "admin": {
       "enabled": true,
