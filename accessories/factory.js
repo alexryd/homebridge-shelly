@@ -658,8 +658,11 @@ module.exports = homebridge => {
       // helper function that creates the given number of accessories
       const multiple = num => {
         return Array.from({ length: num }, (_, i) => i)
-            .filter((i) => !config.channels || !config.channels[i] || !config.channels[i].exclude)
-            .map((i) => this.createAccessory(device, i, config, log))
+          .filter((i) => !config.channels ||
+            !config.channels[i] ||
+            !config.channels[i].exclude
+          )
+          .map((i) => this.createAccessory(device, i, config, log))
       }
 
       return multiple(factory.numberOfAccessories)

@@ -23,14 +23,21 @@ module.exports = homebridge => {
      * device or the `defaultName` property.
      */
     get name() {
-      if (this.config.channels && this.config.channels[this.index] && this.config.channels[this.index].name) {
+      if (this.config.channels &&
+          this.config.channels[this.index] &&
+          this.config.channels[this.index].name
+      ) {
         return this.config.channels[this.index].name
       } else if (this.config.name) {
         return this.config.name
       }
 
       const d = this.device
-      if (d.settings && d.settings.relays && d.settings.relays[this.index] && d.settings.relays[this.index].name) {
+      if (d.settings &&
+          d.settings.relays &&
+          d.settings.relays[this.index] &&
+          d.settings.relays[this.index].name
+      ) {
         return d.settings.relays[this.index].name
       } else if (this.device.name) {
         return this.device.name
