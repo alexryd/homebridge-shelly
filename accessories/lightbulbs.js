@@ -145,6 +145,33 @@ module.exports = homebridge => {
       ))
     }
 
+    /**
+     * The name of this accessory, as specified by either the configuration, the
+     * device or the `defaultName` property.
+     */
+    get name() {
+      if (this.config.channels &&
+          this.config.channels[this.index] &&
+          this.config.channels[this.index].name
+      ) {
+        return this.config.channels[this.index].name
+      } else if (this.config.name) {
+        return this.config.name
+      }
+
+      const d = this.device
+      if (d.settings &&
+          d.settings.lights &&
+          d.settings.lights[this.index] &&
+          d.settings.lights[this.index].name
+      ) {
+        return d.settings.lights[this.index].name
+      } else if (this.device.name) {
+        return this.device.name
+      }
+      return this.defaultName
+    }
+
     get category() {
       return Accessory.Categories.LIGHTBULB
     }

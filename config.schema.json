@@ -115,6 +115,23 @@
             "exclude": {
               "title": "Exclude device",
               "type": "boolean"
+            },
+            "channels": {
+              "title": "Channel configuration",
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Channel name",
+                    "typeof": "string"
+                  },
+                  "exclude": {
+                    "title": "Exclude channel",
+                    "type": "boolean"
+                  }
+                }
+              }
             }
           }
         }

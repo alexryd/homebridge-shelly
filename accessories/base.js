@@ -136,11 +136,9 @@ module.exports = homebridge => {
         )
       }
 
-      if (d.settings && d.settings.name && d.settings.name === this.name) {
-        infoService.setCharacteristic(
-          Characteristic.Name, this.name
-        )
-      }
+      infoService.setCharacteristic(
+        Characteristic.Name, this.name
+      )
     }
 
     /**

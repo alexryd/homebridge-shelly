@@ -34,6 +34,13 @@ class Characteristic extends EventEmitter {
   }
 }
 
+class Name extends Characteristic {
+  constructor() {
+    super('Name', 'Name')
+  }
+}
+Characteristic.Name = Name
+
 class BatteryLevel extends Characteristic {
   constructor() {
     super('BatteryLevel', 'BatteryLevel')
