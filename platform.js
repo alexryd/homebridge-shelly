@@ -141,10 +141,10 @@ module.exports = homebridge => {
 
         try {
           if (!this.addDevice(device)) {
-            this.log.info('Unknown device, so skipping it')
+            this.log.info(`Unknown device ${device}, so skipping it`)
           }
         } catch (e) {
-          this.log.error('Failed to add device')
+          this.log.error(`Failed to add device ${device} [${device.type}], ${device.id}@${device.host} due to ${e}`)
           if (e.stack) {
             this.log.error(e.stack)
           }
@@ -205,6 +205,7 @@ module.exports = homebridge => {
     removeDevice(device) {
       const deviceWrapper = this.deviceWrappers.get(device)
       if (!deviceWrapper) {
+        this.log.info(`No deviceWrapper found for ${device.id} in removeDevice().`)
         return
       }
 
