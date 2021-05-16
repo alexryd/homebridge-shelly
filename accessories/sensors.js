@@ -82,6 +82,22 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyInputContactSensorAccessory extends ShellyAccessory {
+    constructor(device, index, config, log, powerMeterIndex = false) {
+      super('contactSensor', device, index, config, log)
+
+      this.abilities.push(new ContactSensorAbility('input' + index, false))
+
+      if (powerMeterIndex !== false) {
+        this.abilities.push(new PowerMeterAbility('power' + powerMeterIndex))
+      }
+    }
+
+    get category() {
+      return Accessory.Categories.SENSOR
+    }
+  }
+
   class ShellyRelayContactSensorAccessory extends ShellyAccessory {
     constructor(device, index, config, log, powerMeterIndex = false) {
       super('contactSensor', device, index, config, log)
@@ -158,6 +174,7 @@ module.exports = homebridge => {
     ShellyFloodAccessory,
     ShellyGasSmokeSensorAccessory,
     ShellyHTAccessory,
+    ShellyInputContactSensorAccessory,
     ShellyRelayContactSensorAccessory,
     ShellyRelayMotionSensorAccessory,
     ShellyRelayOccupancySensorAccessory,
