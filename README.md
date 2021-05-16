@@ -127,6 +127,15 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 #### Shelly 2.5 configurations
 * `"type"` - in roller mode, the device can be identified as either `"door"`,
   `"garageDoorOpener"`, `"window"` or `"windowCovering"` (default).
+* For detached mode, you can use a `type` of `"detachedContactSensor"`; in
+  this configuration, you won't be able to control the relay through HomeKit
+  (you can still control it through the Shelly directly).  What will be
+  exposed instead is the status of the connected light switch.
+* You can also specify certain types on a per-channel basis: `skip` will
+  cause Homebridge to not configure that channel at all, and other options
+  (like `detachedContactSensor`, `switch`, `outlet`, etc.) make it possible
+  to have a heterogenous mixture of types and configurations attached to a
+  single device.
 
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
@@ -146,6 +155,7 @@ interface of a device, under *Settings -> Device info -> Device ID*.
       { "id": "6A78BB", "colorMode": "rgb" },
       { "id": "AD2214", "name": "My Device" },
       { "id": "1D56AF", "type": "outlet" }
+      { "id": "921A84CFBBA7", "type": "outlet", "channels": [{"type": "skip"}, {}] }
     ],
     "admin": {
       "enabled": true,
@@ -160,7 +170,8 @@ If you have a Shelly device that is not yet supported by this plugin you can
 help adding support for it by following these steps:
 
 1. Run `$ homebridge-shelly describe <ip-address>` with the IP address of the
-   Shelly device.
+   Shelly device.  (If you are using HTTP auth, you'll need to edit the script
+   to hardcode those values.)
 2. Create [a new issue](https://github.com/alexryd/homebridge-shelly/issues)
    and post the output from the previous command.
 
