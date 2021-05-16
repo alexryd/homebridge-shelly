@@ -28,6 +28,7 @@ const describe = async host => {
   console.log(v('Type', device.type))
   console.log(v('CoAP description', JSON.stringify(description.payload)))
   console.log(v('CoAP status', JSON.stringify(status.payload)))
+  //device.setAuthCredentials('username', 'password') // hardcode Basic auth here, if used
   console.log(v('HTTP Settings:', JSON.stringify(await device.getSettings())))
   console.log(v('HTTP Status:', JSON.stringify(await device.getStatus())))
 }
