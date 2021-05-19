@@ -31,7 +31,7 @@ function renderDevice(list, device) {
       $('<div class="heading">')
         .append(
           $('<div class="title">')
-            .text(device.name || (device.modelName + ' ' + device.id))
+            .text(device.name ? device.name + ' [' + device.id + ']' : (device.modelName + ' ' + device.id))
         )
         .append(
           $('<a class="host-link" target="_blank">')
