@@ -165,9 +165,13 @@ module.exports = homebridge => {
 
       callback()
 
-      if (this.targetPosition === newValue ||
-          this._setPositionTimeout !== null) {
+      if (this.targetPosition === newValue) {
         return
+      }
+
+      if (this._setPositionTimeout !== null) {
+        clearTimeout(this._setPositionTimeout)
+        this.__setPositionTimeout = null
       }
 
       this._setPositionTimeout = setTimeout(async () => {
