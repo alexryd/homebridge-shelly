@@ -83,6 +83,7 @@ module.exports = homebridge => {
       this._setPositionTimeout = null
       this._targetPosition = null
       this._targetPositionTimeout = null
+      this._prevStopPosition = 0
     }
 
     /**
@@ -229,10 +230,6 @@ module.exports = homebridge => {
         newValue
       )
 
-      this.service
-        .getCharacteristic(Characteristic.CurrentPosition)
-        .setValue(this.position)
-
       this._updateTargetPositionDebounced()
     }
 
@@ -261,11 +258,17 @@ module.exports = homebridge => {
 
       if (state === 'stop') {
         targetPosition = position
-      } else if (state === 'open' && this.targetPosition <= position) {
+        this._prevStopPosition = position
+
+        this.service
+          .getCharacteristic(Characteristic.CurrentPosition)
+          .setValue(position)
+
+      } else if (state === 'open' && this.targetPosition === this._prevStopPosition) {
         // we don't know what the target position is here, but we set it
         // to 100 so that the interface shows that the roller is opening
         targetPosition = 100
-      } else if (state === 'close' && this.targetPosition >= position) {
+      } else if (state === 'close' && this.targetPosition === this._prevStopPosition) {
         // we don't know what the target position is here, but we set it
         // to 0 so that the interface shows that the roller is closing
         targetPosition = 0
