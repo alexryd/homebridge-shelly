@@ -35,7 +35,7 @@
   "dependencies": {
     "color-convert": "^2.0.1",
     "colors": "^1.4.0",
-    "command-line-commands": "^2.0.1",
+    "command-line-commands": "^3.0.2",
     "express": "^4.17.1",
     "shellies": "^1.5.0"
   },
