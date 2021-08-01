@@ -16,6 +16,10 @@ module.exports = homebridge => {
         humidityProperty
       )
     }
+
+    _valueToHomeKit(value) {
+      return Math.min(Math.max(value, 0), 100)
+    }
   }
 
   return HumiditySensorAbility

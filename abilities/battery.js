@@ -25,7 +25,7 @@ module.exports = homebridge => {
     }
 
     get level() {
-      return this.device[this._levelProperty]
+      return Math.min(Math.max(this.device[this._levelProperty], 0), 100)
     }
 
     get chargingState() {

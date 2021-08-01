@@ -31,7 +31,10 @@ module.exports = homebridge => {
     }
 
     get consumption() {
-      return this.device[this._consumptionProperty]
+      return Math.min(
+        Math.max(this.device[this._consumptionProperty], 0),
+        65535
+      )
     }
 
     get electricCurrent() {

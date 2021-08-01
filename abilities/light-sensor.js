@@ -30,6 +30,10 @@ module.exports = homebridge => {
 
       return service
     }
+
+    _valueToHomeKit(value) {
+      return Math.min(Math.max(value, 0.0001), 500000)
+    }
   }
 
   return LightSensorAbility
