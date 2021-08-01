@@ -25,6 +25,7 @@ module.exports = homebridge => {
     ShellyFloodAccessory,
     ShellyGasSmokeSensorAccessory,
     ShellyHTAccessory,
+    ShellyInputContactSensorAccessory,
     ShellyRelayContactSensorAccessory,
     ShellyRelayMotionSensorAccessory,
     ShellyRelayOccupancySensorAccessory,
@@ -136,10 +137,12 @@ module.exports = homebridge => {
     }
 
     _createAccessory(accessoryType, index, config, log) {
+      const util=require('util')
       const powerMeterIndex = this.numberOfPowerMeters > 0
         ? Math.min(index, this.numberOfPowerMeters - 1)
         : false
 
+      log.debug(`Creating accessory ${accessoryType} at ${index} with ${util.inspect(config)} ${powerMeterIndex === false ? 'without power tracking' : `with power at ${powerMeterIndex}`}.`)
       return this._createAccessoryForRelay(
         accessoryType,
         index,
@@ -156,6 +159,8 @@ module.exports = homebridge => {
     _createAccessoryForRelay(accessoryType, ...opts) {
       if (accessoryType === 'contactSensor') {
         return new ShellyRelayContactSensorAccessory(this.device, ...opts)
+      } else if (accessoryType === 'detachedContactSensor') {
+        return new ShellyInputContactSensorAccessory(this.device, ...opts)
       } else if (accessoryType === 'motionSensor') {
         return new ShellyRelayMotionSensorAccessory(this.device, ...opts)
       } else if (accessoryType === 'occupancySensor') {
@@ -453,6 +458,8 @@ module.exports = homebridge => {
     }
 
     _createAccessory(accessoryType, index, config, log) {
+      const util=require('util')
+      log.debug(`Shelly2Factory _createAccessory(${accessoryType}, ${index}, ${util.inspect(config)})`)
       if (this.device.mode === 'roller') {
         if (accessoryType === 'door') {
           return new Shelly2DoorAccessory(this.device, index, config, log)
@@ -474,6 +481,11 @@ module.exports = homebridge => {
         )
       }
 
+      accessoryType = config?.channels?.[index]?.type ?? accessoryType
+      log.debug(`Shelly2Factory creating accessory ${this.device.id}[${index}] with type ${accessoryType} using config ${util.inspect(config)} ${this.device.settings ? `with device settings of ${util.inspect(this.device.settings.relays[index])}` : 'without settings loaded from the device yet'}.`)
+      if ( accessoryType == 'skip' ) {
+        log.info(`Skipping setup on ${this.device.id}[${index}], by config request.`)
+      }
       return super._createAccessory(accessoryType, index, config, log)
     }
   }

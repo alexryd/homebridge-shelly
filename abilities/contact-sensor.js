@@ -9,17 +9,22 @@ module.exports = homebridge => {
      * @param {string} detectedProperty - The device property used to indicate
      * whether contact has been detected.
      */
-    constructor(detectedProperty) {
+    constructor(detectedProperty, invert=true) {
       super(
         Service.ContactSensor,
         Characteristic.ContactSensorState,
         detectedProperty
       )
+
+      this.invert = invert
     }
 
     _valueToHomeKit(value) {
       const CSS = Characteristic.ContactSensorState
-      return !value ? CSS.CONTACT_DETECTED : CSS.CONTACT_NOT_DETECTED
+      if ( this.invert ) {
+        return !value ? CSS.CONTACT_DETECTED : CSS.CONTACT_NOT_DETECTED
+      }
+      return value ? CSS.CONTACT_DETECTED : CSS.CONTACT_NOT_DETECTED
     }
   }
 
