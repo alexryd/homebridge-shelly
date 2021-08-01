@@ -1,17 +1,17 @@
 /* eslint-env browser,jquery */
 
 function loadDevices() {
-  var list = $('#devices-list').empty()
+  const list = $('#devices-list').empty()
 
   $.ajax({
     url: '/api/devices',
     success: function(result) {
-      var devices = result.data.slice().sort(function(a, b) {
+      const devices = result.data.slice().sort(function(a, b) {
         return String(a.type + a.id).localeCompare(b.type + b.id)
       })
 
       if (devices.length > 0) {
-        for (var i = 0; i < devices.length; i++) {
+        for (let i = 0; i < devices.length; i++) {
           renderDevice(list, devices[i])
         }
       } else {
@@ -66,9 +66,9 @@ function renderDevice(list, device) {
 }
 
 function renderLastSeen(device) {
-  var lastSeen = device.lastSeen
-  var label, datetime
-  var title = 'Last seen: '
+  const lastSeen = device.lastSeen
+  let label, datetime
+  let title = 'Last seen: '
 
   if (lastSeen === null) {
     label = 'Unknown'
@@ -97,7 +97,7 @@ function renderLastSeen(device) {
 }
 
 function renderStatusBadges(device) {
-  var badges = [
+  const badges = [
     $('<div>')
       .addClass('status-badge')
       .addClass(device.online ? 'online' : 'offline')
