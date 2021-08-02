@@ -33,6 +33,7 @@ module.exports = homebridge => {
       super(device, index, config, log, [
         new ContactSensorAbility('state'),
         new LightSensorAbility('illuminance'),
+        new MotionSensorAbility('vibration'),
         new BatteryAbility('battery'),
       ])
     }
@@ -43,6 +44,7 @@ module.exports = homebridge => {
       super(device, index, config, log, [
         new ContactSensorAbility('state'),
         new LightSensorAbility('illuminance'),
+        new MotionSensorAbility('vibration'),
         new TemperatureSensorAbility('temperature'),
         new BatteryAbility('battery')
       ])
