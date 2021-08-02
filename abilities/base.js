@@ -324,10 +324,13 @@ module.exports = homebridge => {
      * @param {Object} Characteristic - The HAP characteristic class to use.
      * @param {(string|Object)} property - Name of the device property to use,
      * or an object with the name and a getter function.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      * @param {function} updater - A function that updates the device property.
      * Must return a Promise.
      */
-    constructor(Service, Characteristic, property, updater = null) {
+    constructor(Service, Characteristic, property, invalidValue = null,
+      updater = null) {
       super()
 
       let propertyName = property
@@ -342,6 +345,7 @@ module.exports = homebridge => {
       this._Characteristic = Characteristic
       this._propertyName = propertyName
       this._propertyGetter = propertyGetter
+      this._invalidValue = invalidValue
       this._updater = updater
     }
 
@@ -383,11 +387,15 @@ module.exports = homebridge => {
     }
 
     _createService() {
-      return new this._Service()
+      const service = new this._Service()
         .setCharacteristic(
           this._Characteristic,
           this._valueToHomeKit(this.value)
         )
+
+      this._setStatusFault(service, this.value)
+
+      return service
     }
 
     _setupEventHandlers() {
@@ -406,6 +414,21 @@ module.exports = homebridge => {
         'change:' + this._propertyName,
         this._propertyChangeHandler,
         this
+      )
+    }
+
+    /**
+     * Sets the StatusFault characteristic on our service based on the given
+     * value and the configured invalid value.
+     * @param {Service} service - The service to update.
+     * @param {any} value - The current property value.
+     */
+    _setStatusFault(service, value) {
+      const SF = Characteristic.StatusFault
+
+      service.setCharacteristic(
+        SF,
+        value === this._invalidValue ? SF.GENERAL_FAULT : SF.NO_FAULT
       )
     }
 
@@ -464,6 +487,8 @@ module.exports = homebridge => {
       this.characteristic.setValue(
         this._valueToHomeKit(nv)
       )
+
+      this._setStatusFault(this.service, nv)
     }
 
     detach() {

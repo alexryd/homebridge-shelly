@@ -8,12 +8,15 @@ module.exports = homebridge => {
     /**
      * @param {string} humidityProperty - The device property used to indicate
      * the current relative humidity.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(humidityProperty) {
+    constructor(humidityProperty, invalidValue = 999) {
       super(
         Service.HumiditySensor,
         Characteristic.CurrentRelativeHumidity,
-        humidityProperty
+        humidityProperty,
+        invalidValue
       )
     }
 

@@ -8,12 +8,15 @@ module.exports = homebridge => {
     /**
      * @param {string} detectedProperty - The device property used to indicate
      * whether smoke has been detected.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(detectedProperty) {
+    constructor(detectedProperty, invalidValue = -1) {
       super(
         Service.SmokeSensor,
         Characteristic.SmokeDetected,
-        detectedProperty
+        detectedProperty,
+        invalidValue
       )
     }
 
