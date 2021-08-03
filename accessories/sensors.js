@@ -16,6 +16,7 @@ module.exports = homebridge => {
   const SmokeSensorAbility = require('../abilities/smoke-sensor')(homebridge)
   const TemperatureSensorAbility =
     require('../abilities/temperature-sensor')(homebridge)
+  const TiltSensorAbility = require('../abilities/tilt-sensor')(homebridge)
   const { ShellyAccessory } = require('./base')(homebridge)
 
   class ShellySensorAccessory extends ShellyAccessory {
@@ -34,6 +35,7 @@ module.exports = homebridge => {
         new ContactSensorAbility('state'),
         new LightSensorAbility('illuminance'),
         new MotionSensorAbility('vibration'),
+        new TiltSensorAbility('tilt'),
         new BatteryAbility('battery'),
       ])
     }
@@ -45,6 +47,7 @@ module.exports = homebridge => {
         new ContactSensorAbility('state'),
         new LightSensorAbility('illuminance'),
         new MotionSensorAbility('vibration'),
+        new TiltSensorAbility('tilt'),
         new TemperatureSensorAbility('temperature'),
         new BatteryAbility('battery')
       ])
