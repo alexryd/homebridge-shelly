@@ -82,7 +82,7 @@ module.exports = homebridge => {
       super(device, index, config, log, [
         new TemperatureSensorAbility('temperature'),
         new HumiditySensorAbility('humidity'),
-        new BatteryAbility('battery'),
+        new BatteryAbility('battery', false, null, -1),
       ])
     }
   }
