@@ -22,7 +22,10 @@ module.exports = homebridge => {
 
     _valueToHomeKit(value) {
       const CSS = Characteristic.ContactSensorState
-      return !value ? CSS.CONTACT_DETECTED : CSS.CONTACT_NOT_DETECTED
+
+      return value !== this._invalidValue && !value
+        ? CSS.CONTACT_DETECTED
+        : CSS.CONTACT_NOT_DETECTED
     }
   }
 

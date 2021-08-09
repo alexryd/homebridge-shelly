@@ -22,7 +22,10 @@ module.exports = homebridge => {
 
     _valueToHomeKit(value) {
       const SD = Characteristic.SmokeDetected
-      return value ? SD.SMOKE_DETECTED : SD.SMOKE_NOT_DETECTED
+
+      return value !== this._invalidValue && value
+        ? SD.SMOKE_DETECTED
+        : SD.SMOKE_NOT_DETECTED
     }
   }
 

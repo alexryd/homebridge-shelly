@@ -21,7 +21,7 @@ module.exports = homebridge => {
     }
 
     _valueToHomeKit(value) {
-      return !!value
+      return value !== this._invalidValue && !!value
     }
   }
 

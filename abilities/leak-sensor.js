@@ -22,7 +22,10 @@ module.exports = homebridge => {
 
     _valueToHomeKit(value) {
       const LD = Characteristic.LeakDetected
-      return value ? LD.LEAK_DETECTED : LD.LEAK_NOT_DETECTED
+
+      return value !== this._invalidValue && value
+        ? LD.LEAK_DETECTED
+        : LD.LEAK_NOT_DETECTED
     }
   }
 

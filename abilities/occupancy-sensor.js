@@ -22,7 +22,10 @@ module.exports = homebridge => {
 
     _valueToHomeKit(value) {
       const OD = Characteristic.OccupancyDetected
-      return value ? OD.OCCUPANCY_DETECTED : OD.OCCUPANCY_NOT_DETECTED
+
+      return value !== this._invalidValue && value
+        ? OD.OCCUPANCY_DETECTED
+        : OD.OCCUPANCY_NOT_DETECTED
     }
   }
 

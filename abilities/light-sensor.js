@@ -35,7 +35,9 @@ module.exports = homebridge => {
     }
 
     _valueToHomeKit(value) {
-      return Math.min(Math.max(value, 0.0001), 500000)
+      return value !== this._invalidValue
+        ? Math.min(Math.max(value, 0.0001), 500000)
+        : 0.0001
     }
   }
 
