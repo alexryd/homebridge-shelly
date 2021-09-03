@@ -157,6 +157,19 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyTemperatureAddOnAccessory extends ShellySensorAccessory {
+    constructor(device, index, config, log) {
+      const abilities = [
+        new TemperatureSensorAbility('externalTemperature' + index)
+      ]
+      const humitiyEnabled = index === 0 && config.humidity
+      if (humitiyEnabled) {
+        abilities.push(new HumiditySensorAbility('externalHumidity'))
+      }
+      super(device, index, config, log, abilities)
+    }
+  }
+
   return {
     ShellyDoorWindowAccessory,
     ShellyDoorWindow2Accessory,
@@ -168,5 +181,6 @@ module.exports = homebridge => {
     ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
     ShellyMotionAccessory,
+    ShellyTemperatureAddOnAccessory
   }
 }

@@ -15,6 +15,7 @@ For the next generation, see [homebridge-shelly-ng](https://github.com/alexryd/h
 * [Shelly 1](https://shelly.cloud/shelly1-open-source/)
 * [Shelly 1L](https://shelly.cloud/products/shelly-1l-single-wire-smart-home-automation-relay/)
 * [Shelly 1PM](https://shelly.cloud/shelly-1pm-wifi-smart-relay-home-automation/)
+* [Shelly 1AddOn](https://shop.shelly.cloud/temperature-sensor-addon-for-shelly-1-1pm-wifi-smart-home-automation)
 * Shelly 2 <sup>1</sup>
 * [Shelly 2.5](https://shelly.cloud/shelly-25-wifi-smart-relay-roller-shutter-home-automation/) <sup>1</sup>
 * [Shelly 3EM](https://shelly.cloud/shelly-3-phase-energy-meter-with-contactor-control-wifi-smart-home-automation/)
@@ -131,6 +132,15 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 #### Shelly RGBW2 configurations
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
+
+#### Shelly 1AddOn configurations
+*Applies to Shelly 1, 1PM*
+* `"type"` - when addon connected, the device can be identified as either `"thermostat"` or `"temperatureSensor"`
+* `"sensors"` - 1-3, number of sensors connected to the addon. (default:1 , max: 3)
+* `"humidity"` - false, shows humitidy (only applicable to one sensor)
+* `"heating"` - true|false, enable heating on the thermostat. (default: true)
+* `"cooling"` - true|false, enable cooling on the thermostat. (default: false)
+* `"hysteresis"` - Sets a hysteresis at which difference the thermostat should switch on/off. (default: 0.5)
 
 ### Example configuration
 ```json

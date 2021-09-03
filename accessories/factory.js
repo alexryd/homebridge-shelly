@@ -30,6 +30,7 @@ module.exports = homebridge => {
     ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
     ShellyMotionAccessory,
+    ShellyTemperatureAddOnAccessory
   } = require('./sensors')(homebridge)
 
   const {
@@ -40,6 +41,10 @@ module.exports = homebridge => {
   const {
     ShellyRelaySwitchAccessory,
   } = require('./switches')(homebridge)
+
+  const {
+    ShellyThermostatAccessory,
+  } = require('./thermostat')(homebridge)
 
   const {
     ShellyRelayValveAccessory,
@@ -62,8 +67,9 @@ module.exports = homebridge => {
     /**
      * @param {object} device - The device that accessories will be created for.
      */
-    constructor(device) {
+    constructor(device, config) {
       this.device = device
+      this.config = config
     }
 
     /**
@@ -427,6 +433,30 @@ module.exports = homebridge => {
     get numberOfPowerMeters() {
       return 0
     }
+
+    get numberOfAccessories() {
+      if (this.config.type === 'thermostat') {
+        return this.config.sensors || super.numberOfAccessories
+      }
+      return super.numberOfAccessories
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      if (accessoryType === 'temperatureSensor') {
+        return new ShellyTemperatureAddOnAccessory(
+          this.device,
+          index,
+          config,
+          log)
+      } else if (accessoryType === 'thermostat') {
+        return new ShellyThermostatAccessory(
+          this.device,
+          index,
+          config,
+          log)
+      }
+      return super._createAccessory(accessoryType, index, config, log)
+    }
   }
   FACTORIES.set('SHSW-1', Shelly1Factory)
 
@@ -579,12 +609,12 @@ module.exports = homebridge => {
   /**
    * Returns the factory for the given device.
    */
-  const getFactory = device => {
+  const getFactory = (device, config = null) => {
     const FactoryClass = FACTORIES.get(device.type)
     if (!FactoryClass) {
       return null
     }
-    return new FactoryClass(device)
+    return new FactoryClass(device, config)
   }
 
   return {
@@ -628,7 +658,7 @@ module.exports = homebridge => {
      */
     createAccessory(device, index, config, log,
       platformAccessory = null) {
-      const factory = getFactory(device)
+      const factory = getFactory(device, config)
       if (!factory) {
         return null
       }
@@ -650,7 +680,7 @@ module.exports = homebridge => {
      * Creates all accessories for the given device.
      */
     createAccessories(device, config, log) {
-      const factory = getFactory(device)
+      const factory = getFactory(device, config)
       if (!factory) {
         return null
       }
