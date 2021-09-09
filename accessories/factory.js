@@ -435,7 +435,8 @@ module.exports = homebridge => {
     }
 
     get numberOfAccessories() {
-      if (this.config.type === 'thermostat') {
+      if (this.config.type === 'temperatureSensor' ||
+          this.config.type === 'thermostat') {
         return this.config.sensors || super.numberOfAccessories
       }
       return super.numberOfAccessories
