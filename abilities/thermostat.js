@@ -239,7 +239,7 @@ module.exports = homebridge => {
       )
 
       this.service
-        .getCharacteristic(Characteristic.CurrentHumidity)
+        .getCharacteristic(Characteristic.CurrentRelativeHumidity)
         .setValue(this.humidity)
     }
 
