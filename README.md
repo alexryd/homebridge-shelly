@@ -135,8 +135,8 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 
 #### Shelly 1AddOn configurations
 *Applies to Shelly 1, 1PM*
-* `"type"` - when addon connected, the device can be identified as either `"thermostat"` or `"temperatureSensor"`
 * `"sensors"` - 1-3, number of sensors connected to the addon. (default:1 , max: 3)
+* `"type"` - when the relais should act like a thermostat set the type to `"thermostat"`
 * `"humidity"` - false, shows humitidy (only applicable to one sensor)
 * `"heating"` - true|false, enable heating on the thermostat. (default: true)
 * `"cooling"` - true|false, enable cooling on the thermostat. (default: false)

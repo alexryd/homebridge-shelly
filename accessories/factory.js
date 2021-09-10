@@ -435,24 +435,27 @@ module.exports = homebridge => {
     }
 
     get numberOfAccessories() {
-      if (this.config.type === 'temperatureSensor' ||
-          this.config.type === 'thermostat') {
+      if (this.config.type === 'thermostat') {
         return this.config.sensors || super.numberOfAccessories
+      } else if (this.config.sensors) {
+        return this.config.sensors + super.numberOfAccessories
       }
       return super.numberOfAccessories
     }
 
     _createAccessory(accessoryType, index, config, log) {
-      if (accessoryType === 'temperatureSensor') {
-        return new ShellyTemperatureAddOnAccessory(
+      if (accessoryType === 'thermostat') {
+        return new ShellyThermostatAccessory(
           this.device,
           index,
           config,
           log)
-      } else if (accessoryType === 'thermostat') {
-        return new ShellyThermostatAccessory(
+      } else if (config.sensors &&
+        (index > super.numberOfAccessories - 1)) {
+        const sensorIndex = index - super.numberOfAccessories
+        return new ShellyTemperatureAddOnAccessory(
           this.device,
-          index,
+          sensorIndex,
           config,
           log)
       }
