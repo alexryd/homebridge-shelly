@@ -316,7 +316,7 @@ module.exports = homebridge => {
       const d = this.device
       const nv = newValue
 
-      if (this.heatingCoolingState === nv) {
+      if (this.targetHeatingCoolingState === nv) {
         callback()
         return
       }
