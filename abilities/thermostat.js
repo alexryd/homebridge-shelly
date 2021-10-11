@@ -262,6 +262,9 @@ module.exports = homebridge => {
         .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
         .setValue(this.heatingCoolingState)
       this.service
+        .getCharacteristic(Characteristic.TargetHeatingCoolingState)
+        .setValue(this.targetHeatingCoolingState)
+      this.service
         .getCharacteristic(Characteristic.TargetTemperature)
         .setValue(this.targetTemperature)
       this.service
