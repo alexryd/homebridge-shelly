@@ -555,7 +555,11 @@ module.exports = homebridge => {
   /**
    * Shelly 1PM factory.
    */
-  class Shelly1PMFactory extends RelayAccessoryFactory {}
+  class Shelly1PMFactory extends Shelly1Factory {
+    get numberOfPowerMeters() {
+      return this.numberOfAccessories
+    }
+  }
   FACTORIES.set('SHSW-PM', Shelly1PMFactory)
 
   /**
