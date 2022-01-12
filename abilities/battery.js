@@ -11,13 +11,17 @@ module.exports = homebridge => {
      * @param {boolean} chargeable - Whether the device is chargeable.
      * @param {string} chargingProperty - The device property used to indicate
      * whether the device is currently charging.
+     * @param {number} externalPowerValue - A property value indicating that the
+     * device is currently running on an external power supply.
      */
-    constructor(levelProperty, chargeable = false, chargingProperty = null) {
+    constructor(levelProperty, chargeable = false, chargingProperty = null,
+      externalPowerValue = null) {
       super()
 
       this._levelProperty = levelProperty
       this._chargeable = chargeable
       this._chargingProperty = chargingProperty
+      this._externalPowerValue = externalPowerValue
     }
 
     get service() {
@@ -25,7 +29,15 @@ module.exports = homebridge => {
     }
 
     get level() {
-      return this.device[this._levelProperty]
+      const v = this.device[this._levelProperty]
+
+      if (v === this._externalPowerValue) {
+        // set the battery level to 100% when running on an external power
+        // supply
+        return 100
+      }
+
+      return Math.min(Math.max(v, 0), 100)
     }
 
     get chargingState() {

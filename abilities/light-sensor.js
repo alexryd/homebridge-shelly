@@ -8,12 +8,15 @@ module.exports = homebridge => {
     /**
      * @param {string} levelProperty - The device property used to indicate
      * the current ambient light level.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(levelProperty) {
+    constructor(levelProperty, invalidValue = -1) {
       super(
         Service.LightSensor,
         Characteristic.CurrentAmbientLightLevel,
-        levelProperty
+        levelProperty,
+        invalidValue
       )
     }
 
@@ -29,6 +32,12 @@ module.exports = homebridge => {
         })
 
       return service
+    }
+
+    _valueToHomeKit(value) {
+      return value !== this._invalidValue
+        ? Math.min(Math.max(value, 0.0001), 500000)
+        : 0.0001
     }
   }
 

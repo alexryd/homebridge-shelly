@@ -16,6 +16,7 @@ module.exports = homebridge => {
   const SmokeSensorAbility = require('../abilities/smoke-sensor')(homebridge)
   const TemperatureSensorAbility =
     require('../abilities/temperature-sensor')(homebridge)
+  const TiltSensorAbility = require('../abilities/tilt-sensor')(homebridge)
   const { ShellyAccessory } = require('./base')(homebridge)
 
   class ShellySensorAccessory extends ShellyAccessory {
@@ -40,6 +41,14 @@ module.exports = homebridge => {
         this.abilities.push(new LightSensorAbility('illuminance'))
       }
 
+      if (config.vibration !== false) {
+        this.abilities.push(new LightSensorAbility('vibration'))
+      }
+
+      if (config.tilt !== false) {
+        this.abilities.push(new LightSensorAbility('tilt'))
+      }
+
       if (config.battery !== false) {
         this.abilities.push(new BatteryAbility('battery'))
       }
@@ -56,6 +65,14 @@ module.exports = homebridge => {
 
       if (config.illuminance !== false) {
         this.abilities.push(new LightSensorAbility('illuminance'))
+      }
+
+      if (config.vibration !== false) {
+        this.abilities.push(new LightSensorAbility('vibration'))
+      }
+
+      if (config.tilt !== false) {
+        this.abilities.push(new LightSensorAbility('tilt'))
       }
 
       if (config.temperature !== false) {
@@ -112,7 +129,7 @@ module.exports = homebridge => {
       }
 
       if (config.battery !== false) {
-        this.abilities.push(new BatteryAbility('battery'))
+        this.abilities.push(new BatteryAbility('battery'), false, null, -1)
       }
     }
   }
