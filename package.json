@@ -36,7 +36,7 @@
     "color-convert": "^2.0.1",
     "colors": "^1.4.0",
     "command-line-commands": "^3.0.2",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "shellies": "^1.6.0"
   },
   "devDependencies": {
