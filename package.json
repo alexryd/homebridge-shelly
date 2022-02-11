@@ -19,7 +19,7 @@
     "shelly"
   ],
   "engines": {
-    "node": ">=8",
+    "node": ">=12.0.0",
     "homebridge": ">=1.0.0"
   },
   "author": "Alexander Rydén",
