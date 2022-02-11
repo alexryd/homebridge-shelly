@@ -7,9 +7,9 @@
 [![certified-hoobs-plugin](https://badgen.net/badge/HOOBS/Certified/yellow)](https://plugins.hoobs.org)
 
 [Homebridge](https://homebridge.io) plugin for [Shelly](https://shelly.cloud),
-enabling HomeKit support for Shelly devices.
+enabling HomeKit support for the first generation of Shelly devices.
 
-Note that this is an unofficial plugin.
+For the next generation, see [homebridge-shelly-ng](https://github.com/alexryd/homebridge-shelly-ng).
 
 ## Supported devices
 * [Shelly 1](https://shelly.cloud/shelly1-open-source/)
