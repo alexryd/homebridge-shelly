@@ -132,6 +132,10 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 * `"colorMode"` - set to `"rgbw"` (default) to have HomeKit control all four
   channels of the device (R, G, B, and W), or to `"rgb"` to omit the W channel.
 
+#### Channel configuration
+*Applies to 2.5 in switch mode, 4Pro, HD, Uni and RGBW2 in white mode.*
+* `"channels"` - configure channel name or exclude a channel (see example)
+
 ### Example configuration
 ```json
 "platforms": [
@@ -146,6 +150,14 @@ interface of a device, under *Settings -> Device info -> Device ID*.
       { "id": "6A78BB", "colorMode": "rgb" },
       { "id": "AD2214", "name": "My Device" },
       { "id": "1D56AF", "type": "outlet" }
+      { 
+        "id": "A69E7F",
+        "channels":
+        {
+          "0": { "name": "Channel 0" }
+          "2": { "exclude": true }
+        }
+      }
     ],
     "admin": {
       "enabled": true,
