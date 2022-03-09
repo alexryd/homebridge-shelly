@@ -303,6 +303,10 @@ module.exports = homebridge => {
     get numberOfPowerMeters() {
       return 2
     }
+
+    get enableTotalConsumption() {
+      return true
+    }
   }
   FACTORIES.set('SHEM', ShellyEMFactory)
 
