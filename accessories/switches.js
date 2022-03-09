@@ -5,7 +5,8 @@ module.exports = homebridge => {
   const { ShellyRelayAccessory } = require('./base')(homebridge)
 
   class ShellyRelaySwitchAccessory extends ShellyRelayAccessory {
-    constructor(device, index, config, log, powerMeterIndex = false) {
+    constructor(device, index, config, log, powerMeterIndex = false,
+      enableElectricCurrent = false, enableVoltage = false) {
       super('switch', device, index, config, log)
 
       this.abilities.push(new SwitchAbility(
@@ -14,7 +15,11 @@ module.exports = homebridge => {
       ))
 
       if (powerMeterIndex !== false) {
-        this.addPowerMeter('power' + powerMeterIndex)
+        this.addPowerMeter(
+          'power' + powerMeterIndex,
+          enableElectricCurrent ? 'current' + powerMeterIndex : null,
+          enableVoltage ? 'voltage' + powerMeterIndex : null,
+        )
       }
     }
 

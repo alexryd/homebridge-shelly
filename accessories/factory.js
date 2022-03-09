@@ -135,6 +135,14 @@ module.exports = homebridge => {
       return this.numberOfAccessories
     }
 
+    get enableElectricCurrent() {
+      return false
+    }
+
+    get enableVoltage() {
+      return false
+    }
+
     _createAccessory(accessoryType, index, config, log) {
       const powerMeterIndex = this.numberOfPowerMeters > 0
         ? Math.min(index, this.numberOfPowerMeters - 1)
@@ -165,7 +173,12 @@ module.exports = homebridge => {
       } else if (accessoryType === 'valve') {
         return new ShellyRelayValveAccessory(this.device, ...opts)
       }
-      return new ShellyRelaySwitchAccessory(this.device, ...opts)
+      return new ShellyRelaySwitchAccessory(
+        this.device,
+        ...opts,
+        this.enableElectricCurrent,
+        this.enableVoltage
+      )
     }
   }
 

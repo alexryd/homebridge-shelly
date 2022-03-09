@@ -5,7 +5,8 @@ module.exports = homebridge => {
   const ValveAbility = require('../abilities/valve')(homebridge)
 
   class ShellyRelayValveAccessory extends ShellyRelayAccessory {
-    constructor(device, index, config, log, powerMeterIndex = false) {
+    constructor(device, index, config, log, powerMeterIndex = false,
+      enableElectricCurrent = false, enableVoltage = false) {
       super('valve', device, index, config, log)
 
       const consumptionProperty = powerMeterIndex !== false
@@ -19,7 +20,11 @@ module.exports = homebridge => {
       ))
 
       if (consumptionProperty) {
-        this.addPowerMeter(consumptionProperty)
+        this.addPowerMeter(
+          consumptionProperty,
+          enableElectricCurrent ? 'current' + powerMeterIndex : null,
+          enableVoltage ? 'voltage' + powerMeterIndex : null,
+        )
       }
     }
 
