@@ -210,15 +210,18 @@ module.exports = homebridge => {
      * This method must be called before setup().
      * @param {string} consumptionProperty - The device property used to
      * indicate the current power consumption (Watt).
+     * @param {string} totalConsumptionProperty - The device property used to
+     * indicate the total current power consumption (Kilowatt-hour).
      * @param {string} electricCurrentProperty - The device property used to
      * indicate the amount of electric current (Ampere).
      * @param {string} voltageProperty - The device property used to indicate
      * the current voltage (Volt).
      */
-    addPowerMeter(consumptionProperty, electricCurrentProperty = null,
-      voltageProperty = null) {
+    addPowerMeter(consumptionProperty, totalConsumptionProperty = null,
+      electricCurrentProperty = null, voltageProperty = null) {
       this.abilities.push(new PowerMeterAbility(
         consumptionProperty,
+        totalConsumptionProperty,
         electricCurrentProperty,
         voltageProperty
       ))

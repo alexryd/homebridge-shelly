@@ -3,6 +3,7 @@ module.exports = homebridge => {
   const { Ability } = require('./base')(homebridge)
   const {
     ConsumptionCharacteristic,
+    TotalConsumptionCharacteristic,
     ElectricCurrentCharacteristic,
     VoltageCharacteristic,
   } = require('../util/custom-characteristics')(homebridge)
@@ -12,16 +13,19 @@ module.exports = homebridge => {
     /**
      * @param {string} consumptionProperty - The device property used to
      * indicate the current power consumption (Watt).
+     * @param {string} totalConsumptionProperty - The device property used to
+     * indicate the total current power consumption (Kilowatt-hour).
      * @param {string} electricCurrentProperty - The device property used to
      * indicate the amount of electric current (Ampere).
      * @param {string} voltageProperty - The device property used to indicate
      * the current voltage (Volt).
      */
-    constructor(consumptionProperty, electricCurrentProperty = null,
-      voltageProperty = null) {
+    constructor(consumptionProperty, totalConsumptionProperty = null,
+      electricCurrentProperty = null, voltageProperty = null) {
       super()
 
       this._consumptionProperty = consumptionProperty
+      this._totalConsumptionProperty = totalConsumptionProperty
       this._electricCurrentProperty = electricCurrentProperty
       this._voltageProperty = voltageProperty
     }
@@ -37,6 +41,10 @@ module.exports = homebridge => {
       )
     }
 
+    get totalConsumption() {
+      return Math.max(this.device[this._totalConsumptionProperty] / 1000, 0)
+    }
+
     get electricCurrent() {
       return this.device[this._electricCurrentProperty]
     }
@@ -48,6 +56,13 @@ module.exports = homebridge => {
     _createService() {
       const service = new PowerMeterService()
         .setCharacteristic(ConsumptionCharacteristic, this.consumption)
+
+      if (this._totalConsumptionProperty) {
+        service.setCharacteristic(
+          TotalConsumptionCharacteristic,
+          this.totalConsumption
+        )
+      }
 
       if (this._electricCurrentProperty) {
         service.setCharacteristic(
@@ -71,6 +86,14 @@ module.exports = homebridge => {
         this._consumptionChangeHandler,
         this
       )
+
+      if (this._totalConsumptionProperty) {
+        this.device.on(
+          'change:' + this._totalConsumptionProperty,
+          this._totalConsumptionChangeHandler,
+          this
+        )
+      }
 
       if (this._electricCurrentProperty) {
         this.device.on(
@@ -105,6 +128,24 @@ module.exports = homebridge => {
       this.service
         .getCharacteristic(ConsumptionCharacteristic)
         .setValue(this.consumption)
+    }
+
+    /**
+     * Handles changes from the device to the total consumption property.
+     */
+    _totalConsumptionChangeHandler(newValue) {
+      this.log.debug(
+        this._totalConsumptionProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this.service
+        .getCharacteristic(TotalConsumptionCharacteristic)
+        .setValue(this.totalConsumption)
     }
 
     /**
@@ -149,6 +190,14 @@ module.exports = homebridge => {
         this._consumptionChangeHandler,
         this
       )
+
+      if (this._totalConsumptionProperty) {
+        this.device.removeListener(
+          'change:' + this._totalConsumptionProperty,
+          this._totalConsumptionChangeHandler,
+          this
+        )
+      }
 
       if (this._electricCurrentProperty) {
         this.device.removeListener(

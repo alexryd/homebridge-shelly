@@ -2,6 +2,7 @@
 module.exports = homebridge => {
   const {
     ConsumptionCharacteristic,
+    TotalConsumptionCharacteristic,
     ElectricCurrentCharacteristic,
     VoltageCharacteristic,
   } = require('./custom-characteristics')(homebridge)
@@ -13,6 +14,7 @@ module.exports = homebridge => {
       super(displayName, PowerMeterService.UUID, subtype)
 
       this.addCharacteristic(ConsumptionCharacteristic)
+      this.addOptionalCharacteristic(TotalConsumptionCharacteristic)
       this.addOptionalCharacteristic(ElectricCurrentCharacteristic)
       this.addOptionalCharacteristic(VoltageCharacteristic)
     }

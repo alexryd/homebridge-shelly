@@ -21,6 +21,21 @@ module.exports = homebridge => {
   }
   ConsumptionCharacteristic.UUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'
 
+  class TotalConsumptionCharacteristic extends Characteristic {
+    constructor() {
+      super('Total Consumption', TotalConsumptionCharacteristic.UUID)
+      this.setProps({
+        format: Formats.FLOAT,
+        unit: 'kWh',
+        minValue: 0,
+        minStep: 0.001,
+        perms: [Perms.READ, Perms.NOTIFY],
+      })
+      this.value = this.getDefaultValue()
+    }
+  }
+  TotalConsumptionCharacteristic.UUID = 'E863F10C-079E-48FF-8F27-9C2605A29F52'
+
   class ElectricCurrentCharacteristic extends Characteristic {
     constructor() {
       super('Electric Current', ElectricCurrentCharacteristic.UUID)
@@ -49,6 +64,7 @@ module.exports = homebridge => {
 
   return {
     ConsumptionCharacteristic,
+    TotalConsumptionCharacteristic,
     ElectricCurrentCharacteristic,
     VoltageCharacteristic,
   }
