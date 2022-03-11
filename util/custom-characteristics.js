@@ -27,6 +27,7 @@ module.exports = homebridge => {
       this.setProps({
         format: Formats.FLOAT,
         unit: 'A',
+        minStep: 0.1,
         perms: [Perms.READ, Perms.NOTIFY],
       })
       this.value = this.getDefaultValue()
@@ -40,6 +41,7 @@ module.exports = homebridge => {
       this.setProps({
         format: Formats.FLOAT,
         unit: 'V',
+        minStep: 0.1,
         perms: [Perms.READ, Perms.NOTIFY],
       })
       this.value = this.getDefaultValue()
