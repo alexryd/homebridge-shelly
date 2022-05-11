@@ -8,12 +8,15 @@ module.exports = homebridge => {
     /**
      * @param {string} temperatureProperty - The device property used to
      * indicate the current temperature.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(temperatureProperty) {
+    constructor(temperatureProperty, invalidValue = 999) {
       super(
         Service.TemperatureSensor,
         Characteristic.CurrentTemperature,
-        temperatureProperty
+        temperatureProperty,
+        invalidValue
       )
     }
 
@@ -26,6 +29,12 @@ module.exports = homebridge => {
         .setProps({ minValue: -100 })
 
       return service
+    }
+
+    _valueToHomeKit(value) {
+      return value !== this._invalidValue
+        ? Math.min(Math.max(value, -270), 100)
+        : 0
     }
   }
 

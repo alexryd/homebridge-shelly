@@ -8,18 +8,24 @@ module.exports = homebridge => {
     /**
      * @param {string} detectedProperty - The device property used to indicate
      * whether contact has been detected.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(detectedProperty) {
+    constructor(detectedProperty, invalidValue = -1) {
       super(
         Service.ContactSensor,
         Characteristic.ContactSensorState,
-        detectedProperty
+        detectedProperty,
+        invalidValue
       )
     }
 
     _valueToHomeKit(value) {
       const CSS = Characteristic.ContactSensorState
-      return !value ? CSS.CONTACT_DETECTED : CSS.CONTACT_NOT_DETECTED
+
+      return value !== this._invalidValue && !value
+        ? CSS.CONTACT_DETECTED
+        : CSS.CONTACT_NOT_DETECTED
     }
   }
 

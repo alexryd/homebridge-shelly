@@ -166,6 +166,15 @@ class SerialNumber extends Characteristic {
 }
 Characteristic.SerialNumber = SerialNumber
 
+class StatusFault extends Characteristic {
+  constructor() {
+    super('StatusFault', 'StatusFault')
+  }
+}
+StatusFault.NO_FAULT = 0
+StatusFault.GENERAL_FAULT = 1
+Characteristic.StatusFault = StatusFault
+
 class StatusLowBattery extends Characteristic {
   constructor() {
     super('StatusLowBattery', 'StatusLowBattery')

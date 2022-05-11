@@ -8,17 +8,20 @@ module.exports = homebridge => {
     /**
      * @param {string} detectedProperty - The device property used to indicate
      * whether motion has been detected.
+     * @param {any} invalidValue - A property value that indicates that the
+     * current value is invalid.
      */
-    constructor(detectedProperty) {
+    constructor(detectedProperty, invalidValue = -1) {
       super(
         Service.MotionSensor,
         Characteristic.MotionDetected,
-        detectedProperty
+        detectedProperty,
+        invalidValue
       )
     }
 
     _valueToHomeKit(value) {
-      return !!value
+      return value !== this._invalidValue && !!value
     }
   }
 

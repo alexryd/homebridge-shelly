@@ -16,6 +16,7 @@ module.exports = homebridge => {
         Service.Switch,
         Characteristic.On,
         switchProperty,
+        null,
         setSwitch
       )
     }
