@@ -37,7 +37,7 @@
     "colors": "^1.4.0",
     "command-line-commands": "^3.0.2",
     "express": "^4.17.2",
-    "shellies": "^1.7.0"
+    "shellies": "git+ssh://git@github.com/tritter/node-shellies.git#master"
   },
   "devDependencies": {
     "eslint": "^8.8.0",
