@@ -1,5 +1,5 @@
 const express = require('express')
-const shellies = require('shellies')
+const shellies = require('@tritter/shellies')
 
 module.exports = (platform, config, log) => {
   const api = express()
