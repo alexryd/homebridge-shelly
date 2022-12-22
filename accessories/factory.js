@@ -452,9 +452,10 @@ module.exports = homebridge => {
           log)
       } else if (config.sensors &&
         ((index + 1) > super.numberOfAccessories)) {
-        const sensorIndex = index
+        const sensorIndex = index - super.numberOfAccessories
         return new ShellyTemperatureAddOnAccessory(
           this.device,
+          index,
           sensorIndex,
           config,
           log)
