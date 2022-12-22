@@ -135,9 +135,13 @@ interface of a device, under *Settings -> Device info -> Device ID*.
 
 #### Shelly 1AddOn configurations
 *Applies to Shelly 1, 1PM*
-* `"sensors"` - 1-3, number of sensors connected to the addon. (default:0 , max: 3)
+* `"sensors"` - 1-3, number of sensors connected to the addon. (default: 0 , max: 3)
+* `"humidity"` - true|false, shows humidity. (only applicable to one and first sensor)
+* `"excludeRelay"` - true|false, hiding the relay (switch) from homebridge. (default: false)
+
+*For thermostat use:*
 * `"type"` - when the relais should act like a thermostat set the type to `"thermostat"`
-* `"humidity"` - false, shows humitidy (only applicable to one sensor)
+* `"humidity"` - true|false, shows humidity. (only applicable to one sensor) (default: false)
 * `"heating"` - true|false, enable heating on the thermostat. (default: true)
 * `"cooling"` - true|false, enable cooling on the thermostat. (default: false)
 * `"hysteresis"` - Sets a hysteresis at which difference the thermostat should switch on/off. (default: 0.5)
