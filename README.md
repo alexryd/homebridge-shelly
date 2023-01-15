@@ -124,6 +124,16 @@ interface of a device, under *Settings -> Device info -> Device ID*.
   types are `"contactSensor"`, `"motionSensor"`, `"occupancySensor"`,
   `"outlet"`, `"switch"` (default) and `"valve"`.
 
+#### Shelly 1L configurations
+* `"type"` - sets the type of the secondary button (only useful when configured
+  to detached mode). Available types are:
+  
+  * `"switch"` (default) disables the secondary button.
+  * `"statelessSwitch"` triggers short, double or long press (useful for push
+    buttons).
+  * `"statelessToggle"` always triggers a single press with each state change
+    (useful for toggle switches).
+
 #### Shelly 2.5 configurations
 * `"type"` - in roller mode, the device can be identified as either `"door"`,
   `"garageDoorOpener"`, `"window"` or `"windowCovering"` (default).

@@ -35,6 +35,7 @@ module.exports = homebridge => {
   const {
     ShellyButton1StatelessSwitchAccessory,
     ShellyInputStatelessSwitchAccessory,
+    ShellyInputStatelessToggleAccessory,
   } = require('./stateless-switches')(homebridge)
 
   const {
@@ -515,7 +516,25 @@ module.exports = homebridge => {
   /**
    * Shelly 1L factory.
    */
-  class Shelly1LFactory extends RelayAccessoryFactory {}
+  class Shelly1LFactory extends RelayAccessoryFactory {
+    get numberOfAccessories() {
+      return 2
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      if (index == 0) {
+        return this._createAccessoryForRelay(accessoryType, index, config, log)
+      }
+      else {
+        if (accessoryType === "statelessToggle") {
+          return new ShellyInputStatelessToggleAccessory(this.device, index, config, log, 1, 1)
+        }
+        else if (accessoryType === "statelessSwitch") {
+          return new ShellyInputStatelessSwitchAccessory(this.device, index, config, log, 1, 1)
+        }
+      }
+    }
+  }
   FACTORIES.set('SHSW-L', Shelly1LFactory)
 
   /**

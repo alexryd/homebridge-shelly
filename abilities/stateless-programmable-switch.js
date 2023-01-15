@@ -141,5 +141,72 @@ module.exports = homebridge => {
     }
   }
 
-  return StatelessProgrammableSwitchAbility
+  class StatelessProgrammableToggleAbility extends StatelessProgrammableSwitchAbility {
+    /**
+     * @param {string} inputProperty - The device property used to indicate
+     * that the input has been triggered
+     * @param {string} inputCounterProperty - The device property used to
+     * indicate the current input event count.
+     * @param {number} index - The index of this switch.
+     */
+    constructor(inputProperty, inputCounterProperty, index = 1) {
+      super(null, inputCounterProperty, index)
+
+      this.inputProperty = inputProperty
+    }
+
+    _setupEventHandlers() {
+      super._setupEventHandlers()
+
+      this.device
+        .on(
+          'change:' + this.inputProperty,
+          this._inputChangeHandler,
+          this
+        )
+    }
+
+    /**
+     * Handles changes from the device to the input property.
+     */
+    _inputChangeHandler(newValue) {
+      this.log.debug(
+        this.inputProperty,
+        'of device',
+        this.device.type,
+        this.device.id,
+        'changed to',
+        newValue
+      )
+
+      this._triggerSwitchDebounced()
+    }
+
+    /**
+     * Triggers a new switch event.
+     */
+    _triggerSwitch() {
+      const PSE = Characteristic.ProgrammableSwitchEvent
+
+      this.service
+        .getCharacteristic(PSE)
+        .updateValue(PSE.SINGLE_PRESS)
+    }
+
+    detach() {
+      this.device
+        .removeListener(
+          'change:' + this.inputProperty,
+          this._inputChangeHandler,
+          this
+        )
+
+      super.detach()
+    }
+  }
+
+  return {
+    StatelessProgrammableSwitchAbility,
+    StatelessProgrammableToggleAbility,
+  }
 }
