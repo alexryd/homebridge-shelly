@@ -52,6 +52,7 @@ module.exports = homebridge => {
 
   const {
     Shelly2WindowCoveringAccessory,
+    ShellyUniWindowCoveringAccessory
   } = require('./window-coverings')(homebridge)
 
   const {
@@ -571,7 +572,19 @@ module.exports = homebridge => {
    */
   class ShellyUniFactory extends RelayAccessoryFactory {
     get numberOfAccessories() {
+      if (this.config.type === 'windowCovering') {
+        return 1
+      }
       return 2
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      if (this.config.type === 'windowCovering') {
+        return new ShellyUniWindowCoveringAccessory(
+          this.device, config, log)
+      }
+
+      return super._createAccessory(accessoryType, index, config, log)
     }
   }
   FACTORIES.set('SHUNI-1', ShellyUniFactory)
