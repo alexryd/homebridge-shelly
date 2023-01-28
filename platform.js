@@ -1,5 +1,5 @@
 const os = require('os')
-const shellies = require('shellies')
+const shellies = require('@tritter/shellies')
 
 const AdminServer = require('./admin')
 

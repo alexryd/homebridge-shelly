@@ -89,6 +89,7 @@
                   "sensor",
                   "statelessSwitch",
                   "switch",
+                  "thermostat",
                   "valve",
                   "whiteLightbulb",
                   "window",
@@ -103,6 +104,50 @@
                 { "title": "RGB only", "enum": ["rgb"] },
                 { "title": "RGBW", "enum": ["rgbw"] }
               ]
+            },
+            "sensors": {
+              "title": "Number of sensors",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "default": 0,
+              "description": "Number of sensors connected to the addon."
+            },
+            "excludeRelay": {
+              "title": "Exclude Relay",
+              "type": "boolean",
+              "default": false,
+              "description": "Hiding the relay (switch) from homebridge."
+            },
+            "humidity": {
+              "title": "Humidity",
+              "type": "boolean",
+              "default": false,
+              "description": "Shows humidity. (only applicable to one and first sensor)."
+            },
+            "heating": {
+              "title": "Heating",
+              "type": "boolean",
+              "default": true,
+              "description": "Enable heating on the thermostat."
+            },
+            "cooling": {
+              "title": "Cooling",
+              "type": "boolean",
+              "default": false,
+              "description": "Enable cooling on the thermostat."
+            },
+            "hysteresis": {
+              "title": "Hysteresis",
+              "type": "number",
+              "default": 0.5,
+              "description": "Sets a hysteresis at which difference the thermostat should switch on/off."
+            },
+            "clearTimeout": {
+              "title": "Stateless Clear Timeout",
+              "type": "number",
+              "default": 60,
+              "description": "Sets a timeout at which the position of stateless windowCovering will be resetted to 50% (only windowCovering with Shelly Uni)."
             },
             "username": {
               "title": "Username",
@@ -160,9 +205,34 @@
             "devices[].id",
             "devices[].name",
             "devices[].type",
+            "devices[].sensors",
             {
               "key": "devices[].colorMode",
               "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'colorLightbulb'" }
+            },
+            {
+              "key": "devices[].humidity",
+              "condition": { "functionBody": "return model.devices && (model.devices[arrayIndices[0]].sensors > 0 || model.devices[arrayIndices[0]].type === 'thermostat')" }
+            },
+            {
+              "key": "devices[].excludeRelay",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].sensors > 0" }
+            },
+            {
+              "key": "devices[].heating",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'thermostat'" }
+            },
+            {
+              "key": "devices[].cooling",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'thermostat'" }
+            },
+            {
+              "key": "devices[].hysteresis",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'thermostat'" }
+            },
+            {
+              "key": "devices[].clearTimeout",
+              "condition": { "functionBody": "return model.devices && model.devices[arrayIndices[0]].type === 'windowCovering'" }
             },
             {
               "key": "devices[]",

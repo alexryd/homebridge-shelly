@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 const os = require('os')
-const shellies = require('shellies')
+const shellies = require('@tritter/shellies')
 const should = require('should')
 const sinon = require('sinon')
 

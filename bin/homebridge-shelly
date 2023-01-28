@@ -3,7 +3,7 @@
 
 const colors = require('colors/safe')
 const commandLineCommands = require('command-line-commands')
-const shellies = require('shellies')
+const shellies = require('@tritter/shellies')
 
 const packageVersion = require('../package.json').version
 

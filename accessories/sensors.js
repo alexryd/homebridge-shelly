@@ -157,6 +157,23 @@ module.exports = homebridge => {
     }
   }
 
+  class ShellyTemperatureAddOnAccessory extends ShellySensorAccessory {
+    constructor(device, index, sensorIndex, config, log) {
+      const abilities = [
+        new TemperatureSensorAbility('externalTemperature' + sensorIndex)
+      ]
+      const humitiyEnabled = sensorIndex === 0 && config.humidity
+      if (humitiyEnabled) {
+        abilities.push(new HumiditySensorAbility('externalHumidity'))
+      }
+      if (config.humidity && sensorIndex !== 0) {
+        throw new Error(`Invalid config, 
+          humidity can only work with one DHT22 sensor connected`)
+      }
+      super(device, index, config, log, abilities)
+    }
+  }
+
   return {
     ShellyDoorWindowAccessory,
     ShellyDoorWindow2Accessory,
@@ -168,5 +185,6 @@ module.exports = homebridge => {
     ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
     ShellyMotionAccessory,
+    ShellyTemperatureAddOnAccessory
   }
 }

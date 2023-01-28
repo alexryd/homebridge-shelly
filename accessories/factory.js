@@ -30,6 +30,7 @@ module.exports = homebridge => {
     ShellyRelayOccupancySensorAccessory,
     ShellySenseAccessory,
     ShellyMotionAccessory,
+    ShellyTemperatureAddOnAccessory
   } = require('./sensors')(homebridge)
 
   const {
@@ -42,11 +43,16 @@ module.exports = homebridge => {
   } = require('./switches')(homebridge)
 
   const {
+    ShellyThermostatAccessory,
+  } = require('./thermostat')(homebridge)
+
+  const {
     ShellyRelayValveAccessory,
   } = require('./valves')(homebridge)
 
   const {
     Shelly2WindowCoveringAccessory,
+    ShellyUniWindowCoveringAccessory
   } = require('./window-coverings')(homebridge)
 
   const {
@@ -62,8 +68,9 @@ module.exports = homebridge => {
     /**
      * @param {object} device - The device that accessories will be created for.
      */
-    constructor(device) {
+    constructor(device, config) {
       this.device = device
+      this.config = config
     }
 
     /**
@@ -427,6 +434,38 @@ module.exports = homebridge => {
     get numberOfPowerMeters() {
       return 0
     }
+
+    get numberOfAccessories() {
+      if (this.config.type === 'thermostat') {
+        return this.config.sensors || super.numberOfAccessories
+      } else if (this.config.sensors) {
+        return this.config.excludeRelay
+          ? this.config.sensors
+          : this.config.sensors + super.numberOfAccessories
+      }
+      return super.numberOfAccessories
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      const numberOfRelays = config.excludeRelay ? 0 : super.numberOfAccessories
+      if (accessoryType === 'thermostat') {
+        return new ShellyThermostatAccessory(
+          this.device,
+          index,
+          config,
+          log)
+      } else if (config.sensors &&
+        ((index + 1) > numberOfRelays)) {
+        const sensorIndex = index - numberOfRelays
+        return new ShellyTemperatureAddOnAccessory(
+          this.device,
+          index,
+          sensorIndex,
+          config,
+          log)
+      }
+      return super._createAccessory(accessoryType, index, config, log)
+    }
   }
   FACTORIES.set('SHSW-1', Shelly1Factory)
 
@@ -521,7 +560,11 @@ module.exports = homebridge => {
   /**
    * Shelly 1PM factory.
    */
-  class Shelly1PMFactory extends RelayAccessoryFactory {}
+  class Shelly1PMFactory extends Shelly1Factory {
+    get numberOfPowerMeters() {
+      return this.numberOfAccessories
+    }
+  }
   FACTORIES.set('SHSW-PM', Shelly1PMFactory)
 
   /**
@@ -529,7 +572,19 @@ module.exports = homebridge => {
    */
   class ShellyUniFactory extends RelayAccessoryFactory {
     get numberOfAccessories() {
+      if (this.config.type === 'windowCovering') {
+        return 1
+      }
       return 2
+    }
+
+    _createAccessory(accessoryType, index, config, log) {
+      if (this.config.type === 'windowCovering') {
+        return new ShellyUniWindowCoveringAccessory(
+          this.device, config, log)
+      }
+
+      return super._createAccessory(accessoryType, index, config, log)
     }
   }
   FACTORIES.set('SHUNI-1', ShellyUniFactory)
@@ -579,12 +634,12 @@ module.exports = homebridge => {
   /**
    * Returns the factory for the given device.
    */
-  const getFactory = device => {
+  const getFactory = (device, config = null) => {
     const FactoryClass = FACTORIES.get(device.type)
     if (!FactoryClass) {
       return null
     }
-    return new FactoryClass(device)
+    return new FactoryClass(device, config)
   }
 
   return {
@@ -628,7 +683,7 @@ module.exports = homebridge => {
      */
     createAccessory(device, index, config, log,
       platformAccessory = null) {
-      const factory = getFactory(device)
+      const factory = getFactory(device, config)
       if (!factory) {
         return null
       }
@@ -650,7 +705,7 @@ module.exports = homebridge => {
      * Creates all accessories for the given device.
      */
     createAccessories(device, config, log) {
-      const factory = getFactory(device)
+      const factory = getFactory(device, config)
       if (!factory) {
         return null
       }
